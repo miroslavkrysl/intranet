@@ -1,0 +1,20 @@
+{
+    "name": "willyxjam/intranet",
+    "description": "Simple web application for school intranet.",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Miroslav Krysl",
+            "email": "wilyxjam@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Intranet\\": "application/",
+            "Core\\": "core/"
+        }
+    },
+    "require": {
+        "twig/twig": "^2.4"
+    }
+}
