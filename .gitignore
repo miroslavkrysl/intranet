@@ -1,4 +1,4 @@
 /node_modules
 /vendor
-*.conf.json
+.env.json
 /.idea
