@@ -18,8 +18,8 @@ class Definition
     private $class;
 
     /**
-     * Names of the arguments of the class constructor.
-     * @var array
+     * Arguments of the class constructor.
+     * @var mixed[]
      */
     private $arguments;
 
@@ -83,8 +83,8 @@ class Definition
     }
 
     /**
-     * Get the constructor argument names.
-     * @return string[]
+     * Get the arguments to pass to the service constructor.
+     * @return mixed[]
      */
     public function getArguments(): array
     {

@@ -88,9 +88,8 @@ class Container
 
     /**
      * Build the service with it's dependencies.
-     * @todo Building logic
      * @param string $name
-     * @throws ContainerException
+     * @throws ContainerException When there is a circular service reference.
      */
     private function build(string $name)
     {
@@ -98,5 +97,16 @@ class Container
             throw new ContainerException($name . ' contains circular reference');
         }
         $this->building[$name] = true;
+
+        $definition = $this->definitions[$name];
+        $arguments = $definition->getArguments();
+
+        foreach ($arguments as $argument) {
+            if (!isset($this->parameters[$argument])) {
+                throw new ContainerException('Parameter ' . $argument .
+                    ' for service ' . $name . ' is not defined');
+            }
+
+        }
     }
 }
