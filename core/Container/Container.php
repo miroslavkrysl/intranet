@@ -31,6 +31,7 @@ class Container
      * Get the service.
      * @param string $name
      * @return mixed Service
+     * @throws ContainerException If there is not the service definition.
      */
     public function get(string $name): mixed
     {
@@ -89,9 +90,10 @@ class Container
     /**
      * Build the service with it's dependencies.
      * @param string $name
+     * @return mixed Service
      * @throws ContainerException When there is a circular service reference.
      */
-    private function build(string $name)
+    private function build(string $name): mixed
     {
         if (isset($this->building[$name])) {
             throw new ContainerException($name . ' contains circular reference');
@@ -100,13 +102,71 @@ class Container
 
         $definition = $this->definitions[$name];
         $arguments = $definition->getArguments();
+        $arguments = $this->resolve($arguments);
 
-        foreach ($arguments as $argument) {
-            if (!isset($this->parameters[$argument])) {
-                throw new ContainerException('Parameter ' . $argument .
-                    ' for service ' . $name . ' is not defined');
-            }
+        $reflectionClass = new \ReflectionClass($name);
+        $constructor = $reflectionClass->getConstructor();
 
+        if ($constructor and $constructor->getNumberOfRequiredParameters() > count($arguments)) {
+            throw new ContainerException('Too few arguments for the ' . $reflectionClass->getName() .
+                ' class costructor in service ' . $name);
         }
+
+        $service = $constructor ? $reflectionClass->newInstance() : $reflectionClass->newInstanceArgs($arguments);
+
+        return $service;
+    }
+
+    /**
+     * Resolve dependencies.
+     * @param mixed $value
+     * @return mixed
+     * @throws ContainerException
+     */
+    private function resolve(mixed $value): mixed
+    {
+        if (\is_array($value)) {
+            foreach ($value as $key => $v) {
+                $value[$key] = $this->resolve($v);
+            }
+        }
+        else if ($value instanceof Reference) {
+            $value = $this->get($value);
+        }
+        else if ($value instanceof Definition) {
+            $value = $this->build($value);
+        }
+        else if ($this->hasParameter($value)) {
+            $value = $this->getParameter($value);
+        }
+        else {
+            throw new ContainerException('Parameter ' . (string) $value . ' is not defined.');
+        }
+
+        return $value;
+    }
+
+    /**
+     * Checks if the parameter is defined.
+     * @param string $name
+     * @return bool True if the parameter is defined, false otherwise
+     */
+    public function hasParameter(string $name): bool
+    {
+        return isset($this->parameters[$name]);
+    }
+
+    /**
+     * Returns parameter value.
+     * @param string $name
+     * @return mixed
+     * @throws ContainerException If parameter is not defined.
+     */
+    public function getParameter(string $name): mixed
+    {
+        if (!$this->hasParameter($name)) {
+            throw new ContainerException('Parameter ' . $name . ' is not defined');
+        }
+        return $this->parameters[$name];
     }
 }
