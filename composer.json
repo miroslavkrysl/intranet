@@ -12,7 +12,10 @@
         "psr-4": {
             "Intranet\\": "application/",
             "Core\\": "core/"
-        }
+        },
+        "files": [
+            "core/helpers.php"
+        ]
     },
     "require": {
         "twig/twig": "^2.4"

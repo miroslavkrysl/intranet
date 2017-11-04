@@ -3,6 +3,10 @@
 
 namespace Core\Database;
 
+
+use Core\Contracts\Database\DatabaseInterface;
+
+
 /**
  * Simple PDO wrapper.
  */
@@ -79,7 +83,7 @@ class PDOWrapper implements DatabaseInterface
         );
 
         $this->connection = new \PDO(
-            "$this->host:$this->database",
+            "$this->type:dbname=$this->database;host=$this->host",
             $this->username,
             $this->password,
             $this->settings

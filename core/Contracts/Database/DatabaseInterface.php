@@ -1,7 +1,8 @@
 <?php
 
 
-namespace Core\Database;
+namespace Core\Contracts\Database;
+
 
 /**
  * Determines the interface for interaction with the database.
