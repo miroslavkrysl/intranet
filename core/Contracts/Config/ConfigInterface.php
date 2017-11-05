@@ -26,4 +26,10 @@ interface ConfigInterface
      * @return bool
      */
     public function has(string $key): bool;
+
+    /**
+     * Get array of all settings.
+     * @return array
+     */
+    public function all(): array;
 }

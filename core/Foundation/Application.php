@@ -5,6 +5,7 @@ namespace Core\Foundation;
 use Core\Container\Container;
 use Core\DotArray\DotArray;
 use Core\Foundation\Exception\EnvVariableNotExistsException;
+use Core\Foundation\Exception\PathNotExistsException;
 
 
 /**
@@ -18,6 +19,7 @@ class Application extends Container
      */
     private $paths = [
         'services' => '/config/services.php',
+        'settings' => '/config/settings.php',
         'env' => '/.env.json'
     ];
 
@@ -52,7 +54,7 @@ class Application extends Container
      */
     private function registerServices()
     {
-        $register = require $this->rootDir . $this->paths['services'];
+        $register = require($this->path('services'));
         $register($this);
     }
 
@@ -66,11 +68,23 @@ class Application extends Container
     }
 
     /**
+     * Get path from defined paths.
+     * @return string
+     */
+    public function path($name): string
+    {
+        if (!isset($this->paths[$name])) {
+            throw new PathNotExistsException('Path with name ' . $name . ' does not exist.');
+        }
+        return $this->rootDir() . $this->paths[$name];
+    }
+
+    /**
      * Register environment variables.
      */
     private function registerEnvVariables()
     {
-        $env = \json_decode(\file_get_contents($this->rootDir() . $this->paths['env']), true);
+        $env = \json_decode(\file_get_contents($this->path('env')), true);
         $this->env = new DotArray($env);
     }
 

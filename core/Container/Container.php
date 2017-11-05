@@ -71,7 +71,7 @@ class Container
      */
     public function has(string $name): bool
     {
-        return isset($this->services[$name]);
+        return isset($this->definitions[$name]);
     }
 
     /**
@@ -123,7 +123,7 @@ class Container
         $arguments = $definition->getArguments();
         $arguments = $this->resolve($arguments);
 
-        $reflectionClass = new \ReflectionClass($name);
+        $reflectionClass = new \ReflectionClass($definition->getClass());
         $constructor = $reflectionClass->getConstructor();
 
         if ($constructor and $constructor->getNumberOfRequiredParameters() > count($arguments)) {
@@ -132,6 +132,19 @@ class Container
         }
 
         $service = $constructor ? $reflectionClass->newInstance() : $reflectionClass->newInstanceArgs($arguments);
+
+        $calls = $definition->getCalls();
+
+        foreach ($calls as $call) {
+            $method = $reflectionClass->getMethod($call['name']);
+
+            if ($constructor->getNumberOfRequiredParameters() > count($arguments)) {
+                throw new ContainerException('Too few arguments for the ' . $reflectionClass->getName() .
+                    ' class method ' . $method->getName() . ' in service ' . $name);
+            }
+
+            $method->invokeArgs($service, $this->resolve($call['args']));
+        }
 
         return $service;
     }
@@ -187,5 +200,23 @@ class Container
             throw new ContainerException('Parameter ' . $name . ' is not defined');
         }
         return $this->parameters[$name];
+    }
+
+    /**
+     * Get list of definitions.
+     * @return array
+     */
+    public function definitions(): array
+    {
+        return $this->definitions;
+    }
+
+    /**
+     * Get list of available services.
+     * @return array
+     */
+    public function services(): array
+    {
+        return \array_keys($this->definitions);
     }
 }

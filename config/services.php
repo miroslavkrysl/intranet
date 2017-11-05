@@ -9,13 +9,16 @@ use Core\Session\SessionManager;
 
 
 /**
- * This file return a method to be called to register all the container services.
+ * This file returns a method to be called to register all the container services.
  */
 
 return function (Container $container)
 {
     // config
-    $container->register('config', Config::class);
+    $container->setParameter('config.path', path('settings'));
+
+    $container->register('config', Config::class)
+        ->addCall('loadFromFile', ['config.path']);
 
     // database
     $container->setParameter('database.type', config('database.type'));
@@ -32,7 +35,6 @@ return function (Container $container)
         ->addArgument('database.password');
 
     // session
-    \session_start();
     $container->register('session', SessionManager::class);
 
     // cookies

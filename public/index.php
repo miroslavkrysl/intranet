@@ -11,9 +11,6 @@ var_dump($_SESSION);
 var_dump($_FILES);
 var_dump($_REQUEST);
 
-$gg =[];
-$gg['dd']['sdsd'][4] = 41;
+echo "<hr />";
 
-var_dump($gg);
-
-//$app = require('../bootstrap/app.php');
+$app = require('../bootstrap/app.php');

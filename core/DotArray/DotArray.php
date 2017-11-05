@@ -82,4 +82,12 @@ class DotArray
             return false;
         }
     }
+
+    /**
+     * @return array
+     */
+    public function all()
+    {
+        return $this->data;
+    }
 }

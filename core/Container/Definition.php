@@ -68,7 +68,7 @@ class Definition
         if (!\method_exists($this->class, $method)) {
             throw new DefinitionException('Method ' . $this->class . '::' . $method . ' does not exist');
         }
-        $this->calls[] = array($method, $arguments);
+        $this->calls[] = array('name' => $method, 'args' => $arguments);
 
         return $this;
     }
@@ -99,6 +99,4 @@ class Definition
     {
         return $this->calls;
     }
-
-
 }

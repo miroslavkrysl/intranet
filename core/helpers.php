@@ -1,8 +1,8 @@
 <?php
 
 
-use Core\Contracts\Config\ConfigInterface;
 use Core\Foundation\Application;
+use Core\Contracts\Config\ConfigInterface;
 use Core\Contracts\Session\SessionManagerInterface;
 use Core\Contracts\Cookies\CookiesManagerInterface;
 
@@ -124,4 +124,15 @@ function array_to_dot(array $array): array
 function root_dir(): string
 {
     return app()->rootDir();
+}
+
+
+/**
+ * Get the specified registered path.
+ * @param $name
+ * @return string
+ */
+function path($name): string
+{
+    return app()->path($name);
 }
