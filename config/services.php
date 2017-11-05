@@ -3,6 +3,7 @@
 
 use Core\Config\Config;
 use Core\Container\Container;
+use Core\Container\ParameterReference as PR;
 use Core\Cookies\CookiesManager;
 use Core\Database\PDOWrapper;
 use Core\Session\SessionManager;
@@ -15,24 +16,16 @@ use Core\Session\SessionManager;
 return function (Container $container)
 {
     // config
-    $container->setParameter('config.path', path('settings'));
-
     $container->register('config', Config::class)
-        ->addCall('loadFromFile', ['config.path']);
+        ->addCall('loadFromFile', [path('settings')]);
 
     // database
-    $container->setParameter('database.type', config('database.type'));
-    $container->setParameter('database.host', config('database.host'));
-    $container->setParameter('database.dbname', config('database.dbname'));
-    $container->setParameter('database.username', config('database.username'));
-    $container->setParameter('database.password', config('database.password'));
-
     $container->register('database', PDOWrapper::class)
-        ->addArgument('database.type')
-        ->addArgument('database.host')
-        ->addArgument('database.dbname')
-        ->addArgument('database.username')
-        ->addArgument('database.password');
+        ->addArgument(config('database.type'))
+        ->addArgument(config('database.host'))
+        ->addArgument(config('database.dbname'))
+        ->addArgument(config('database.username'))
+        ->addArgument(config('database.password'));
 
     // session
     $container->register('session', SessionManager::class);

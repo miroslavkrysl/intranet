@@ -13,4 +13,8 @@ var_dump($_REQUEST);
 
 echo "<hr />";
 
+var_dump(htmlspecialchars('<hr />'));
+
 $app = require('../bootstrap/app.php');
+
+cookie('test-cookie', 48);

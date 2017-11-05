@@ -47,13 +47,24 @@ class Definition
 
     /**
      * Add an argument for the class constructor.
-     * @param string $argument Argument name
+     * @param string $argument
      * @return self
      */
     public function addArgument(string $argument): self
     {
         $this->arguments[] = $argument;
 
+        return $this;
+    }
+
+    /**
+     * Add arguments for the class constructor.
+     * @param string $arguments
+     * @return self
+     */
+    public function addArguments(array $arguments): self
+    {
+        \array_merge($this->arguments, \array_values($arguments));
         return $this;
     }
 

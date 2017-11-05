@@ -4,27 +4,27 @@
 namespace Core\Container;
 
 /**
- * Represents a reference to a service.
+ * Represents a reference to an entity with the name.
  */
 class Reference
 {
     /**
-     * Name of the referenced service.
+     * Name of the referenced entity.
      * @var string
      */
-    private $name;
+    protected $name;
 
     /**
      * Reference constructor.
-     * @param string $name Name of the referenced service
+     * @param string $name Name of the referenced entity
      */
     public function __construct(string $name)
     {
-        $this->name = 'name';
+        $this->name = $name;
     }
 
     /**
-     * Returns the name of the referenced service.
+     * Returns the name of the referenced entity.
      * @return string
      */
     public function getName(): string
