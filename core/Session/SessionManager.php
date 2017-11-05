@@ -44,7 +44,7 @@ class SessionManager implements SessionManagerInterface
      */
     public function isset(string $key): bool
     {
-        return $this->isset($_SESSION[$key]);
+        return isset($_SESSION[$key]);
     }
 
     /**
