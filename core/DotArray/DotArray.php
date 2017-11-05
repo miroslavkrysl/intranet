@@ -31,7 +31,7 @@ class DotArray
      * @return array|mixed
      * @throws ArrayKeyNotExistsException
      */
-    public function get(string $key = null): mixed
+    public function get(string $key = null)
     {
         $keys = \explode('.', $key);
         $value = $this->data;
@@ -50,7 +50,7 @@ class DotArray
      * @param string $key
      * @param mixed $value
      */
-    public function set(string $key, mixed $value)
+    public function set(string $key, $value)
     {
         $keys = \explode('.', $key);
         $array = &$this->data;

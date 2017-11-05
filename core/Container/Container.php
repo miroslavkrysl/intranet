@@ -2,6 +2,10 @@
 
 namespace Core\Container;
 
+
+use Core\Container\Exception\ContainerException;
+
+
 /**
  * Dependency injection container.
  */
@@ -11,7 +15,7 @@ class Container
      * Current container instance
      * @var self
      */
-    private static $instance;
+    protected static $instance;
 
     /**
      * @var Definition[]
@@ -35,11 +39,11 @@ class Container
 
     /**
      * Get current Container instance.
-     * @return self
+     * @return static
      */
-    public static function getInstance(): self
+    public static function getInstance()
     {
-        return self::$instance;
+        return static::$instance;
     }
 
     /**
@@ -48,7 +52,7 @@ class Container
      * @return mixed Service
      * @throws ContainerException If there is not the service definition.
      */
-    public function get(string $name): mixed
+    public function get(string $name)
     {
         if (!$this->has($name)) {
             throw new ContainerException('Service not found: ' . $name);
@@ -97,7 +101,7 @@ class Container
      * @param string $name
      * @param mixed $value
      */
-    public function setParameter(string $name, mixed $value)
+    public function setParameter(string $name, $value)
     {
         $this->parameters[$name] = $value;
     }
@@ -108,7 +112,7 @@ class Container
      * @return mixed Service
      * @throws ContainerException When there is a circular service reference.
      */
-    private function build(string $name): mixed
+    private function build(string $name)
     {
         if (isset($this->building[$name])) {
             throw new ContainerException($name . ' contains circular reference');
@@ -124,7 +128,7 @@ class Container
 
         if ($constructor and $constructor->getNumberOfRequiredParameters() > count($arguments)) {
             throw new ContainerException('Too few arguments for the ' . $reflectionClass->getName() .
-                ' class costructor in service ' . $name);
+                ' class constructor in service ' . $name);
         }
 
         $service = $constructor ? $reflectionClass->newInstance() : $reflectionClass->newInstanceArgs($arguments);
@@ -134,11 +138,11 @@ class Container
 
     /**
      * Resolve dependencies.
-     * @param mixed $value
+     * @param mixed|array $value
      * @return mixed
      * @throws ContainerException
      */
-    private function resolve(mixed $value): mixed
+    private function resolve($value)
     {
         if (\is_array($value)) {
             foreach ($value as $key => $v) {
@@ -177,7 +181,7 @@ class Container
      * @return mixed
      * @throws ContainerException If parameter is not defined.
      */
-    public function getParameter(string $name): mixed
+    public function getParameter(string $name)
     {
         if (!$this->hasParameter($name)) {
             throw new ContainerException('Parameter ' . $name . ' is not defined');

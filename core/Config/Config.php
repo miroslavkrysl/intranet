@@ -33,9 +33,8 @@ class Config implements ConfigInterface
      * Set the specified setting.
      * @param string $key
      * @param mixed $value
-     * @return mixed
      */
-    public function set(string $key, mixed $value)
+    public function set(string $key, $value)
     {
         $this->settings->set($key, $value);
     }
@@ -45,10 +44,10 @@ class Config implements ConfigInterface
      * @param string $key
      * @return mixed
      */
-    public function get(string $key): mixed
+    public function get(string $key)
     {
         if (!$this->has($key)) {
-            throw new SettingNotExistsException;
+            throw new SettingNotExistsException('Setting ' . $key . ' does not exist.');
         }
         return $this->settings->get($key);
     }

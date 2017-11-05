@@ -10,16 +10,15 @@ interface ConfigInterface
      * Set the specified setting.
      * @param string $key
      * @param mixed $value
-     * @return mixed
      */
-    public function set(string $key, mixed $value);
+    public function set(string $key, $value);
 
     /**
      * Get the specified setting.
      * @param string $key
      * @return mixed
      */
-    public function get(string $key): mixed;
+    public function get(string $key);
 
     /**
      * Check if the setting exists.

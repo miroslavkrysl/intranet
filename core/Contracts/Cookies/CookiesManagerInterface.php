@@ -13,16 +13,15 @@ interface CookiesManagerInterface
      * Set the specified cookie.
      * @param string $key
      * @param mixed $value
-     * @param int $expire Cookie expiration timestamp
      */
-    public function set(string $key, mixed $value, int $expire);
+    public function set(string $key, $value);
 
     /**
      * Get the value of the specified cookie.
      * @param string $key
      * @return mixed
      */
-    public function get(string $key): mixed;
+    public function get(string $key);
 
     /**
      * Check if the cookie is set.

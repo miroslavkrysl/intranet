@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Core\Container;
+namespace Core\Container\Exception;
 
 
 class ContainerException extends \Exception

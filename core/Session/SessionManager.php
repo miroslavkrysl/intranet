@@ -19,7 +19,7 @@ class SessionManager implements SessionManagerInterface
      * @param string $key
      * @param mixed $value
      */
-    public function set(string $key, mixed $value)
+    public function set(string $key, $value)
     {
         $_SESSION[$key] = $value;
     }
@@ -29,7 +29,7 @@ class SessionManager implements SessionManagerInterface
      * @param string $key
      * @return mixed
      */
-    public function get(string $key): mixed
+    public function get(string $key)
     {
         if (!$this->isset($key)) {
             throw new SessionVariableNotExistsException;

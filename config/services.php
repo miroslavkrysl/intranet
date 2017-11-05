@@ -15,16 +15,16 @@ use Core\Session\SessionManager;
 return function (Container $container)
 {
     // config
-    $this->container->register('config', Config::class);
+    $container->register('config', Config::class);
 
     // database
-    $this->container->setParameter('database.type', config('database.type'));
-    $this->container->setParameter('database.host', config('database.host'));
-    $this->container->setParameter('database.dbname', config('database.dbname'));
-    $this->container->setParameter('database.username', config('database.username'));
-    $this->container->setParameter('database.password', config('database.password'));
+    $container->setParameter('database.type', config('database.type'));
+    $container->setParameter('database.host', config('database.host'));
+    $container->setParameter('database.dbname', config('database.dbname'));
+    $container->setParameter('database.username', config('database.username'));
+    $container->setParameter('database.password', config('database.password'));
 
-    $this->container->register('database', PDOWrapper::class)
+    $container->register('database', PDOWrapper::class)
         ->addArgument('database.type')
         ->addArgument('database.host')
         ->addArgument('database.dbname')
@@ -33,8 +33,8 @@ return function (Container $container)
 
     // session
     \session_start();
-    $this->container->register('session', SessionManager::class);
+    $container->register('session', SessionManager::class);
 
     // cookies
-    $this->container->register('cookies', CookiesManager::class);
+    $container->register('cookies', CookiesManager::class);
 };

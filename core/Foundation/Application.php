@@ -17,12 +17,12 @@ class Application extends Container
      * @var array
      */
     private $paths = [
-        'services' => 'config/services.php',
-        'env' => '.env.json'
+        'services' => '/config/services.php',
+        'env' => '/.env.json'
     ];
 
     /**
-     * Application root directory.
+     * Application root directory absolute path.
      * @var string
      */
     private $rootDir;
@@ -36,10 +36,13 @@ class Application extends Container
 
     /**
      * Application constructor.
-     * @param string $rootDir Application root directory
+     * @param string $rootDir Application root directory relative path.
      */
     public function __construct(string $rootDir)
     {
+        static::$instance = $this;
+
+        $this->rootDir = realpath ($rootDir);
         $this->registerEnvVariables();
         $this->registerServices();
     }
@@ -67,7 +70,7 @@ class Application extends Container
      */
     private function registerEnvVariables()
     {
-        $env = \json_decode($this->rootDir() . $this->paths['env']);
+        $env = \json_decode(\file_get_contents($this->rootDir() . $this->paths['env']), true);
         $this->env = new DotArray($env);
     }
 

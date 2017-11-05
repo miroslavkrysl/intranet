@@ -15,14 +15,14 @@ interface SessionManagerInterface
      * @param string $key
      * @param mixed $value
      */
-    public function set(string $key, mixed $value);
+    public function set(string $key, $value);
 
     /**
      * Get the value of the specified session variable.
      * @param string $key
      * @return mixed
      */
-    public function get(string $key): mixed;
+    public function get(string $key);
 
     /**
      * Check if the session variable is set.

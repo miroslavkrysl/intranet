@@ -1,10 +1,10 @@
 <?php
 
 
+use Core\Contracts\Config\ConfigInterface;
 use Core\Foundation\Application;
 use Core\Contracts\Session\SessionManagerInterface;
 use Core\Contracts\Cookies\CookiesManagerInterface;
-use Core\Contracts\Config;
 
 
 /**
@@ -12,7 +12,7 @@ use Core\Contracts\Config;
  * @param string $service
  * @return mixed|Application
  */
-function app(string $service = null): mixed
+function app(string $service = null)
 {
     if ($service == null) {
         return Application::getInstance();
@@ -36,9 +36,9 @@ function env($key)
  * Get or set the specified setting, or get the config service instance.
  * @param string $key
  * @param mixed $default
- * @return mixed
+ * @return mixed|ConfigInterface
  */
-function config(string $key = null, mixed $value = null)
+function config(string $key = null, $value = null)
 {
     if (is_null($key)) {
         return app('config');
@@ -58,7 +58,7 @@ function config(string $key = null, mixed $value = null)
  * @param mixed $default
  * @return mixed|SessionManagerInterface
  */
-function session(string $key = null, mixed $value = null): mixed
+function session(string $key = null, $value = null)
 {
     if (is_null($key)) {
         return app('session');
@@ -77,7 +77,7 @@ function session(string $key = null, mixed $value = null): mixed
  * @param mixed $default
  * @return mixed|CookiesManagerInterface
  */
-function cookie(string $key = null, mixed $value = null): mixed
+function cookie(string $key = null, $value = null)
 {
     if (is_null($key)) {
         return app('session');

@@ -20,7 +20,7 @@ class CookiesManager implements CookiesManagerInterface
      * @param mixed $value
      * @param int $expire Cookie expiration timestamp
      */
-    public function set(string $key, mixed $value)
+    public function set(string $key, $value)
     {
         $conf = \config('cookies');
         \setcookie($key, $value, \time() + $conf['expire'], $conf['path'], $conf['domain']);
@@ -31,7 +31,7 @@ class CookiesManager implements CookiesManagerInterface
      * @param string $key
      * @return mixed
      */
-    public function get(string $key): mixed
+    public function get(string $key)
     {
         if (!$this->isset($key)) {
             throw new CookieNotExistsException('Cookie ' . $key . ' does not exist.');
