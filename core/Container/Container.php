@@ -8,6 +8,12 @@ namespace Core\Container;
 class Container
 {
     /**
+     * Current container instance
+     * @var self
+     */
+    private static $instance;
+
+    /**
      * @var Definition[]
      */
     private $definitions;
@@ -26,6 +32,15 @@ class Container
      * @var bool[]
      */
     private $building;
+
+    /**
+     * Get current Container instance.
+     * @return self
+     */
+    public static function getInstance(): self
+    {
+        return self::$instance;
+    }
 
     /**
      * Get the service.
