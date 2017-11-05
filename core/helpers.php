@@ -77,7 +77,7 @@ function session(string $key = null, mixed $value = null): mixed
  * @param mixed $default
  * @return mixed|CookiesManagerInterface
  */
-function cookie(string $key = null, mixed $value = null, $time): mixed
+function cookie(string $key = null, mixed $value = null): mixed
 {
     if (is_null($key)) {
         return app('session');

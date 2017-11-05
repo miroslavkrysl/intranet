@@ -38,7 +38,7 @@ class DotArray
 
         foreach ($keys as $k) {
             if (!is_array($value) || !array_key_exists($k, $value)) {
-                throw new ArrayKeyNotExistsException();
+                throw new ArrayKeyNotExistsException('Array key ' . $key . ' does not exist.');
             }
             $value = $value[$k];
         }

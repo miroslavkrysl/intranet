@@ -3,7 +3,9 @@
 namespace Core\Foundation;
 
 use Core\Container\Container;
+use Core\DotArray\DotArray;
 use Core\Foundation\Exception\EnvVariableNotExistsException;
+
 
 /**
  * Main class of the application.
@@ -11,7 +13,7 @@ use Core\Foundation\Exception\EnvVariableNotExistsException;
 class Application extends Container
 {
     /**
-     * Basic config files paths.
+     * Basic config files paths relative to the application root directory.
      * @var array
      */
     private $paths = [
@@ -27,7 +29,7 @@ class Application extends Container
 
     /**
      * Contains environment variables.
-     * @var array
+     * @var DotArray
      */
     private $env;
 
@@ -66,14 +68,14 @@ class Application extends Container
     private function registerEnvVariables()
     {
         $env = \json_decode($this->rootDir() . $this->paths['env']);
-        $this->env = \array_to_dot($env);
+        $this->env = new DotArray($env);
     }
 
     public function env($key)
     {
-        if (!\array_key_exists($key, $this->env)) {
-            throw  new EnvVariableNotExistsException;
+        if (!$this->env->has($key)) {
+            throw  new EnvVariableNotExistsException('Environment variable ' . $key . ' does not exist.');
         }
-        return $this->env[$key];
+        return $this->env->get($key);
     }
 }
