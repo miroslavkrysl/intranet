@@ -42,6 +42,7 @@ class Definition
         }
         $this->class = $class;
         $this->arguments = $arguments;
+        $this->calls = [];
     }
 
     /**
