@@ -18,22 +18,22 @@ class Container
     protected static $instance;
 
     /**
-     * @var Definition[]
+     * @var array
      */
     private $definitions;
 
     /**
-     * @var mixed[]
+     * @var array
      */
     private $parameters;
 
     /**
-     * @var mixed[]
+     * @var array
      */
     private $instances;
 
     /**
-     * @var bool[]
+     * @var array
      */
     private $building;
 
@@ -97,6 +97,20 @@ class Container
     }
 
     /**
+     * Get definition.
+     * @param string $name
+     * @return Definition
+     * @throws ContainerException
+     */
+    public function getDefinition(string $name): Definition
+    {
+        if (!$this->has($name)) {
+            throw new ContainerException('Definition of ' . $name . ' not found.');
+        }
+        return $this->definitions[$name];
+    }
+
+    /**
      * Register a parameter into the container.
      * @param string $name
      * @param mixed $value
@@ -131,7 +145,7 @@ class Container
                 ' class constructor in service ' . $name);
         }
 
-        $service = $constructor ? $reflectionClass->newInstance() : $reflectionClass->newInstanceArgs($arguments);
+        $service = $reflectionClass->newInstanceArgs($arguments);
 
         $calls = $definition->getCalls();
 
