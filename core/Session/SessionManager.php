@@ -13,6 +13,13 @@ use Core\Session\Exception\SessionVariableNotExistsException;
  */
 class SessionManager implements SessionManagerInterface
 {
+    /**
+     * SessionManager constructor. Starts a session.
+     */
+    public function __construct()
+    {
+        \session_start();
+    }
 
     /**
      * Set the specified session variable.
