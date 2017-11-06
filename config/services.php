@@ -4,8 +4,10 @@
 use Core\Config\Config;
 use Core\Container\Container;
 use Core\Container\ParameterReference as PR;
+use Core\Container\ServiceReference as SR;
 use Core\Cookies\CookiesManager;
 use Core\Database\PDOWrapper;
+use Core\Http\Request;
 use Core\Session\SessionManager;
 
 
@@ -15,9 +17,12 @@ use Core\Session\SessionManager;
 
 return function (Container $container)
 {
-    // config
+    // config - should come first to instant use
     $container->register('config', Config::class)
         ->addCall('loadFromFile', [path('settings')]);
+
+    // request
+    $container->register('request', Request::class);
 
     // database
     $container->register('database', PDOWrapper::class)
