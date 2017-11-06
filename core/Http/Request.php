@@ -98,7 +98,7 @@ class Request implements RequestInterface
      * @param string $key
      * @return string|array|null
      */
-    public function post($key)
+    public function post($key = null)
     {
         if (\is_null($key)) {
             return $_POST;
@@ -110,7 +110,7 @@ class Request implements RequestInterface
      * Get the request uploaded file info, or the $_FILES itself.
      * @return array|null
      */
-    public function file($key)
+    public function file($key = null)
     {
         if (\is_null($key)) {
             return $_FILES;

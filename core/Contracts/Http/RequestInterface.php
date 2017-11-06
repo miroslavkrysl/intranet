@@ -41,18 +41,18 @@ interface RequestInterface
      * @param string $key
      * @return string|array|null
      */
-    public function get($key);
+    public function get($key = null);
 
     /**
      * Get the value from $_POST or the $_POST itself.
      * @param string $key
      * @return string|array|null
      */
-    public function post($key);
+    public function post($key = null);
 
     /**
      * Get the request uploaded file info, or the $_FILES itself.
      * @return array|null
      */
-    public function file($key);
+    public function file($key = null);
 }
