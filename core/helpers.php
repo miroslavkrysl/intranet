@@ -136,3 +136,13 @@ function path($name): string
 {
     return app()->path($name);
 }
+
+
+/**
+ * Get app copyright text.
+ * @return string
+ */
+function copyright(): string
+{
+    return sprintf("&copy; %s, %s", env('app.author'), env('app.year'));
+}

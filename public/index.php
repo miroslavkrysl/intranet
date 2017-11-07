@@ -1,6 +1,12 @@
 <?php
 
 ini_set('display_errors', true);
+
+if ($_SERVER['REQUEST_URI'] == "/"){
+    header('Location: /www/gg');
+    die();
+}
+
 require('../vendor/autoload.php');
 $app = require('../bootstrap/app.php');
 session();
@@ -30,9 +36,6 @@ echo 'request: ';
 var_dump($_REQUEST);
 
 echo "<hr />";
-
-
-cookie('gg', 43);
 
 echo app('request')->path();
 echo app('request')->method();
