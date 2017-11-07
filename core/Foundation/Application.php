@@ -54,8 +54,7 @@ class Application extends Container
      */
     private function registerServices()
     {
-        $register = require($this->path('services'));
-        $register($this);
+        require($this->path('services'));
     }
 
     /**

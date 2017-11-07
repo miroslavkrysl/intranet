@@ -10,31 +10,29 @@ use Core\Database\PDOWrapper;
 use Core\Http\Request;
 use Core\Session\SessionManager;
 
-
 /**
- * This file returns a method to be called to register all the container services.
+ * This file contains services registrations to the container.
  */
 
-return function (Container $container)
-{
-    // config - should come first to instant use
-    $container->register('config', Config::class)
-        ->addCall('loadFromFile', [path('settings')]);
+$container = app();
 
-    // request
-    $container->register('request', Request::class);
+// config - should come first to instant use
+$container->register('config', Config::class)
+    ->addCall('loadFromFile', [path('settings')]);
 
-    // database
-    $container->register('database', PDOWrapper::class)
-        ->addArgument(config('database.type'))
-        ->addArgument(config('database.host'))
-        ->addArgument(config('database.dbname'))
-        ->addArgument(config('database.username'))
-        ->addArgument(config('database.password'));
+// request
+$container->register('request', Request::class);
 
-    // session
-    $container->register('session', SessionManager::class);
+// database
+$container->register('database', PDOWrapper::class)
+    ->addArgument(config('database.type'))
+    ->addArgument(config('database.host'))
+    ->addArgument(config('database.dbname'))
+    ->addArgument(config('database.username'))
+    ->addArgument(config('database.password'));
 
-    // cookies
-    $container->register('cookie', CookieManager::class);
-};
+// session
+$container->register('session', SessionManager::class);
+
+// cookies
+$container->register('cookie', CookieManager::class);
