@@ -13,7 +13,7 @@ return [
         'username' => env('database.username'),
         'password' => env('database.password')
     ],
-    'cookies' => [
+    'cookie' => [
         'expire' => 120 * 86400,
         'path' => '/',
         'domain' => env('app.url')

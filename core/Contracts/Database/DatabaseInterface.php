@@ -15,7 +15,7 @@ interface DatabaseInterface
      * @param array $params Associative array with parameters.
      * @return self
      */
-    public function execute(string $query, array $params = []);
+    public function execute(string $query, $params);
 
     /**
      * Get first row from last result set as an array indexed by column name.

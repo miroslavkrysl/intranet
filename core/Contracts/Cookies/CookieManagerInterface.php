@@ -7,7 +7,7 @@ namespace Core\Contracts\Cookies;
 /**
  * Interface for interaction with cookies.
  */
-interface CookiesManagerInterface
+interface CookieManagerInterface
 {
     /**
      * Set the specified cookie.

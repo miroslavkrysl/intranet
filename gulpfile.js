@@ -8,11 +8,11 @@ var tildeImporter = require('node-sass-tilde-importer');
 var scripts = [
     'node_modules/jquery/dist/jquery.min.js',
     'node_modules/bootstrap-v4-dev/dist/js/bootstrap.min.js',
-    'application/assets/js/*.js'
+    'resources/assets/js/*.js'
 ];
 
 var style = [
-    'application/assets/sass/app.scss'
+    'resources/assets/sass/app.scss'
 ];
 
 function handleError(error) {

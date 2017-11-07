@@ -4,14 +4,14 @@
 namespace Core\Cookies;
 
 
-use Core\Contracts\Cookies\CookiesManagerInterface;
+use Core\Contracts\Cookies\CookieManagerInterface;
 use Core\Cookies\Exception\CookieNotExistsException;
 
 
 /**
  * Implementation of CookiesInterface
  */
-class CookiesManager implements CookiesManagerInterface
+class CookieManager implements CookieManagerInterface
 {
 
     /**
@@ -22,7 +22,7 @@ class CookiesManager implements CookiesManagerInterface
      */
     public function set(string $key, $value)
     {
-        $conf = \config('cookies');
+        $conf = \config('cookie');
         \setcookie($key, $value, \time() + $conf['expire'], $conf['path'], $conf['domain']);
     }
 

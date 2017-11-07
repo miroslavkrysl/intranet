@@ -5,7 +5,7 @@ use Core\Config\Config;
 use Core\Container\Container;
 use Core\Container\ParameterReference as PR;
 use Core\Container\ServiceReference as SR;
-use Core\Cookies\CookiesManager;
+use Core\Cookies\CookieManager;
 use Core\Database\PDOWrapper;
 use Core\Http\Request;
 use Core\Session\SessionManager;
@@ -36,5 +36,5 @@ return function (Container $container)
     $container->register('session', SessionManager::class);
 
     // cookies
-    $container->register('cookies', CookiesManager::class);
+    $container->register('cookie', CookieManager::class);
 };

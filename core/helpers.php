@@ -4,7 +4,7 @@
 use Core\Foundation\Application;
 use Core\Contracts\Config\ConfigInterface;
 use Core\Contracts\Session\SessionManagerInterface;
-use Core\Contracts\Cookies\CookiesManagerInterface;
+use Core\Contracts\Cookies\CookieManagerInterface;
 
 
 /**
@@ -75,19 +75,19 @@ function session(string $key = null, $value = null)
  * Get or set the specified cookie, or get the cookie service instance.
  * @param string $key
  * @param mixed $default
- * @return mixed|CookiesManagerInterface
+ * @return mixed|CookieManagerInterface
  */
 function cookie(string $key = null, $value = null)
 {
     if (is_null($key)) {
-        return app('session');
+        return app('cookie');
     }
 
     if (is_null($value)) {
-        return app('session')->get($key);
+        return app('cookie')->get($key);
     }
 
-    return app('session')->set($key, $value);
+    return app('cookie')->set($key, $value);
 }
 
 
