@@ -4,6 +4,8 @@ namespace Core\Foundation;
 
 use Core\Container\Container;
 use Core\Contracts\Http\RequestInterface;
+use Core\Contracts\Http\ResponseInterface;
+use Core\Contracts\Routing\RouterInterface;
 use Core\DotArray\DotArray;
 use Core\Foundation\Exception\EnvVariableNotExistsException;
 use Core\Foundation\Exception\PathNotExistsException;
@@ -42,22 +44,27 @@ class Application extends Container
         static::$instance = $this;
 
         $this->rootDir = realpath ($rootDir);
-        $this->registerPaths();
+        $this->registerPaths('/config/paths.php');
         $this->registerEnvVariables();
         $this->registerServices();
+        $this->registerRoutes();
     }
 
-    public function handle(RequestInterface $request)
+    public function handle(RequestInterface $request): ResponseInterface
     {
+        /** @var RouterInterface $router */
+        $router = $this->get('router');
 
+        return $router->dispatch($request);
     }
 
     /**
      * Register application paths.
+     * @param string $pathsFile
      */
-    private function registerPaths()
+    private function registerPaths(string $pathsFile)
     {
-        $this->paths = require($this->rootDir() . '/config/paths.php');
+        $this->paths = require($this->rootDir() . $pathsFile);
     }
 
     /**
@@ -75,6 +82,14 @@ class Application extends Container
     private function registerServices()
     {
         require($this->path('services'));
+    }
+
+    /**
+     * Register routes from `routes` file.
+     */
+    private function registerRoutes()
+    {
+        require($this->path('routes'));
     }
 
     /**

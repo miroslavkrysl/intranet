@@ -1,15 +1,28 @@
 <?php
 
+use Core\Foundation\Application;
+
+
 ini_set('display_errors', true);
 
-if ($_SERVER['REQUEST_URI'] == "/"){
-    header('Location: /www/gg');
-    die();
-}
 
+// require autoloader
 require('../vendor/autoload.php');
+
+// make app
+
+/** @var Application $app */
 $app = require('../bootstrap/app.php');
+
 session();
+
+// process request and send response
+$request = app('request');
+$response = $app->handle($request);
+$response->send();
+
+/*
+echo '<hr />';
 
 echo '<h1>GLOBALS</h1>';
 
@@ -37,6 +50,4 @@ var_dump($_REQUEST);
 
 echo "<hr />";
 
-echo app('request')->path();
-echo app('request')->method();
-var_dump(app('request')->get());
+*/

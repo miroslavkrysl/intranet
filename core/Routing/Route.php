@@ -67,6 +67,7 @@ class Route implements RouteInterface
         $this->pattern = $this->makePattern($uri);
         $this->action = $action;
         $this->parseAction($action);
+        $this->onlyAjax = false;
     }
 
     /**

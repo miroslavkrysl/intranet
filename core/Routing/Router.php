@@ -49,7 +49,7 @@ class Router implements RouterInterface
             }
         }
 
-        return error(404);
+        return $this->container->get('response')->error(404);
     }
 
     /**

@@ -1,6 +1,8 @@
 <?php
 
 
+use Core\Contracts\Http\ResponseFactoryInterface;
+use Core\Contracts\Http\ResponseInterface;
 use Core\Contracts\View\ViewInterface;
 use Core\Foundation\Application;
 use Core\Contracts\Config\ConfigInterface;
@@ -105,6 +107,44 @@ function view(string $name = null, $data = [])
     }
 
     return app('view')->render($name, $data);
+}
+
+
+/**
+ * Get response using data.
+ * @param string|array|object null $data
+ * @return ResponseFactoryInterface|ResponseInterface
+ */
+function response($data = null)
+{
+    if (is_null($data)) {
+        return app('response');
+    }
+    if (is_string($data)) {
+        return app('response')->html($data);
+    }
+    return app('response')->json($data);
+}
+
+
+/**
+ * Get redirection response.
+ * @param string $url
+ * @return ResponseInterface
+ */
+function redirect(string $url) {
+    return app('response')->redirect($url);
+}
+
+
+/**
+ * Get error response.
+ * @param int $code
+ * @return ResponseInterface
+ */
+function error(int $code)
+{
+    return app('response')->error($code);
 }
 
 

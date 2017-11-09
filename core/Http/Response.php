@@ -10,7 +10,7 @@ use Core\Contracts\Http\ResponseInterface;
 /**
  * Base response class.
  */
-abstract class Response implements ResponseInterface
+class Response implements ResponseInterface
 {
     /**
      * Array of response headers.
@@ -28,36 +28,23 @@ abstract class Response implements ResponseInterface
      * Response status code.
      * @var int
      */
-    private $code = 200;
+    private $status;
 
-    /**
-     * Get or set response content.
-     * @param mixed|null $content
-     * @return mixed
-     */
-    public function content($content = null)
+
+    public function __construct(string $content = null, array $headers = null, int $status = 200)
     {
-        if (\is_null($content)){
-            return $this->content;
-        }
         $this->content = $content;
+        $this->status = $status;
+        $this->headers = $headers;
     }
 
-    /**
-     * Set status code.
-     * @param int $code
-     */
-    public function code(int $code = null)
-    {
-        $this->code = \is_null($code) ? 200 : $code;
-    }
 
     /**
      * Send response.
      */
     public function send()
     {
-        \http_response_code($this->code);
+        \http_response_code($this->status);
         $this->sendHeaders();
         $this->sendContent();
     }
@@ -65,26 +52,41 @@ abstract class Response implements ResponseInterface
     /**
      * Send content.
      */
-    protected abstract function sendContent();
+    private function sendContent()
+    {
+        echo $this->content;
+    }
 
     /**
-     * Add response header.
-     * @param string $key
-     * @param string|null $value
-     * @return mixed
+     * Set response header.
+     * @param string $header
+     * @param string $value
+     * @return self
      */
-    protected function header($header)
+    public function header(string $header, string $value)
     {
-        $this->headers[] = $header;
+        $this->headers[$header] = $value;
+        return $this;
     }
 
     /**
      * Send headers.
      */
-    protected function sendHeaders()
+    private function sendHeaders()
     {
-        foreach ($this->headers as $header) {
-            \header($header);
+        foreach ($this->headers as $header => $value) {
+            \header($header . ': ' . $value);
         }
+    }
+
+    /**
+     * Set status code.
+     * @param int $status
+     * @return self
+     */
+    public function status(int $status)
+    {
+        $this->status = $status;
+        return $this;
     }
 }

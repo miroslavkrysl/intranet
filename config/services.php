@@ -28,6 +28,10 @@ $container->register('request', Request::class);
 $container->register('router', \Core\Routing\Router::class)
     ->addArgument($container);
 
+// responses
+$container->register('response', \Core\Http\ResponseFactory::class)
+    ->addArgument($container);
+
 // view
 $container->register('view', TwigView::class)
     ->addArgument(path('views'));
