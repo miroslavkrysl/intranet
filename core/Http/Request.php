@@ -14,7 +14,7 @@ class Request implements RequestInterface
 {
     private $ajax;
     private $method;
-    private $path;
+    private $uri;
     private $query;
     private $fragment;
     private $get;
@@ -27,7 +27,7 @@ class Request implements RequestInterface
 
         $this->method = \strtolower($_SERVER['REQUEST_METHOD']);
 
-        $this->path = \parse_url($_SERVER['REQUEST_URI'], \PHP_URL_PATH);
+        $this->uri = \parse_url($_SERVER['REQUEST_URI'], \PHP_URL_PATH);
         $this->query = \parse_url($_SERVER['REQUEST_URI'], \PHP_URL_QUERY);
         $this->fragment = \parse_url($_SERVER['REQUEST_URI'], \PHP_URL_FRAGMENT);
         $this->get = $_GET;
@@ -54,12 +54,12 @@ class Request implements RequestInterface
     }
 
     /**
-     * Get request path.
+     * Get request uri.
      * @return string
      */
-    public function path(): string
+    public function uri(): string
     {
-        return $this->path;
+        return $this->uri;
     }
 
     /**

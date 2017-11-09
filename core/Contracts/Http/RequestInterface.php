@@ -19,10 +19,10 @@ interface RequestInterface
     public function method(): string;
 
     /**
-     * Get request path.
+     * Get request uri.
      * @return string
      */
-    public function path(): string;
+    public function uri(): string;
 
     /**
      * Get request query string.
