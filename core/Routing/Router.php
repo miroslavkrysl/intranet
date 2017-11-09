@@ -43,13 +43,21 @@ class Router implements RouterInterface
      */
     public function dispatch(RequestInterface $request): ResponseInterface
     {
+        $this->runBeforeMiddleware($request);
+
+        $response = null;
+
         foreach ($this->routes as $route) {
             if ($route->matches($request)) {
-                return $route->run($request);
+                $response = $route->run($request);
+                break;
             }
         }
 
-        return $this->container->get('response')->error(404);
+        $this->runAfterMiddleware($request);
+
+        $response = $response ?: $this->container->get('response')->error(404);
+        return $response;
     }
 
     /**
@@ -60,7 +68,7 @@ class Router implements RouterInterface
      */
     public function get(string $url, $action): RouteInterface
     {
-        $route = new Route('get', $url, $action);
+        $route = new Route('get', $url, $action, $this->container);
         $this->routes[] = $route;
         return $route;
     }
@@ -73,7 +81,7 @@ class Router implements RouterInterface
      */
     public function post(string $url, $action): RouteInterface
     {
-        $route = new Route('post', $url, $action);
+        $route = new Route('post', $url, $action, $this->container);
         $this->routes[] = $route;
         return $route;
     }
@@ -86,7 +94,7 @@ class Router implements RouterInterface
      */
     public function put(string $url, $action): RouteInterface
     {
-        $route = new Route('put', $url, $action);
+        $route = new Route('put', $url, $action, $this->container);
         $this->routes[] = $route;
         return $route;
     }
@@ -99,8 +107,18 @@ class Router implements RouterInterface
      */
     public function delete(string $url, $action): RouteInterface
     {
-        $route = new Route('delete', $url, $action);
+        $route = new Route('delete', $url, $action, $this->container);
         $this->routes[] = $route;
         return $route;
+    }
+
+    private function runBeforeMiddleware(RequestInterface $request)
+    {
+        // TODO: implement runBeforeMiddleware
+    }
+
+    private function runAfterMiddleware(RequestInterface $request)
+    {
+        // TODO: implement runAfterMiddleware
     }
 }

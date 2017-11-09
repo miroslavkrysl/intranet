@@ -7,7 +7,6 @@ namespace Core\Http;
 use Core\Container\Container;
 use Core\Contracts\Http\ResponseFactoryInterface;
 use Core\Contracts\Http\ResponseInterface;
-use Core\Routing\Router;
 
 class ResponseFactory implements ResponseFactoryInterface
 {
@@ -164,7 +163,7 @@ class ResponseFactory implements ResponseFactoryInterface
      */
     public function error(int $status, string $content = null, array $headers = []): ResponseInterface
     {
-        $content = $content ? $content :
+        $content = $content ?:
             $this->container
             ->get('view')
             ->render('layouts.error', [

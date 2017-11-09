@@ -53,5 +53,10 @@ interface RouteInterface
      */
     public function run(RequestInterface $request): ResponseInterface;
 
-    //TODO: middleware
+    /**
+     * Add a middleware to the route.
+     * @param string $middleware
+     * @return self
+     */
+    public function middleware(string $middleware);
 }

@@ -4,9 +4,11 @@
 namespace Core\Routing;
 
 
+use Core\Container\Container;
 use Core\Contracts\Http\RequestInterface;
 use Core\Contracts\Http\ResponseInterface;
 use Core\Contracts\Routing\RouteInterface;
+use Core\Routing\Exception\MiddlewareNotExistsException;
 use Core\Routing\Exception\RouteActionException;
 
 
@@ -55,13 +57,27 @@ class Route implements RouteInterface
     private $onlyAjax;
 
     /**
+     * Route middleware.
+     * @var array
+     */
+    private $middleware;
+
+    /**
+     * Global container instance.
+     * @var Container
+     */
+    private $container;
+
+    /**
      * Route constructor.
      * @param string $method
      * @param string $uri
      * @param \Closure|string $action
      */
-    public function __construct(string $method, string $uri, $action)
+    public function __construct(string $method, string $uri, $action, Container $container)
     {
+        $this->container = $container;
+        $this->middleware = [];
         $this->method = $method;
         $this->uri = $uri;
         $this->pattern = $this->makePattern($uri);
@@ -187,6 +203,28 @@ class Route implements RouteInterface
      */
     public function run(RequestInterface $request): ResponseInterface
     {
+        $before = $this->runBeforeMiddleware($request);
+        if ($before) {
+            return $before;
+        }
+
+        $response = $this->runAction($request);
+
+        $after = $this->runAfterMiddleware($request);
+        if ($after) {
+            return $after;
+        }
+
+        return $response;
+    }
+
+    /**
+     * Run the route action and return response.
+     * @param RequestInterface $request
+     * @return ResponseInterface
+     */
+    private function runAction(RequestInterface $request): ResponseInterface
+    {
         $action = $this->action;
         if (!\is_null($this->controllerMethod)) {
             $controller = $this->controller->newInstance();
@@ -206,5 +244,63 @@ class Route implements RouteInterface
         return \call_user_func_array($action, $parameters);
     }
 
-    //TODO: middleware
+    /**
+     * Run middleware before methods. Could return a response.
+     * @param RequestInterface $request
+     * @return ResponseInterface|null
+     */
+    private function runBeforeMiddleware(RequestInterface $request)
+    {
+        return $this->runMiddlewareMethod('before', $request);
+    }
+
+    /**
+     * Run middleware after methods. Could return a response.
+     * @param RequestInterface $request
+     * @return ResponseInterface|null
+     */
+    private function runAfterMiddleware(RequestInterface $request)
+    {
+        return $this->runMiddlewareMethod('after', $request);
+    }
+
+    /**
+     * Run a method on the all middleware. Could return a response.
+     * @param RequestInterface $request
+     * @return ResponseInterface|null
+     */
+    public function runMiddlewareMethod(string $method, RequestInterface $request)
+    {
+        foreach ($this->middleware as $middleware) {
+            $instance = $this->container->get($middleware['name']);
+            $reflectionClass = new \ReflectionClass($instance);
+
+            if (!$reflectionClass->hasMethod($method)) {
+                continue;
+            }
+
+            $parameters = (array) $middleware['parameters'];
+
+            $result = \call_user_func_array(array($instance, $method), $parameters);
+
+            if ($result) {
+                return $result;
+            }
+        }
+    }
+
+    /**
+     * Add a middleware to the route.
+     * @param string $middleware
+     * @return self
+     */
+    public function middleware(string $middleware)
+    {
+        $middleware = 'middleware.' . $middleware;
+        if (!$this->container->has($middleware)) {
+            throw new MiddlewareNotExistsException('The container has not a middleware ' . $middleware);
+        }
+        $this->middleware = $middleware;
+        return $this;
+    }
 }
