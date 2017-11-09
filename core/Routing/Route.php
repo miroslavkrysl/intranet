@@ -287,6 +287,8 @@ class Route implements RouteInterface
                 return $result;
             }
         }
+        
+        return null;
     }
 
     /**
