@@ -136,15 +136,6 @@ class Route implements RouteInterface
     }
 
     /**
-     * Return true, if the route has a controller action, false when closure action.
-     * @return bool
-     */
-    private function isControllerAction(): bool
-    {
-        return !\is_null($this->controller);
-    }
-
-    /**
      * Make pattern from route uri for matching request uri.
      * @param string $uri
      * @return string
@@ -161,7 +152,7 @@ class Route implements RouteInterface
     /**
      * Check if the route matches given request.
      * @param RequestInterface $request
-     * @return null|array
+     * @return bool
      */
     public function matches(RequestInterface $request): bool
     {
