@@ -196,7 +196,23 @@ class Route implements RouteInterface
      */
     public function run(RequestInterface $request): ResponseInterface
     {
-        // TODO: Implement run() method.
+        $action = $this->action;
+        if (!\is_null($this->controllerMethod)) {
+            $controller = $this->controller->newInstance();
+            $action = $this->controllerMethod->getClosure($controller);
+        }
+
+        preg_match($this->pattern, $request->uri(), $matches);
+
+        $reflectionFunction = new \ReflectionFunction($action);
+        $reflectionParameters = $reflectionFunction->getParameters();
+
+        $parameters = [];
+        foreach ($reflectionParameters as $rp) {
+            $parameters[] = $matches[$rp->getName()];
+        }
+
+        return \call_user_func_array($action, $parameters);
     }
 
     //TODO: middleware

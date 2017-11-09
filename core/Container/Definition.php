@@ -47,10 +47,10 @@ class Definition
 
     /**
      * Add an argument for the class constructor.
-     * @param string $argument
+     * @param mixed $argument
      * @return self
      */
-    public function addArgument(string $argument): self
+    public function addArgument($argument): self
     {
         $this->arguments[] = $argument;
 
