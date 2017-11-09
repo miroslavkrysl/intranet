@@ -95,22 +95,6 @@ function cookie(string $key = null, $value = null)
 
 
 /**
- * Render a view or get the view service.
- * @param string $key
- * @param mixed $default
- * @return string|ViewInterface
- */
-function view(string $name = null, $data = [])
-{
-    if (is_null($name)) {
-        return app('view');
-    }
-
-    return app('view')->render($name, $data);
-}
-
-
-/**
  * Get response using data.
  * @param string|array|object null $data
  * @return ResponseFactoryInterface|ResponseInterface
@@ -124,6 +108,22 @@ function response($data = null)
         return app('response')->html($data);
     }
     return app('response')->json($data);
+}
+
+
+/**
+ * Create a response with rendered view, or get the view service instance.
+ * @param string $key
+ * @param mixed $default
+ * @return ResponseInterface|ViewInterface
+ */
+function view(string $name = null, $data = [])
+{
+    if (is_null($name)) {
+        return app('view');
+    }
+
+    return response(view()->render($name, $data));
 }
 
 
