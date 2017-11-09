@@ -24,6 +24,10 @@ $container->register('config', Config::class)
 // request
 $container->register('request', Request::class);
 
+// router
+$container->register('router', \Core\Routing\Router::class)
+    ->addArgument($container);
+
 // view
 $container->register('view', TwigView::class)
     ->addArgument(path('views'));

@@ -4,10 +4,12 @@
 namespace Core\Routing;
 
 
+use Core\Container\Container;
 use Core\Contracts\Http\RequestInterface;
 use Core\Contracts\Http\ResponseInterface;
 use Core\Contracts\Routing\RouteInterface;
 use Core\Contracts\Routing\RouterInterface;
+
 
 class Router implements RouterInterface
 {
@@ -18,13 +20,36 @@ class Router implements RouterInterface
     private $routes;
 
     /**
+     * Global container instance.
+     * @var Container
+     */
+    private $container;
+
+    /**
+     * Router constructor.
+     * @param Container $container
+     * @param Route[] $routes
+     */
+    public function __construct(Container $container, array $routes = [])
+    {
+        $this->container = $container;
+        $this->routes = $routes;
+    }
+
+    /**
      * Dispatch the request.
      * @param RequestInterface $request
      * @return ResponseInterface
      */
     public function dispatch(RequestInterface $request): ResponseInterface
     {
-        // TODO: Implement dispatch() method.
+        foreach ($this->routes as $route) {
+            if ($route->matches($request)) {
+                return $route->run($request);
+            }
+        }
+
+        return error(404);
     }
 
     /**
@@ -35,7 +60,9 @@ class Router implements RouterInterface
      */
     public function get(string $url, $action): RouteInterface
     {
-        // TODO: Implement get() method.
+        $route = new Route('get', $url, $action);
+        $this->routes[] = $route;
+        return $route;
     }
 
     /**
@@ -46,7 +73,9 @@ class Router implements RouterInterface
      */
     public function post(string $url, $action): RouteInterface
     {
-        // TODO: Implement post() method.
+        $route = new Route('post', $url, $action);
+        $this->routes[] = $route;
+        return $route;
     }
 
     /**
@@ -57,7 +86,9 @@ class Router implements RouterInterface
      */
     public function put(string $url, $action): RouteInterface
     {
-        // TODO: Implement put() method.
+        $route = new Route('put', $url, $action);
+        $this->routes[] = $route;
+        return $route;
     }
 
     /**
@@ -68,6 +99,8 @@ class Router implements RouterInterface
      */
     public function delete(string $url, $action): RouteInterface
     {
-        // TODO: Implement delete() method.
+        $route = new Route('delete', $url, $action);
+        $this->routes[] = $route;
+        return $route;
     }
 }
