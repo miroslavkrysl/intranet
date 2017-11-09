@@ -3,6 +3,7 @@
 namespace Core\Foundation;
 
 use Core\Container\Container;
+use Core\Contracts\Http\RequestInterface;
 use Core\DotArray\DotArray;
 use Core\Foundation\Exception\EnvVariableNotExistsException;
 use Core\Foundation\Exception\PathNotExistsException;
@@ -17,11 +18,7 @@ class Application extends Container
      * Basic config files paths relative to the application root directory.
      * @var array
      */
-    private $paths = [
-        'services' => '/config/services.php',
-        'settings' => '/config/settings.php',
-        'env' => '/.env.json'
-    ];
+    private $paths;
 
     /**
      * Application root directory absolute path.
@@ -45,8 +42,31 @@ class Application extends Container
         static::$instance = $this;
 
         $this->rootDir = realpath ($rootDir);
+        $this->registerPaths();
         $this->registerEnvVariables();
         $this->registerServices();
+    }
+
+    public function handle(RequestInterface $request)
+    {
+
+    }
+
+    /**
+     * Register application paths.
+     */
+    private function registerPaths()
+    {
+        $this->paths = require($this->rootDir() . '/config/paths.php');
+    }
+
+    /**
+     * Register environment variables.
+     */
+    private function registerEnvVariables()
+    {
+        $env = \json_decode(\file_get_contents($this->path('env')), true);
+        $this->env = new DotArray($env);
     }
 
     /**
@@ -65,7 +85,6 @@ class Application extends Container
     {
         return $this->rootDir;
     }
-
     /**
      * Get path from defined paths.
      * @return string
@@ -77,16 +96,6 @@ class Application extends Container
         }
         return $this->rootDir() . $this->paths[$name];
     }
-
-    /**
-     * Register environment variables.
-     */
-    private function registerEnvVariables()
-    {
-        $env = \json_decode(\file_get_contents($this->path('env')), true);
-        $this->env = new DotArray($env);
-    }
-
     public function env($key)
     {
         if (!$this->env->has($key)) {

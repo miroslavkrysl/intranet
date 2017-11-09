@@ -1,6 +1,7 @@
 <?php
 
 
+use Core\Contracts\View\ViewInterface;
 use Core\Foundation\Application;
 use Core\Contracts\Config\ConfigInterface;
 use Core\Contracts\Session\SessionManagerInterface;
@@ -88,6 +89,22 @@ function cookie(string $key = null, $value = null)
     }
 
     return app('cookie')->set($key, $value);
+}
+
+
+/**
+ * Render a view or get the view service.
+ * @param string $key
+ * @param mixed $default
+ * @return string|ViewInterface
+ */
+function view(string $name = null, $data = [])
+{
+    if (is_null($name)) {
+        return app('view');
+    }
+
+    return app('view')->render($name, $data);
 }
 
 

@@ -9,6 +9,7 @@ use Core\Cookies\CookieManager;
 use Core\Database\PDOWrapper;
 use Core\Http\Request;
 use Core\Session\SessionManager;
+use Core\View\TwigView;
 
 /**
  * This file contains services registrations to the container.
@@ -22,6 +23,10 @@ $container->register('config', Config::class)
 
 // request
 $container->register('request', Request::class);
+
+// view
+$container->register('view', TwigView::class)
+    ->addArgument(path('views'));
 
 // database
 $container->register('database', PDOWrapper::class)
