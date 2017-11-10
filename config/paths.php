@@ -4,5 +4,6 @@ return [
     'settings' => '/config/settings.php',
     'env' => '/.env.json',
     'views' => '/resources/views',
-    'routes' => '/routes/routes.php'
+    'routes' => '/routes/routes.php',
+    'language' => '/resources/lang'
 ];

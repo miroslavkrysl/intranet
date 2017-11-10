@@ -149,6 +149,17 @@ function error(int $code)
 
 
 /**
+ * Get the translation for the key.
+ * @param string $key
+ * @param string|null $locale
+ */
+function text(string $key, string $locale = null)
+{
+    return app('language')->get($key, $locale);
+}
+
+
+/**
  * Transform multidimensional array into one-dimensional.
  * The nested keys in old array is represented in dot notation in new array.
  * @param array $array

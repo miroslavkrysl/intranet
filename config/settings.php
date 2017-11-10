@@ -3,7 +3,8 @@ return [
     'app' => [
         'name' => env('app.name'),
         'url' => env('app.url'),
-        'locale' => 'cz'
+        'locale' => 'cz',
+        'fallback-locale' => 'cz'
     ],
     'database' => [
         'type' => env('database.type'),

@@ -8,6 +8,7 @@ use Core\Container\ServiceReference as SR;
 use Core\Cookies\CookieManager;
 use Core\Database\PDOWrapper;
 use Core\Http\Request;
+use Core\Language\Language;
 use Core\Session\SessionManager;
 use Core\View\TwigView;
 
@@ -18,6 +19,13 @@ use Core\View\TwigView;
 
 /** @var Container $container */
 $container = app();
+
+
+/*
+|-------------------------------|
+|         Core services         |
+|-------------------------------|
+*/
 
 
 // config - should come first to instant use
@@ -44,6 +52,13 @@ $container->register('view', TwigView::class)
     ->addArgument(path('views'));
 
 
+// language
+$container->register('language', Language::class)
+    ->addArgument(path('language'))
+    ->addArgument(\config('app.locale'))
+    ->addArgument(\config('app.fallback-locale'));
+
+
 // database
 $container->register('database', PDOWrapper::class)
     ->addArgument(config('database.type'))
@@ -59,6 +74,14 @@ $container->register('session', SessionManager::class);
 
 // cookies
 $container->register('cookie', CookieManager::class);
+
+
+
+/*
+|-------------------------------|
+|         App services          |
+|-------------------------------|
+*/
 
 
 // middleware
