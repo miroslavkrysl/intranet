@@ -33,6 +33,10 @@ class DotArray
      */
     public function get(string $key = null)
     {
+        if (\is_null($key)) {
+            return $this->data;
+        }
+
         $keys = \explode('.', $key);
         $value = $this->data;
 
