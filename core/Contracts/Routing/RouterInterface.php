@@ -50,4 +50,13 @@ interface RouterInterface
      * @return RouteInterface
      */
     public function delete(string $url, $action): RouteInterface;
+
+    /**
+     * Add a global middleware.
+     * @param string $middleware
+     * @param array $beforeParameters
+     * @param array $afterParameters
+     * @return RouterInterface
+     */
+    public function middleware(string $middleware, array $beforeParameters = [], array $afterParameters = []);
 }

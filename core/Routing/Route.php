@@ -279,7 +279,7 @@ class Route implements RouteInterface
                 continue;
             }
 
-            $parameters = (array) $middleware['parameters'];
+            $parameters = (array) $request + (array) $middleware['parameters'][$method];
 
             $result = \call_user_func_array(array($instance, $method), $parameters);
 
@@ -287,22 +287,31 @@ class Route implements RouteInterface
                 return $result;
             }
         }
-        
+
         return null;
     }
 
     /**
      * Add a middleware to the route.
      * @param string $middleware
-     * @return self
+     * @param array $parameters
+     * @return Route
+     * @throws MiddlewareNotExistsException
      */
-    public function middleware(string $middleware)
+    public function middleware(string $middleware, array $beforeParameters = [], array $afterParameters = [])
     {
         $middleware = 'middleware.' . $middleware;
         if (!$this->container->has($middleware)) {
             throw new MiddlewareNotExistsException('The container has not a middleware ' . $middleware);
         }
-        $this->middleware = $middleware;
+        $this->middleware[] = [
+            'name' => $middleware,
+            'parameters' => [
+                'before' => $beforeParameters,
+                'after' => $afterParameters
+            ]
+        ];
+
         return $this;
     }
 }

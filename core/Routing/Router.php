@@ -9,6 +9,7 @@ use Core\Contracts\Http\RequestInterface;
 use Core\Contracts\Http\ResponseInterface;
 use Core\Contracts\Routing\RouteInterface;
 use Core\Contracts\Routing\RouterInterface;
+use Core\Routing\Exception\MiddlewareNotExistsException;
 
 
 class Router implements RouterInterface
@@ -26,6 +27,12 @@ class Router implements RouterInterface
     private $container;
 
     /**
+     * Global middleware.
+     * @var array
+     */
+    private $middleware;
+
+    /**
      * Router constructor.
      * @param Container $container
      * @param Route[] $routes
@@ -34,6 +41,7 @@ class Router implements RouterInterface
     {
         $this->container = $container;
         $this->routes = $routes;
+        $this->middleware = [];
     }
 
     /**
@@ -112,13 +120,74 @@ class Router implements RouterInterface
         return $route;
     }
 
+    /**
+     * Run middleware before methods. Could return a response.
+     * @param RequestInterface $request
+     * @return ResponseInterface|null
+     */
     private function runBeforeMiddleware(RequestInterface $request)
     {
-        // TODO: implement runBeforeMiddleware
+        return $this->runMiddlewareMethod('before', $request);
     }
 
+    /**
+     * Run middleware after methods. Could return a response.
+     * @param RequestInterface $request
+     * @return ResponseInterface|null
+     */
     private function runAfterMiddleware(RequestInterface $request)
     {
-        // TODO: implement runAfterMiddleware
+        return $this->runMiddlewareMethod('after', $request);
+    }
+
+    /**
+     * Run a method on the all middleware. Could return a response.
+     * @param RequestInterface $request
+     * @return ResponseInterface|null
+     */
+    public function runMiddlewareMethod(string $method, RequestInterface $request)
+    {
+        foreach ($this->middleware as $middleware) {
+            $instance = $this->container->get($middleware['name']);
+            $reflectionClass = new \ReflectionClass($instance);
+
+            if (!$reflectionClass->hasMethod($method)) {
+                continue;
+            }
+
+            $parameters = (array) $request + (array) $middleware['parameters'][$method];
+
+            $result = \call_user_func_array(array($instance, $method), $parameters);
+
+            if ($result) {
+                return $result;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Add a global middleware.
+     * @param string $middleware
+     * @param array $parameters
+     * @return Router
+     * @throws MiddlewareNotExistsException
+     */
+    public function middleware(string $middleware, array $beforeParameters = [], array $afterParameters = [])
+    {
+        $middleware = 'middleware.' . $middleware;
+        if (!$this->container->has($middleware)) {
+            throw new MiddlewareNotExistsException('The container has not a middleware ' . $middleware);
+        }
+        $this->middleware[] = [
+            'name' => $middleware,
+            'parameters' => [
+                'before' => $beforeParameters,
+                'after' => $afterParameters
+            ]
+        ];
+
+        return $this;
     }
 }

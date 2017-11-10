@@ -56,7 +56,9 @@ interface RouteInterface
     /**
      * Add a middleware to the route.
      * @param string $middleware
-     * @return self
+     * @param array $beforeParameters
+     * @param array $afterParameters
+     * @return RouteInterface
      */
-    public function middleware(string $middleware);
+    public function middleware(string $middleware, array $beforeParameters = [], array $afterParameters = []);
 }
