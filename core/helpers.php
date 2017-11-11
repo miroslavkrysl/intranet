@@ -3,8 +3,9 @@
 
 use Core\Contracts\Http\ResponseFactoryInterface;
 use Core\Contracts\Http\ResponseInterface;
+use Core\Contracts\Language\LanguageInterface;
 use Core\Contracts\View\ViewInterface;
-use Core\Foundation\Application;
+use Core\Application\Application;
 use Core\Contracts\Config\ConfigInterface;
 use Core\Contracts\Session\SessionManagerInterface;
 use Core\Contracts\Cookies\CookieManagerInterface;
@@ -149,12 +150,15 @@ function error(int $code)
 
 
 /**
- * Get the translation for the key.
+ * Get the translation for the key or the language service instance.
  * @param string $key
- * @param string|null $locale
+ * @param string|LanguageInterface $locale
  */
-function text(string $key, string $locale = null)
+function text(string $key = null, string $locale = null)
 {
+    if (is_null($key)) {
+        return app('language');
+    }
     return app('language')->get($key, $locale);
 }
 

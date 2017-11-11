@@ -34,7 +34,7 @@ class TwigView implements ViewInterface
     public function render(string $name, array $data = []): string
     {
         $name = \preg_replace('/\./', '/', $name);
-        $name .= '.php.twig';
+        $name .= '.twig';
         return $this->twigEnv->render($name, $data);
     }
 }
