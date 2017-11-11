@@ -1,6 +1,6 @@
 <?php
 
-use Core\Foundation\Application;
+use Core\Application\Application;
 
 
 ini_set('display_errors', true);
@@ -13,8 +13,6 @@ require('../vendor/autoload.php');
 
 /** @var Application $app */
 $app = require('../bootstrap/app.php');
-
-session();
 
 // process request and send response
 $request = app('request');

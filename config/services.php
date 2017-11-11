@@ -11,6 +11,7 @@ use Core\Http\Request;
 use Core\Language\Language;
 use Core\Session\SessionManager;
 use Core\View\TwigView;
+use Intranet\Http\Middleware\Csrf;
 
 /**
  * This file contains services registrations to the container.
@@ -39,16 +40,17 @@ $container->register('request', Request::class);
 
 // router
 $container->register('router', \Core\Routing\Router::class)
-    ->addArgument($container);
+    ->addArgument(new SR('container'));
 
 
 // responses
 $container->register('response', \Core\Http\ResponseFactory::class)
-    ->addArgument($container);
+    ->addArgument(new SR('container'));
 
 
 // view
 $container->register('view', TwigView::class)
+    ->addArgument(new SR('container'))
     ->addArgument(path('views'));
 
 
@@ -85,6 +87,6 @@ $container->register('cookie', CookieManager::class);
 
 
 // middleware
-
+$container->register('middleware.csrf', Csrf::class);
 
 // controllers

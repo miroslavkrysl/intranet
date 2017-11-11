@@ -1,14 +1,14 @@
 <?php
 
-namespace Core\Foundation;
+namespace Core\Application;
 
 use Core\Container\Container;
 use Core\Contracts\Http\RequestInterface;
 use Core\Contracts\Http\ResponseInterface;
 use Core\Contracts\Routing\RouterInterface;
 use Core\DotArray\DotArray;
-use Core\Foundation\Exception\EnvVariableNotExistsException;
-use Core\Foundation\Exception\PathNotExistsException;
+use Core\Application\Exception\EnvVariableNotExistsException;
+use Core\Application\Exception\PathNotExistsException;
 
 
 /**
@@ -41,7 +41,7 @@ class Application extends Container
      */
     public function __construct(string $rootDir)
     {
-        static::$instance = $this;
+        parent::__construct();
 
         $this->rootDir = realpath ($rootDir);
         $this->registerPaths('/config/paths.php');

@@ -1,0 +1,11 @@
+{% extends "layouts/app.twig" %}
+
+{% block content %}
+    <h1>Whoops!</h1>
+    <p>
+        {{ text }}
+    </p>
+    <p>
+        {{ _text('base.webmaster')|capitalize }}: <a href="mailto:{{ _config('app.webmaster') }}">{{ _config('app.webmaster') }}</a>
+    </p>
+{% endblock %}

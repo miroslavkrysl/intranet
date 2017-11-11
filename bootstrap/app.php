@@ -1,5 +1,5 @@
 <?php
 // create new app instance
-$app = new \Core\Foundation\Application("../");
+$app = new \Core\Application\Application("../");
 
 return $app;

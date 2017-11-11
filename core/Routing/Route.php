@@ -236,7 +236,7 @@ class Route implements RouteInterface
         $reflectionFunction = new \ReflectionFunction($action);
         $reflectionParameters = $reflectionFunction->getParameters();
 
-        $parameters = [];
+        $parameters = (array) $request;
         foreach ($reflectionParameters as $rp) {
             $parameters[] = $matches[$rp->getName()];
         }
@@ -279,12 +279,12 @@ class Route implements RouteInterface
                 continue;
             }
 
-            $parameters = (array) $request + (array) $middleware['parameters'][$method];
+            $parameters = [$request] + $middleware['parameters'][$method];
 
             $result = \call_user_func_array(array($instance, $method), $parameters);
 
-            if ($result) {
-                return $result;
+            if (!$result) {
+                return $instance->getResponse() ?: $this->container->get('response')->whoops();
             }
         }
 

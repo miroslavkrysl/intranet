@@ -13,6 +13,13 @@ use Core\Contracts\Routing\RouterInterface;
 $router = app('router');
 
 
+// global middleware
+
+$router->middleware('csrf');
+
+
+// routes
+
 $router->get('/', function () {
-    return response("Hello, this is home.");
+    return view('layouts.app');
 });

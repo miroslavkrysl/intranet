@@ -52,6 +52,15 @@ interface ResponseFactoryInterface
      */
     public function error(int $status, string $content = null, array $headers = []): ResponseInterface;
 
+    /**
+     * Create a new whoops response.
+     * @param string $text
+     * @param int $status
+     * @param array $headers
+     * @return ResponseInterface
+     */
+    public function whoops(string $text = null, int $status = 200, array $headers = []): ResponseInterface;
+
     // TODO: redirection to route
     //public function redirectToRoute($route, $parameters = [], $status = 302, $headers = []): ResponseFactoryInterface;
 }

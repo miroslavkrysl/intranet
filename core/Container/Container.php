@@ -38,6 +38,15 @@ class Container
     private $building;
 
     /**
+     * Container constructor.
+     */
+    public function __construct()
+    {
+        static::$instance = $this;
+        $this->instance('container', $this);
+    }
+
+    /**
      * Get current Container instance.
      * @return static
      */
@@ -71,7 +80,8 @@ class Container
      */
     public function has(string $name): bool
     {
-        return isset($this->definitions[$name]);
+        return \array_key_exists($name, $this->definitions)
+            or \array_key_exists($name, $this->instances);
     }
 
     /**
@@ -86,6 +96,16 @@ class Container
     }
 
     /**
+     * Register a service instance to the container.
+     * @param $string
+     * @param $this
+     */
+    public function instance(string $name, $instance)
+    {
+        $this->instances[$name] = $instance;
+    }
+
+    /**
      * Register a definition into the container.
      * @param string $name
      * @param Definition $definition
@@ -95,6 +115,7 @@ class Container
     {
         return $this->definitions[$name] = $definition;
     }
+
 
     /**
      * Get definition.

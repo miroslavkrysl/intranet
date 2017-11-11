@@ -165,10 +165,30 @@ class ResponseFactory implements ResponseFactoryInterface
     {
         $content = $content ?:
             $this->container
+                ->get('view')
+                ->render('error.error', [
+                    'title' => $status . ' ' . $this->statusTexts[$status],
+                    'code' => $status,
+                    'text' => $this->statusTexts[$status]
+                ]);
+
+        return new Response($content, $headers, $status);
+    }
+
+    /**
+     * Create a new whoops response.
+     * @param int $status
+     * @param string|null $content
+     * @param array $headers
+     * @return ResponseInterface
+     */
+    public function whoops(string $text = null, int $status = 200, array $headers = []): ResponseInterface
+    {
+        $content = $this->container
             ->get('view')
-            ->render('layouts.error', [
-                'code' => $status,
-                'text' => $this->statusTexts[$status]
+            ->render('error.whoops', [
+                'title' => 'Whoops!',
+                'text' => $text ?: text('base.whoops')
             ]);
 
         return new Response($content, $headers, $status);

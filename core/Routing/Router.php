@@ -9,6 +9,7 @@ use Core\Contracts\Http\RequestInterface;
 use Core\Contracts\Http\ResponseInterface;
 use Core\Contracts\Routing\RouteInterface;
 use Core\Contracts\Routing\RouterInterface;
+use Core\Routing\Exception\MiddlewareBadReturnTypeException;
 use Core\Routing\Exception\MiddlewareNotExistsException;
 
 
@@ -51,7 +52,10 @@ class Router implements RouterInterface
      */
     public function dispatch(RequestInterface $request): ResponseInterface
     {
-        $this->runBeforeMiddleware($request);
+        $before = $this->runBeforeMiddleware($request);
+        if ($before) {
+            return $before;
+        }
 
         $response = null;
 
@@ -62,7 +66,10 @@ class Router implements RouterInterface
             }
         }
 
-        $this->runAfterMiddleware($request);
+        $after = $this->runAfterMiddleware($request);
+        if ($after) {
+            return $after;
+        }
 
         $response = $response ?: $this->container->get('response')->error(404);
         return $response;
@@ -155,12 +162,12 @@ class Router implements RouterInterface
                 continue;
             }
 
-            $parameters = (array) $request + (array) $middleware['parameters'][$method];
+            $parameters = [$request] + $middleware['parameters'][$method];
 
             $result = \call_user_func_array(array($instance, $method), $parameters);
 
-            if ($result) {
-                return $result;
+            if (!$result) {
+                return $instance->getResponse() ?: $this->container->get('response')->whoops();
             }
         }
 
