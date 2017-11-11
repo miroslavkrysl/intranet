@@ -35,7 +35,8 @@ $container->register('config', Config::class)
 
 
 // request
-$container->register('request', Request::class);
+$container->register('request', Request::class)
+    ->addCall('createFromGlobals');
 
 
 // router

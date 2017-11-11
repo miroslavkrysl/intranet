@@ -100,20 +100,20 @@ function cookie(string $key = null, $value = null)
  * @param string|array|object null $data
  * @return ResponseFactoryInterface|ResponseInterface
  */
-function response($data = null)
+function response($data = null, int $status = 200, $headers = [])
 {
     if (is_null($data)) {
         return app('response');
     }
     if (is_string($data)) {
-        return app('response')->html($data);
+        return app('response')->html($data, $status, $headers);
     }
-    return app('response')->json($data);
+    return app('response')->json($data, $status, $headers);
 }
 
 
 /**
- * Create a response with rendered view, or get the view service instance.
+ * Render the view, or get the view service instance.
  * @param string $key
  * @param mixed $default
  * @return ResponseInterface|ViewInterface
@@ -124,7 +124,7 @@ function view(string $name = null, $data = [])
         return app('view');
     }
 
-    return response(view()->render($name, $data));
+    return view()->render($name, $data);
 }
 
 

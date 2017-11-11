@@ -21,5 +21,5 @@ $router->middleware('csrf');
 // routes
 
 $router->get('/', function () {
-    return view('layouts.app');
+    return response(view('layouts.app'));
 });

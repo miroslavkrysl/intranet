@@ -10,9 +10,9 @@ ini_set('display_errors', true);
 require('../vendor/autoload.php');
 
 // make app
-
 /** @var Application $app */
 $app = require('../bootstrap/app.php');
+
 
 // process request and send response
 $request = app('request');

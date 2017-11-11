@@ -37,22 +37,29 @@ interface RequestInterface
     public function fragment(): string;
 
     /**
-     * Get the value from $_GET or the $_GET itself.
+     * Get the value from GET or the array af all GET inputs.
      * @param string $key
      * @return string|array|null
      */
     public function get($key = null);
 
     /**
-     * Get the value from $_POST or the $_POST itself.
+     * Get the value from POST or the array af all POST inputs.
      * @param string $key
      * @return string|array|null
      */
     public function post($key = null);
 
     /**
-     * Get the request uploaded file info, or the $_FILES itself.
+     * Get the request uploaded file info, or the array of all files info.
      * @return array|null
      */
     public function file($key = null);
+
+    /**
+     * Get the header value or all headers array.
+     * @param null $key
+     * @return array|string
+     */
+    public function header($key = null);
 }

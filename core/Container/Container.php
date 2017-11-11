@@ -172,12 +172,13 @@ class Container
 
         foreach ($calls as $call) {
             $method = $reflectionClass->getMethod($call['name']);
+            $arguments = $this->resolve($call['args']);
 
-            if ($constructor->getNumberOfRequiredParameters() > count($arguments)) {
+            if ($method->getNumberOfRequiredParameters() > count($arguments)) {
                 throw new ContainerException('Too few arguments for the ' . $reflectionClass->getName() .
                     ' class method ' . $method->getName() . ' in service ' . $name);
             }
-            $arguments = $this->resolve($call['args']);
+
             $method->invokeArgs($service, $arguments);
         }
 

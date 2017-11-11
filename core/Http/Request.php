@@ -19,8 +19,10 @@ class Request implements RequestInterface
     private $fragment;
     private $get;
     private $post;
+    private $headers;
+    private $files;
 
-    public function __construct()
+    public function createFromGlobals()
     {
         $this->ajax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) &&
             strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
@@ -32,8 +34,9 @@ class Request implements RequestInterface
         $this->fragment = \parse_url($_SERVER['REQUEST_URI'], \PHP_URL_FRAGMENT);
         $this->get = $_GET;
         $this->post = $_POST;
+        $this->files = $_FILES;
+        $this->headers = \getallheaders();
     }
-
 
     /**
      * Returns true if the request is send by ajax.
@@ -81,40 +84,53 @@ class Request implements RequestInterface
     }
 
     /**
-     * Get the value from $_GET or the $_GET itself.
+     * Get the value from GET inputs or the array af all GET inputs.
      * @param string $key
      * @return string|array|null
      */
     public function get($key = null)
     {
         if (\is_null($key)) {
-            return $_GET;
+            return $this->get;
         }
-        return isset($_GET[$key]) ? $_GET[$key] : null;
+        return isset($this->get[$key]) ? $this->get[$key] : null;
     }
 
     /**
-     * Get the value from $_POST or the $_POST itself.
+     * Get the value from POST inputs or the array af all GET inputs.
      * @param string $key
      * @return string|array|null
      */
     public function post($key = null)
     {
         if (\is_null($key)) {
-            return $_POST;
+            return $this->post;
         }
-        return isset($_POST[$key]) ? $_POST[$key] : null;
+        return isset($this->post[$key]) ? $this->post[$key] : null;
     }
 
     /**
-     * Get the request uploaded file info, or the $_FILES itself.
+     * Get the request uploaded file info, or the array of all files info.
      * @return array|null
      */
     public function file($key = null)
     {
         if (\is_null($key)) {
-            return $_FILES;
+            return $this->files;
         }
-        return isset($_FILES[$key]) ? $_FILES[$key] : null;
+        return isset($this->files[$key]) ? $this->files[$key] : null;
+    }
+
+    /**
+     * Get the header value or all headers array.
+     * @param null $key
+     * @return array|string
+     */
+    public function header($key = null)
+    {
+        if (\is_null($key)) {
+            return $this->headers;
+        }
+        return isset($this->headers[$key]) ? $this->headers[$key] : null;
     }
 }
