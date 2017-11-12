@@ -131,6 +131,6 @@ class Request implements RequestInterface
         if (\is_null($key)) {
             return $this->headers;
         }
-        return isset($this->headers[$key]) ? $this->headers[$key] : null;
+        return $this->headers[$key] ?? null;
     }
 }

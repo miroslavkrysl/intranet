@@ -96,7 +96,7 @@ class PDOWrapper implements DatabaseInterface
      * @param array $params Associative array with parameters.
      * @return self
      */
-    public function execute(string $query, $params = []): self
+    public function execute(string $query, array $params = []): self
     {
         $this->statement = $this->connection->prepare($query);
         $this->statement->execute($params);

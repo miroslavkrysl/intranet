@@ -11,7 +11,9 @@ use Core\Http\Request;
 use Core\Language\Language;
 use Core\Session\SessionManager;
 use Core\View\TwigView;
-use Intranet\Http\Middleware\Csrf;
+
+use Intranet\Http\Middleware\Csrf as CsrfMiddleware;
+use Intranet\Services\Csrf\Csrf as CsrfService;
 
 /**
  * This file contains services registrations to the container.
@@ -87,7 +89,16 @@ $container->register('cookie', CookieManager::class);
 */
 
 
+// services
+
+$container->register('csrf', CsrfService::class)
+    ->addArgument(new SR('session'));
+
+
 // middleware
-$container->register('middleware.csrf', Csrf::class);
+
+$container->register('middleware.csrf', CsrfMiddleware::class)
+    ->addArgument(new SR('csrf'));
+
 
 // controllers

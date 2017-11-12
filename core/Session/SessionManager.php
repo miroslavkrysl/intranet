@@ -38,10 +38,7 @@ class SessionManager implements SessionManagerInterface
      */
     public function get(string $key)
     {
-        if (!$this->isset($key)) {
-            throw new SessionVariableNotExistsException;
-        }
-        return $_SESSION[$key];
+        return $_SESSION[$key] ?? null;
     }
 
     /**
@@ -49,7 +46,7 @@ class SessionManager implements SessionManagerInterface
      * @param string $key
      * @return bool
      */
-    public function isset(string $key): bool
+    public function has(string $key): bool
     {
         return isset($_SESSION[$key]);
     }
@@ -60,9 +57,16 @@ class SessionManager implements SessionManagerInterface
      */
     public function unset(string $key)
     {
-        if (!$this->isset($key)) {
-            throw new SessionVariableNotExistsException();
-        }
         $this->unset($_SESSION[$key]);
+    }
+
+
+    /**
+     * Get session id.
+     * @return string
+     */
+    public function id(): string
+    {
+        return \session_id();
     }
 }
