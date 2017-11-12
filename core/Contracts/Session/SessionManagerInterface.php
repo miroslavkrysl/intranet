@@ -20,7 +20,7 @@ interface SessionManagerInterface
     /**
      * Get the value of the specified session variable.
      * @param string $key
-     * @return mixed
+     * @return mixed|null
      */
     public function get(string $key);
 
@@ -29,11 +29,17 @@ interface SessionManagerInterface
      * @param string $key
      * @return bool
      */
-    public function isset(string $key): bool;
+    public function has(string $key): bool;
 
     /**
      * Unset specified session variable.
      * @param string $key
      */
     public function unset(string $key);
+
+    /**
+     * Get session id.
+     * @return string
+     */
+    public function id(): string;
 }
