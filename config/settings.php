@@ -1,5 +1,6 @@
 <?php
 return [
+    // core
     'app' => [
         'name' => env('app.name'),
         'url' => env('app.url'),
@@ -19,5 +20,10 @@ return [
         'expire' => 120 * 86400,
         'path' => '/',
         'domain' => env('app.url')
+    ],
+
+    // app
+    'csrf' => [
+        'expire' => 15 // minutes
     ]
 ];

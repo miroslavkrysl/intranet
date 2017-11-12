@@ -24,4 +24,10 @@ interface CsrfInterface
      * @return string
      */
     public function has(): string;
+
+    /**
+     * Get the token for current session. Generate new if not set.
+     * @return string
+     */
+    public function token(): string;
 }

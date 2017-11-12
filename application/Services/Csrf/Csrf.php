@@ -57,4 +57,16 @@ class Csrf implements CsrfInterface
     {
         return $this->session->has('csrf-token');
     }
+
+    /**
+     * Get the token for current session. Generate new if not set.
+     * @return string
+     */
+    public function token(): string
+    {
+        if (!$this->has()) {
+            $this->generate();
+        }
+        return $this->session->get('csrf-token');
+    }
 }

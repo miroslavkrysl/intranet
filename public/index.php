@@ -13,7 +13,6 @@ require('../vendor/autoload.php');
 /** @var Application $app */
 $app = require('../bootstrap/app.php');
 
-
 // process request and send response
 $request = app('request');
 $response = $app->handle($request);

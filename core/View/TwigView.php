@@ -36,6 +36,7 @@ class TwigView implements ViewInterface
         $this->twigEnv = new Twig_Environment($loader);
         $this->twigEnv->addFunction(new \Twig_Function('_text', 'text'));
         $this->twigEnv->addFunction(new \Twig_Function('_config', 'config'));
+        $this->twigEnv->addFunction(new \Twig_Function('_token', 'csrf_token'));
     }
 
     /**
