@@ -10,7 +10,7 @@ use Core\Contracts\Http\ResponseInterface;
 /**
  * Base middleware.
  */
-class Middleware
+abstract class Middleware
 {
     /**
      * The middleware response which can be given.

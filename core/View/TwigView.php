@@ -34,9 +34,8 @@ class TwigView implements ViewInterface
         $this->container = $container;
         $loader = new Twig_Loader_Filesystem($viewsFolderPath);
         $this->twigEnv = new Twig_Environment($loader);
-        $this->twigEnv->addFunction(new \Twig_Function('_text', 'text'));
-        $this->twigEnv->addFunction(new \Twig_Function('_config', 'config'));
-        $this->twigEnv->addFunction(new \Twig_Function('_token', 'csrf_token'));
+
+        $this->registerFunctions();
     }
 
     /**
@@ -50,5 +49,15 @@ class TwigView implements ViewInterface
         $name = \preg_replace('/\./', '/', $name);
         $name .= '.twig';
         return $this->twigEnv->render($name, $data);
+    }
+
+    /**
+     * Register function for using them in templates.
+     */
+    private function registerFunctions()
+    {
+        $this->twigEnv->addFunction(new \Twig_Function('_text', 'text'));
+        $this->twigEnv->addFunction(new \Twig_Function('_config', 'config'));
+        $this->twigEnv->addFunction(new \Twig_Function('_token', 'csrf_token'));
     }
 }

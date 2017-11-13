@@ -32,9 +32,7 @@ class Csrf implements CsrfInterface
      */
     public function matches(string $token): bool
     {
-        $hash = $this->session->get('csrf-token');
-
-        return \password_verify($token, $hash);
+        return $token === $this->session->get('csrf-token');
     }
 
     /**
@@ -44,8 +42,7 @@ class Csrf implements CsrfInterface
     public function generate(): string
     {
         $token = \random_string(64);
-        $hash = \password_hash($token, \PASSWORD_DEFAULT);
-        $this->session->set('csrf-token', $hash);
+        $this->session->set('csrf-token', $token);
         return $token;
     }
 

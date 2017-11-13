@@ -5,6 +5,7 @@ namespace Intranet\Http\Middleware;
 
 
 use Core\Contracts\Http\RequestInterface;
+use Core\Contracts\Http\ResponseInterface;
 use Core\Http\Middleware;
 use Intranet\Services\Csrf\Csrf as CsrfService;
 
@@ -39,9 +40,15 @@ class Csrf extends Middleware
 
         $token = $request->post('_token') ?? $request->header('X-CSRF-TOKEN');
 
-        if ($this->csrf->matches($token)) {
+        if ($token and $this->csrf->matches($token)) {
             return true;
         }
+
+        $response = $request->ajax() ?
+            \response(['error' => \text('csrf.inactive')]) :
+            \response(\view('base.wide-message', ['message' => \text('csrf.inactive')]));
+
+        $this->setResponse($response);
 
         return false;
     }

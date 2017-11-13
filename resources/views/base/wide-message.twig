@@ -1,0 +1,16 @@
+{% extends "layouts/app.twig" %}
+
+{% block content %}
+
+    {% if heading is defined %}
+        <h1>{{ heading }}</h1>
+    {% endif %}
+
+    {% if message is defined %}
+        <p class="lead text-center m-5">{{ message }}</p>
+    {% endif %}
+
+    {% block message %}
+    {% endblock %}
+
+{% endblock %}

@@ -166,10 +166,9 @@ class ResponseFactory implements ResponseFactoryInterface
         $content = $content ?:
             $this->container
                 ->get('view')
-                ->render('error.error', [
+                ->render('base.wide-message', [
                     'title' => $status . ' ' . $this->statusTexts[$status],
-                    'code' => $status,
-                    'text' => $this->statusTexts[$status]
+                    'message' => $status . " " . $this->statusTexts[$status]
                 ]);
 
         return new Response($content, $headers, $status);
@@ -186,7 +185,7 @@ class ResponseFactory implements ResponseFactoryInterface
     {
         $content = $this->container
             ->get('view')
-            ->render('error.whoops', [
+            ->render('base.whoops', [
                 'title' => 'Whoops!',
                 'text' => $text ?: text('base.whoops')
             ]);
