@@ -13,9 +13,9 @@ interface DatabaseInterface
      * Execute query with params.
      * @param string $query SQL query with named parameters.
      * @param array $params Associative array with parameters.
-     * @return self
+     * @return bool True on success, false on failure.
      */
-    public function execute(string $query, array $params = []);
+    public function execute(string $query, array $params = []): bool;
 
     /**
      * Get first row from last result set as an array indexed by column name.

@@ -94,13 +94,12 @@ class PDOWrapper implements DatabaseInterface
      * Execute query with params.
      * @param string $query SQL query with named parameters.
      * @param array $params Associative array with parameters.
-     * @return self
+     * @return bool True on success, false on failure.
      */
-    public function execute(string $query, array $params = []): self
+    public function execute(string $query, array $params = [])
     {
         $this->statement = $this->connection->prepare($query);
-        $this->statement->execute($params);
-        return $this;
+        return $this->statement->execute($params);
     }
 
     /**
