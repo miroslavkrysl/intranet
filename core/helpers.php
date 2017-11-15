@@ -154,12 +154,12 @@ function error(int $code)
  * @param string $key
  * @param string|LanguageInterface $locale
  */
-function text(string $key = null, string $locale = null)
+function text(string $key = null, array $replace = [], int $count = null, string $locale = null)
 {
     if (is_null($key)) {
         return app('language');
     }
-    return app('language')->get($key, $locale);
+    return app('language')->get($key, $replace, $count, $locale);
 }
 
 

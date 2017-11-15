@@ -70,7 +70,7 @@ class Language implements LanguageInterface
      * @param string $dir
      * @return array
      */
-    public function loadDirRecursively(string $dir): array
+    private function loadDirRecursively(string $dir): array
     {
         $result = [];
         $files = \glob($dir . '/*');
@@ -92,25 +92,41 @@ class Language implements LanguageInterface
     /**
      * Get the translation.
      * @param string $key
+     * @param array $replace
+     * @param int|null $count
      * @param string|null $locale
-     * @param string|null $fallback
      * @return string
      * @throws LanguageException
      */
-    public function get(string $key, string $locale = null, string $fallback = null): string
+    public function get(string $key, array $replace = [], int $count = null, string $locale = null): string
     {
+        $translation = "";
         $locale = $locale ?: $this->locale;
+
         if ($this->has($key, $locale)) {
-            return $this->translations->get($locale . '.' . $key);
+            $translation = $this->translations->get($locale . '.' . $key);
+        }
+        else if ($this->has($key, $this->fallback)) {
+            $translation = $this->translations->get($this->fallback . '.' . $key);
+        }
+        else {
+            throw new LanguageException('The translation for ' . $key .
+                ' does not exist neither in the locale ' . $locale . ' nor in the fallback locale ' . $this->fallback);
         }
 
-        $fallback = $fallback ?: $this->fallback;
-        if ($this->has($key, $fallback)) {
-            return $this->translations->get($fallback . '.' . $key);
+        if (\is_array($translation)) {
+            if (\is_null($count)) {
+                throw new LanguageException(\sprintf('In translation %s you must define count.'), $key);
+            }
+
+            $translation = $this->selectByCount($translation, $count);
+
+            if (\is_null($translation)) {
+                throw new LanguageException(\sprintf('The translation %s is not defined for count %d', $key, $count));
+            }
         }
 
-        throw new LanguageException('The translation for ' . $key .
-            ' does not exist neither in the locale ' . $locale . ' nor in the fallback locale ' . $fallback);
+        return $this->replace($translation, $replace);
     }
 
     /**
@@ -147,5 +163,61 @@ class Language implements LanguageInterface
     public function hasLocale(string $locale): bool
     {
         return \array_key_exists($locale, $this->translations->get());
+    }
+
+    /**
+     * Replace placeholders in form with replacements.
+     * @param string $string
+     * @param array $replace
+     * @return mixed|string
+     */
+    private function replace(string $string, array $replace = [])
+    {
+        if (!$replace) {
+            return $string;
+        }
+
+        foreach ($replace as $key => $value) {
+            $string = str_replace(
+                [':' . $key, ':' . \strtoupper($key), ':' . \ucfirst($key)],
+                [$value, \strtoupper($value), \ucfirst($value)],
+                $string
+            );
+        }
+
+        return $string;
+    }
+
+    /**
+     * Select translation from array by definitions in keys equaling the $count.
+     * @param array $translation
+     * @param int $count
+     */
+    private function selectByCount(array $translation, int $count)
+    {
+        foreach ($translation as $key => $string) {
+            if (\preg_match('/^(?<a>[0-9]+)-(?<b>[0-9]+)$/', $key, $m) and
+                $count >= $m['a'] and
+                $count <= $m['b']) {
+                return $string;
+            }
+            if (\preg_match('/^(?<a>[0-9]+)-\*$/', $key, $m) and
+                $count >= $m['a']) {
+                return $string;
+            }
+            if (\preg_match('/^\*-(?<a>[0-9]+)$/', $key, $m) and
+                $count <= $m['a']) {
+                return $string;
+            }
+            if (\preg_match('/^[0-9]+(\s*,\s*[0-9]+)*$/', $string)) {
+                preg_match_all('/(?<a>[0-9]+)/', $string, $m);
+                foreach ($m['a'] as $num) {
+                    if ($num == $count) {
+                        return $string;
+                    }
+                }
+            }
+        }
+        return null;
     }
 }

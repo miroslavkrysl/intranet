@@ -12,11 +12,12 @@ interface LanguageInterface
     /**
      * Get the translation.
      * @param string $key
+     * @param array $replacements
+     * @param int|null $count
      * @param string|null $locale
-     * @param string|null $fallback
      * @return string
      */
-    public function get(string $key, string $locale = null, string $fallback = null): string;
+    public function get(string $key, array $replacements, int $count = null, string $locale = null): string;
 
     /**
      * Determine if the translation exists.
