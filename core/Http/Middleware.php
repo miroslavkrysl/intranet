@@ -4,6 +4,7 @@
 namespace Core\Http;
 
 
+use Core\Contracts\Http\RequestInterface;
 use Core\Contracts\Http\ResponseInterface;
 
 
@@ -19,13 +20,11 @@ abstract class Middleware
     private $response;
 
     /**
-     * Get middleware response.
-     * @param ResponseInterface|null $response
-     * @return ResponseInterface
+     * Middleware before method.
      */
-    public function getResponse()
+    public function before(RequestInterface $request)
     {
-        return $this->response;
+
     }
 
     /**

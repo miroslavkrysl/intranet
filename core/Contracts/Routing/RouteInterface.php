@@ -54,6 +54,13 @@ interface RouteInterface
     public function run(RequestInterface $request): ResponseInterface;
 
     /**
+     * Get the parameter.
+     * @param string $name
+     * @return mixed
+     */
+    public function parameter(string $name);
+
+    /**
      * Add a middleware to the route.
      * @param string $middleware
      * @param array $beforeParameters

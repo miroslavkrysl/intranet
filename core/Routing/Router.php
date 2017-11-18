@@ -6,9 +6,11 @@ namespace Core\Routing;
 
 use Core\Container\Container;
 use Core\Contracts\Http\RequestInterface;
+use Core\Contracts\Http\ResponseFactoryInterface;
 use Core\Contracts\Http\ResponseInterface;
 use Core\Contracts\Routing\RouteInterface;
 use Core\Contracts\Routing\RouterInterface;
+use Core\Http\ResponseFactory;
 use Core\Routing\Exception\MiddlewareBadReturnTypeException;
 use Core\Routing\Exception\MiddlewareNotExistsException;
 
@@ -22,27 +24,27 @@ class Router implements RouterInterface
     private $routes;
 
     /**
-     * Global container instance.
-     * @var Container
-     */
-    private $container;
-
-    /**
      * Global middleware.
      * @var array
      */
     private $middleware;
 
     /**
+     * @var Container
+     */
+    private $container;
+
+    /**
      * Router constructor.
-     * @param Container $container
+     * @param ResponseFactoryInterface $responseFactory
      * @param Route[] $routes
+     * @internal param Container $container
      */
     public function __construct(Container $container, array $routes = [])
     {
-        $this->container = $container;
         $this->routes = $routes;
         $this->middleware = [];
+        $this->container = $container;
     }
 
     /**
@@ -66,12 +68,15 @@ class Router implements RouterInterface
             }
         }
 
+        if(!$response) {
+            return $this->container->get('response')->error(404);
+        }
+
         $after = $this->runAfterMiddleware($request);
         if ($after) {
             return $after;
         }
 
-        $response = $response ?: $this->container->get('response')->error(404);
         return $response;
     }
 

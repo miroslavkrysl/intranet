@@ -10,6 +10,7 @@ use Core\Database\PDOWrapper;
 use Core\Http\Request;
 use Core\Language\Language;
 use Core\Session\SessionManager;
+use Core\Validation\Validator;
 use Core\View\TwigView;
 
 use Intranet\Http\Middleware\Csrf as CsrfMiddleware;
@@ -38,6 +39,7 @@ $container->register('config', Config::class)
 
 // request
 $container->register('request', Request::class)
+    ->addArgument(new SR('validator'))
     ->addCall('createFromGlobals');
 
 
@@ -80,6 +82,12 @@ $container->register('session', SessionManager::class);
 // cookies
 $container->register('cookie', CookieManager::class);
 
+
+// validation
+$container->register('validator', Validator::class)
+    ->addArgument(new SR('database'))
+    ->addArgument(new SR('language'))
+    ->addArgument(config('validator.language-prefix'));
 
 
 /*

@@ -5,6 +5,9 @@ namespace Core\Http;
 
 
 use Core\Contracts\Http\RequestInterface;
+use Core\Contracts\Routing\RouteInterface;
+use Core\DotArray\DotArray;
+use Core\Validation\Validator;
 
 
 /**
@@ -17,11 +20,52 @@ class Request implements RequestInterface
     private $uri;
     private $query;
     private $fragment;
+
+    /**
+     * @var DotArray
+     */
     private $get;
+
+    /**
+     * @var DotArray
+     */
     private $post;
-    private $headers;
+
+    /**
+     * @var DotArray
+     */
     private $files;
 
+    /**
+     * @var array
+     */
+    private $parameters;
+
+    private $headers;
+
+    /**
+     * @var Validator
+     */
+    private $validator;
+
+    /**
+     * Route associated with this request.
+     * @var RouteInterface
+     */
+    private $route;
+
+    /**
+     * Request constructor.
+     * @param Validator $validator
+     */
+    public function __construct(Validator $validator)
+    {
+        $this->validator = $validator;
+    }
+
+    /**
+     * Create request from php globals $_SERVER, $_GET, $_POST and $_FILES.
+     */
     public function createFromGlobals()
     {
         $this->ajax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) &&
@@ -32,9 +76,9 @@ class Request implements RequestInterface
         $this->uri = \parse_url($_SERVER['REQUEST_URI'], \PHP_URL_PATH);
         $this->query = \parse_url($_SERVER['REQUEST_URI'], \PHP_URL_QUERY);
         $this->fragment = \parse_url($_SERVER['REQUEST_URI'], \PHP_URL_FRAGMENT);
-        $this->get = $_GET;
-        $this->post = $_POST;
-        $this->files = $_FILES;
+        $this->get = new DotArray($_GET);
+        $this->post = new DotArray($_POST);
+        $this->files = new DotArray($_FILES);
         $this->headers = \getallheaders();
     }
 
@@ -91,9 +135,9 @@ class Request implements RequestInterface
     public function get($key = null)
     {
         if (\is_null($key)) {
-            return $this->get;
+            return $this->get->get();
         }
-        return isset($this->get[$key]) ? $this->get[$key] : null;
+        return $this->get->has($key) ? $this->get->get('') : null;
     }
 
     /**
@@ -104,9 +148,9 @@ class Request implements RequestInterface
     public function post($key = null)
     {
         if (\is_null($key)) {
-            return $this->post;
+            return $this->post->get();
         }
-        return isset($this->post[$key]) ? $this->post[$key] : null;
+        return $this->post->has($key) ? $this->post->get($key) : null;
     }
 
     /**
@@ -116,9 +160,9 @@ class Request implements RequestInterface
     public function file($key = null)
     {
         if (\is_null($key)) {
-            return $this->files;
+            return $this->files->get();
         }
-        return isset($this->files[$key]) ? $this->files[$key] : null;
+        return $this->files->has($key) ? $this->files->get($key) : null;
     }
 
     /**
@@ -132,5 +176,33 @@ class Request implements RequestInterface
             return $this->headers;
         }
         return $this->headers[$key] ?? null;
+    }
+
+    /**
+     * Get the route associated with this request.
+     * @return RouteInterface|null
+     */
+    public function route()
+    {
+        return $this->route;
+    }
+
+    /**
+     * Set the route associated with this request.
+     * @param RouteInterface $route
+     */
+    public function setRoute(RouteInterface $route)
+    {
+        $this->route = $route;
+    }
+
+    /**
+     * Getter magic method for input parameters.
+     * @param $name
+     * @return array|null|string
+     */
+    public function __get($name)
+    {
+        return $this->post($name) ?? $this->route()->parameter($name);
     }
 }

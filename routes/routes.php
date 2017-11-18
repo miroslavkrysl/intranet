@@ -30,5 +30,8 @@ $router->get('/form', function () {
 });
 
 $router->post('/form', function () {
-    return response('OK');
+    ob_start();
+    var_dump($_POST);
+    $result = ob_get_clean();
+    return response($result);
 });

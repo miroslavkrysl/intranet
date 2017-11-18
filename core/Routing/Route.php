@@ -69,6 +69,12 @@ class Route implements RouteInterface
     private $container;
 
     /**
+     * Associative array of the route parameters.
+     * @var array
+     */
+    private $parameters;
+
+    /**
      * Route constructor.
      * @param string $method
      * @param string $uri
@@ -203,6 +209,8 @@ class Route implements RouteInterface
      */
     public function run(RequestInterface $request): ResponseInterface
     {
+        $request->setRoute($this);
+
         $before = $this->runBeforeMiddleware($request);
         if ($before) {
             return $before;
@@ -234,14 +242,14 @@ class Route implements RouteInterface
         preg_match($this->pattern, $request->uri(), $matches);
 
         $reflectionFunction = new \ReflectionFunction($action);
-        $reflectionParameters = $reflectionFunction->getParameters();
 
-        $parameters = (array) $request;
-        foreach ($reflectionParameters as $rp) {
-            $parameters[] = $matches[$rp->getName()];
+        foreach ($matches as $key => $value) {
+            if (\is_string($key)) {
+                $this->parameters[$key] = $value;
+            }
         }
 
-        return \call_user_func_array($action, $parameters);
+        return \call_user_func_array($action, [$request]);
     }
 
     /**
@@ -283,8 +291,8 @@ class Route implements RouteInterface
 
             $result = \call_user_func_array(array($instance, $method), $parameters);
 
-            if (!$result) {
-                return $instance->getResponse() ?: $this->container->get('response')->whoops();
+            if ($result) {
+                return $result;
             }
         }
 
@@ -313,5 +321,15 @@ class Route implements RouteInterface
         ];
 
         return $this;
+    }
+
+    /**
+     * Get the parameter.
+     * @param string $name
+     * @return mixed
+     */
+    public function parameter(string $name)
+    {
+        return $this->parameters[$name] ?? null;
     }
 }

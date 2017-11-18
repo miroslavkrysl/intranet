@@ -21,6 +21,9 @@ return [
         'path' => '/',
         'domain' => env('app.url')
     ],
+    'validator' => [
+        'language-prefix' => 'validation'
+    ],
 
     // app
     'csrf' => [

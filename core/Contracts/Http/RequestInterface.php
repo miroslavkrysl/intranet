@@ -4,6 +4,8 @@
 namespace Core\Contracts\Http;
 
 
+use Core\Contracts\Routing\RouteInterface;
+
 interface RequestInterface
 {
     /**
@@ -62,4 +64,16 @@ interface RequestInterface
      * @return array|string
      */
     public function header($key = null);
+
+    /**
+     * Get the route associated with this request.
+     * @return RouteInterface|null
+     */
+    public function route();
+
+    /**
+     * Set the route associated with this request.
+     * @param RouteInterface $route
+     */
+    public function setRoute(RouteInterface $route);
 }

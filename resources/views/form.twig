@@ -1,0 +1,11 @@
+{% extends "layouts/app.twig" %}
+
+{% import "macros/form.twig" as form %}
+
+{% block content %}
+    <form action="/form" method="post">
+        {{ form.csrf() }}
+        <input type="number" name="number">
+        <input type="submit" name="submit" value="Submit">
+    </form>
+{% endblock %}
