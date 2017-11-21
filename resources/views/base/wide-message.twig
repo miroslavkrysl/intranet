@@ -6,11 +6,10 @@
         <h1>{{ heading }}</h1>
     {% endif %}
 
-    {% if message is defined %}
-        <p class="lead text-center m-5">{{ message }}</p>
+    {% if messages is defined %}
+        {% for message in messages %}
+            <p class="lead text-center m-5">{{ message }}</p>
+        {% endfor %}
     {% endif %}
-
-    {% block message %}
-    {% endblock %}
 
 {% endblock %}

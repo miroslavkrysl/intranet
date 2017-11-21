@@ -15,7 +15,7 @@ interface ValidatorInterface
      * @param array $rules
      * @return bool
      */
-    public function validate(\object $entity, array $rules): bool;
+    public function validate($entity, array $rules): bool;
 
     /**
      * Get validation errors.
@@ -136,4 +136,13 @@ interface ValidatorInterface
      * @return bool
      */
     public function regex($value, string $pattern): bool;
+
+    /**
+     * Check whether the value exists in the database table column.
+     * @param $value
+     * @param string $table
+     * @param string $column
+     * @return bool
+     */
+    public function exists($value, string $table, string $column): bool;
 }

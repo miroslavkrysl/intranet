@@ -5,6 +5,7 @@ use Core\Config\Config;
 use Core\Container\Container;
 use Core\Container\ParameterReference as PR;
 use Core\Container\ServiceReference as SR;
+use Core\Contracts\Database\DatabaseInterface;
 use Core\Cookies\CookieManager;
 use Core\Database\PDOWrapper;
 use Core\Http\Request;
@@ -13,7 +14,9 @@ use Core\Session\SessionManager;
 use Core\Validation\Validator;
 use Core\View\TwigView;
 
+use Intranet\Http\Controllers\UserController;
 use Intranet\Http\Middleware\Csrf as CsrfMiddleware;
+use Intranet\Repositories\UserRepository;
 use Intranet\Services\Csrf\Csrf as CsrfService;
 
 /**
@@ -87,7 +90,8 @@ $container->register('cookie', CookieManager::class);
 $container->register('validator', Validator::class)
     ->addArgument(new SR('database'))
     ->addArgument(new SR('language'))
-    ->addArgument(config('validator.language-prefix'));
+    ->addArgument(config('validator.lang-prefix-messages'))
+    ->addArgument(config('validator.lang-prefix-fields'));
 
 
 /*
@@ -109,4 +113,14 @@ $container->register('middleware.csrf', CsrfMiddleware::class)
     ->addArgument(new SR('csrf'));
 
 
+// repositories
+
+$container->register('repository.user', UserRepository::class)
+    ->addArgument(new SR('database'))
+    ->addArgument(config('database.tables.user'));
+
+
 // controllers
+
+$container->register('UserController', UserController::class)
+    ->addArgument(new SR('repository.user'));

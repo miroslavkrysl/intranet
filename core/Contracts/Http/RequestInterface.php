@@ -76,4 +76,17 @@ interface RequestInterface
      * @param RouteInterface $route
      */
     public function setRoute(RouteInterface $route);
+
+    /**
+     * Validate request.
+     * @param array $rules
+     * @return bool
+     */
+    public function validate(array $rules): bool;
+
+    /**
+     * Get validation errors.
+     * @return array
+     */
+    public function errors(): array ;
 }

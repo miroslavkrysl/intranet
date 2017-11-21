@@ -40,13 +40,13 @@ class Route implements RouteInterface
 
     /**
      * Route controller.
-     * @var \ReflectionClass|null
+     * @var string|null
      */
     private $controller;
 
     /**
      * Route controller method.
-     * @var \ReflectionMethod|null
+     * @var string|null
      */
     private $controllerMethod;
 
@@ -140,21 +140,8 @@ class Route implements RouteInterface
             throw new RouteActionException('Controller route action must contain a controller name and a method name.');
         }
 
-        $class = $action[0];
-        $method = $action[1];
-
-        if (!\class_exists($class)) {
-            throw new RouteActionException('Class ' . $class . ' does not exist.');
-        }
-
-        $reflectionClass = new \ReflectionClass($class);
-
-        if (!$reflectionClass->hasMethod($method)) {
-            throw new RouteActionException('Controller ' . $class . ' has not the method ' . $method);
-        }
-
-        $this->controller = $reflectionClass;
-        $this->controllerMethod = $reflectionClass->getMethod($method);
+        $this->controller = $action[0];
+        $this->controllerMethod = $action[1];
     }
 
     /**
@@ -210,6 +197,7 @@ class Route implements RouteInterface
     public function run(RequestInterface $request): ResponseInterface
     {
         $request->setRoute($this);
+        $this->setParameters($request);
 
         $before = $this->runBeforeMiddleware($request);
         if ($before) {
@@ -233,23 +221,25 @@ class Route implements RouteInterface
      */
     private function runAction(RequestInterface $request): ResponseInterface
     {
-        $action = $this->action;
-        if (!\is_null($this->controllerMethod)) {
-            $controller = $this->controller->newInstance();
-            $action = $this->controllerMethod->getClosure($controller);
-        }
 
-        preg_match($this->pattern, $request->uri(), $matches);
-
-        $reflectionFunction = new \ReflectionFunction($action);
-
-        foreach ($matches as $key => $value) {
-            if (\is_string($key)) {
-                $this->parameters[$key] = $value;
+        if ($this->controller) {
+            if (!$this->container->has($this->controller)) {
+                throw new RouteActionException(\sprintf('Controller service %s does not exist.', $this->controller));
             }
+
+            $controller = $this->container->get($this->controller);
+            $reflectionClass = new \ReflectionClass($controller);
+
+            if (!$reflectionClass->hasMethod($this->controllerMethod)) {
+                throw new RouteActionException(\sprintf('Controller service %s has not the method %s.',
+                    $this->controller,
+                    $this->controllerMethod));
+            }
+
+            return \call_user_func_array([$controller, $this->controllerMethod], [$request]);
         }
 
-        return \call_user_func_array($action, [$request]);
+        return \call_user_func_array($this->action, [$request]);
     }
 
     /**
@@ -331,5 +321,20 @@ class Route implements RouteInterface
     public function parameter(string $name)
     {
         return $this->parameters[$name] ?? null;
+    }
+
+    /**
+     * Set the route parameters from uri matches.
+     * @param RequestInterface $request
+     */
+    private function setParameters(RequestInterface $request)
+    {
+        preg_match($this->pattern, $request->uri(), $matches);
+
+        foreach ($matches as $key => $value) {
+            if (\is_string($key)) {
+                $this->parameters[$key] = $value;
+            }
+        }
     }
 }

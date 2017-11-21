@@ -46,11 +46,12 @@ interface ResponseFactoryInterface
     /**
      * Create a new error response.
      * @param int $status
-     * @param string|null $content
+     * @param string|array $messages
      * @param array $headers
      * @return ResponseInterface
+     * @internal param null|string $content
      */
-    public function error(int $status, string $content = null, array $headers = []): ResponseInterface;
+    public function error(int $status, $messages = [], array $headers = []): ResponseInterface;
 
     /**
      * Create a new whoops response.

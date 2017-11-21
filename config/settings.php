@@ -14,7 +14,10 @@ return [
         'port' => env('database.port'),
         'dbname' => env('database.name'),
         'username' => env('database.username'),
-        'password' => env('database.password')
+        'password' => env('database.password'),
+        'tables' => [
+            'user' => 'user'
+        ]
     ],
     'cookie' => [
         'expire' => 120 * 86400,
@@ -22,7 +25,8 @@ return [
         'domain' => env('app.url')
     ],
     'validator' => [
-        'language-prefix' => 'validation'
+        'lang-prefix-messages' => 'validation',
+        'lang-prefix-fields' => 'fields'
     ],
 
     // app

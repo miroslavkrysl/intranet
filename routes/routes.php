@@ -24,14 +24,6 @@ $router->get('/', function () {
     return response(view('layouts.app'));
 });
 
+$router->get('/user/{username}', 'UserController@index');
 
-$router->get('/form', function () {
-    return response(view('form', ['title' => 'Form']));
-});
-
-$router->post('/form', function () {
-    ob_start();
-    var_dump($_POST);
-    $result = ob_get_clean();
-    return response($result);
-});
+$router->get('/zadanky', 'RequestController@index');

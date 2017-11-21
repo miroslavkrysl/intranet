@@ -5,8 +5,7 @@ namespace Intranet\Repositories;
 
 
 use Core\Contracts\Database\DatabaseInterface;
-use Intranet\Contracts\UserRepositoryInterface;
-use Intranet\Models\User;
+use Intranet\Contracts\Repositories\UserRepositoryInterface;
 
 
 class UserRepository implements UserRepositoryInterface
@@ -24,12 +23,6 @@ class UserRepository implements UserRepositoryInterface
     private $table;
 
     /**
-     * Contains validation failures messages if the validation failed.
-     * @var array
-     */
-    private $validationFailures;
-
-    /**
      * UserRepository constructor.
      * @param DatabaseInterface $database
      * @param string $table
@@ -38,14 +31,12 @@ class UserRepository implements UserRepositoryInterface
     {
         $this->database = $database;
         $this->table = $table;
-
-        $this->validationFailures = [];
     }
 
     /**
      * Find user by id.
      * @param int $id
-     * @return User|null
+     * @return array|null
      */
     public function findById(int $id)
     {
@@ -55,14 +46,14 @@ class UserRepository implements UserRepositoryInterface
             "WHERE id = :id;";
         $params = ['id' => $id];
 
-        $data = $this->database->execute($query, $params)->fetch();
-        return new User($data);
+        $this->database->execute($query, $params);
+        return $this->database->fetch();
     }
 
     /**
      * Find user by username.
      * @param string $username
-     * @return User|null
+     * @return array|null
      */
     public function findByUsername(string $username)
     {
@@ -72,14 +63,14 @@ class UserRepository implements UserRepositoryInterface
             "WHERE username = :username;";
         $params = ['username' => $username];
 
-        $data = $this->database->execute($query, $params)->fetch();
-        return new User($data);
+        $this->database->execute($query, $params);
+        return $this->database->fetch();
     }
 
     /**
      * Find user by email.
      * @param string $email
-     * @return User|null
+     * @return array|null
      */
     public function findByEmail(string $email)
     {
@@ -89,41 +80,18 @@ class UserRepository implements UserRepositoryInterface
             "WHERE email = :email;";
         $params = ['email' => $email];
 
-        $data = $this->database->execute($query, $params)->fetch();
-        return new User($data);
-    }
-
-    /**
-     * Validate the user and set validation failures eventually.
-     * @param User $user
-     * @return bool
-     */
-    public function validate(User $user): bool
-    {
-        // TODO: validation logic
-    }
-
-    /**
-     * Get validation failures messages.
-     * @return array|null
-     */
-    public function getValidationFailures(): array
-    {
-        return $this->validationFailures;
+        $this->database->execute($query, $params);
+        return $this->database->fetch();
     }
 
     /**
      * Save user to database.
-     * @param User $user
+     * @param array $user
      * @return bool
      */
-    public function save(User $user): bool
+    public function save(array $user): bool
     {
-        if(!$this->validate($user)) {
-            return false;
-        }
-
-        if ($this->exists($user)) {
+        if (isset($user['id'])) {
             $query =
                 "UPDATE $this->table ".
                 "SET ".
@@ -134,12 +102,12 @@ class UserRepository implements UserRepositoryInterface
                 "deleted_at = :deleted_at ".
                 "WHERE id = :id;";
             $params = [
-                'username' => $user->getUsername(),
-                'password' => $user->getPassword(),
-                'name' => $user->getName(),
-                'email' => $user->getEmail(),
-                'deleted_at' => $user->getDeletedAt(),
-                'id' => $user->getId()
+                'username' => $user['username'],
+                'password' => $user['password'],
+                'name' => $user['name'],
+                'email' => $user['email'],
+                'deleted_at' => $user['deleted_at'],
+                'id' => $user['id']
             ];
         }
         else {
@@ -149,57 +117,33 @@ class UserRepository implements UserRepositoryInterface
                 "VALUES ".
                 "(:username, :password, :name, :email, :deleted_at);";
             $params = [
-                'username' => $user->getUsername(),
-                'password' => $user->getPassword(),
-                'name' => $user->getName(),
-                'email' => $user->getEmail(),
-                'deleted_at' => $user->getDeletedAt()
+                'username' => $user['username'],
+                'password' => $user['password'],
+                'name' => $user['name'],
+                'email' => $user['email'],
+                'deleted_at' => $user['deleted_at']
             ];
         }
 
         $this->database->execute($query, $params);
 
-        return true;
+        return $this->database->count() > 0;
     }
 
     /**
      * Delete the user from database.
-     * @param User $user
+     * @param int $userId
      * @return int
      */
-    public function delete(User $user): bool
+    public function delete(int $userId): bool
     {
-        if (!$this->exists($user)) {
-            return false;
-        }
-
         $query =
             "DELETE FROM $this->table ".
             "WHERE id = :id;";
-        $params = ['id' => $user->getId()];
+        $params = ['id' => $userId];
 
         $this->database->execute($query, $params);
 
-        return true;
-    }
-
-    /**
-     * Determine if the user exists.
-     * @param User $user
-     * @return bool
-     */
-    public function exists(User $user): bool
-    {
-        if (!$user->getId()) {
-            return false;
-        }
-
-        $query =
-            "SELECT id ".
-            "FROM $this->table ".
-            "WHERE id = :id;";
-        $params = ['id' => $user->getId()];
-
-        return $this->database->execute($query, $params)->count() > 0;
+        return $this->database->count() > 0;
     }
 }

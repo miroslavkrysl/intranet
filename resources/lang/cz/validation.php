@@ -16,5 +16,6 @@ return [
     'date' => ':Field musí být platné datum.',
     'after' => 'Datum :field musí být po datu :after.',
     'email' => ':Field musí být platná emailová adresa.',
-    'regex' => ':Field není ve správném tvaru.'
+    'regex' => ':Field není ve správném tvaru.',
+    'exists' => ':Field :value neexistuje'
 ];

@@ -7,6 +7,7 @@ namespace Core\View;
 use Core\Container\Container;
 use Core\Contracts\View\ViewInterface;
 use Twig_Environment;
+use Twig_Extension_Debug;
 use Twig_Loader_Filesystem;
 
 

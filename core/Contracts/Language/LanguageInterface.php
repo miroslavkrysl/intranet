@@ -17,7 +17,7 @@ interface LanguageInterface
      * @param string|null $locale
      * @return string
      */
-    public function get(string $key, array $replacements, int $count = null, string $locale = null): string;
+    public function get(string $key, array $replacements = [], int $count = null, string $locale = null): string;
 
     /**
      * Determine if the translation exists.

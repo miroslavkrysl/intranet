@@ -6,6 +6,7 @@ namespace Core\Http;
 
 use Core\Contracts\Http\RequestInterface;
 use Core\Contracts\Routing\RouteInterface;
+use Core\Contracts\Validation\ValidatorInterface;
 use Core\DotArray\DotArray;
 use Core\Validation\Validator;
 
@@ -55,12 +56,19 @@ class Request implements RequestInterface
     private $route;
 
     /**
-     * Request constructor.
-     * @param Validator $validator
+     * Contains validation errors.
+     * @var array
      */
-    public function __construct(Validator $validator)
+    private $validationErrors;
+
+    /**
+     * Request constructor.
+     * @param ValidatorInterface $validator
+     */
+    public function __construct(ValidatorInterface $validator)
     {
         $this->validator = $validator;
+        $this->validationErrors = [];
     }
 
     /**
@@ -204,5 +212,26 @@ class Request implements RequestInterface
     public function __get($name)
     {
         return $this->post($name) ?? $this->route()->parameter($name);
+    }
+
+    /**
+     * Validate request.
+     * @param array $rules
+     * @return bool
+     */
+    public function validate(array $rules): bool
+    {
+        $valid = $this->validator->validate($this, $rules);
+        $this->validationErrors = $this->validator->errors();
+        return $valid;
+    }
+
+    /**
+     * Get validation errors.
+     * @return array
+     */
+    public function errors(): array
+    {
+        return $this->validationErrors;
     }
 }

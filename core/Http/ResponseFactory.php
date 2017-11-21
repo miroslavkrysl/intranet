@@ -7,6 +7,7 @@ namespace Core\Http;
 use Core\Container\Container;
 use Core\Contracts\Http\ResponseFactoryInterface;
 use Core\Contracts\Http\ResponseInterface;
+use Core\Contracts\View\ViewInterface;
 
 class ResponseFactory implements ResponseFactoryInterface
 {
@@ -157,19 +158,22 @@ class ResponseFactory implements ResponseFactoryInterface
     /**
      * Create a new error response.
      * @param int $status
-     * @param string|null $content
+     * @param string|array $messages
      * @param array $headers
      * @return ResponseInterface
      */
-    public function error(int $status, string $content = null, array $headers = []): ResponseInterface
+    public function error(int $status, $messages = [], array $headers = []): ResponseInterface
     {
-        $content = $content ?:
-            $this->container
+        $messages = \is_string($messages) ? [$messages] : $messages;
+
+        $data = [
+            'title' => [$status . ' ' . $this->statusTexts[$status]],
+            'messages' => $messages ?: [$status . " " . $this->statusTexts[$status]]
+        ];
+
+        $content = $this->container
                 ->get('view')
-                ->render('base.wide-message', [
-                    'title' => $status . ' ' . $this->statusTexts[$status],
-                    'message' => $status . " " . $this->statusTexts[$status]
-                ]);
+                ->render('base.wide-message', $data);
 
         return new Response($content, $headers, $status);
     }

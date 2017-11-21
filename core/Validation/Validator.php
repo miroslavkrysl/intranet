@@ -37,19 +37,29 @@ class Validator implements ValidatorInterface
      * The language prefix for getting the error messages.
      * @var string
      */
-    private $languagePrefix;
+    private $langPrefixMessages;
+
+    /**
+     * The language prefix for getting the field names.
+     * @var string
+     */
+    private $langPrefixFields;
 
     /**
      * Validator constructor.
      * @param DatabaseInterface $database
      * @param LanguageInterface $language
-     * @param string $languagePrefix
+     * @param string $langPrefixMessages
+     * @param string $langPrefixFields
+     * @internal param string $languagePrefix
      */
-    public function __construct(DatabaseInterface $database, LanguageInterface $language, string $languagePrefix)
+    public function __construct(DatabaseInterface $database, LanguageInterface $language, string $langPrefixMessages, string $langPrefixFields)
     {
         $this->database = $database;
         $this->language = $language;
-        $this->languagePrefix = $languagePrefix;
+        $this->langPrefixMessages = $langPrefixMessages;
+        $this->langPrefixFields = $langPrefixFields;
+        $this->errors = [];
     }
 
     /**
@@ -67,13 +77,19 @@ class Validator implements ValidatorInterface
      * @param array $rules
      * @return bool
      */
-    public function validate(\object $entity, array $rules): bool
+    public function validate($entity, array $rules): bool
     {
         $valid = true;
 
         foreach ($rules as $field => $fieldRules) {
 
+
             foreach ($fieldRules as $rule => $params) {
+
+                if(\is_string($params)) {
+                    $rule = $params;
+                    $params = [];
+                }
 
                 // snake_case to camelCase
                 $method = \lcfirst(\implode('', \array_map('ucfirst', \explode('_', $rule))));
@@ -83,13 +99,13 @@ class Validator implements ValidatorInterface
                 }
 
                 $reflectionMethod = new \ReflectionMethod($this, $method);
-                $args = [
-                    'value' => $entity->$field ?? null
-                ];
+
+                $params['value'] = $entity->$field ?? null;
+                $args = [];
 
                 foreach ($reflectionMethod->getParameters() as $parameter) {
                     $name = $parameter->getName();
-                    if (!\array_key_exists($name, $params)) {
+                    if (!\is_array($params) and !\array_key_exists($name, $params)) {
                         throw new ValidatorException(\sprintf('You must specify the %s parameter in %s rule.', $name, $method));
                     }
                     $args[$name] = $params[$name];
@@ -98,9 +114,11 @@ class Validator implements ValidatorInterface
 
                 if (!$reflectionMethod->invokeArgs($this, $args)) {
                     $valid = false;
-                    $this->errors[$field] =
+                    $args['field'] = $this->language->get($this->langPrefixFields . '.' . $field);
+
+                    $this->errors[$field][$rule] =
                         $params['message'] ??
-                        $this->language->get($this->languagePrefix . $method, $args);
+                        $this->language->get($this->langPrefixMessages . '.' . $method, $args);
                 }
             }
         }
@@ -278,5 +296,24 @@ class Validator implements ValidatorInterface
     public function regex($value, string $pattern): bool
     {
         return \preg_match($value, $pattern);
+    }
+
+    /**
+     * Check whether the value exists in the database table column.
+     * @param $value
+     * @param string $table
+     * @param string $column
+     * @return bool
+     */
+    public function exists($value, string $table, string $column): bool
+    {
+        $query =
+            "SELECT * FROM $table ".
+            "WHERE $column = :value;";
+        $params = [
+            'value' => $value
+        ];
+        $this->database->execute($query, $params);
+        return $this->database->count() > 0;
     }
 }
