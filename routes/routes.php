@@ -18,12 +18,31 @@ $router = app('router');
 $router->middleware('csrf');
 
 
-// routes
+/*
+|-------------------------------|
+|            Routes             |
+|-------------------------------|
+*/
 
 $router->get('/', function () {
+    var_dump($_SESSION);
+    var_dump($_COOKIE);
+    echo '
+    <form action="/logout" method="post">
+        <input type="hidden" name="_token" value="'. csrf_token() .'">
+        <input type="submit" name="logout" value="logout">
+    </form>
+    ';
+    var_dump(app('auth')->isLogged());
     return response(view('layouts.app'));
 });
+
+// login handling
+$router->get('/login', 'LoginController@index');
+$router->post('/login', 'LoginController@login');
+$router->post('/logout', 'LoginController@logout');
 
 $router->get('/user/{username}', 'UserController@index');
 
 $router->get('/zadanky', 'RequestController@index');
+

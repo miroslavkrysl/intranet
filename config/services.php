@@ -14,9 +14,12 @@ use Core\Session\SessionManager;
 use Core\Validation\Validator;
 use Core\View\TwigView;
 
+use Intranet\Http\Controllers\LoginController;
 use Intranet\Http\Controllers\UserController;
 use Intranet\Http\Middleware\Csrf as CsrfMiddleware;
+use Intranet\Repositories\LoginRepository;
 use Intranet\Repositories\UserRepository;
+use Intranet\Services\Auth\Auth;
 use Intranet\Services\Csrf\Csrf as CsrfService;
 
 /**
@@ -58,7 +61,7 @@ $container->register('response', \Core\Http\ResponseFactory::class)
 
 // view
 $container->register('view', TwigView::class)
-    ->addArgument(new SR('container'))
+    ->addArgument(new SR('language'))
     ->addArgument(path('views'));
 
 
@@ -106,6 +109,10 @@ $container->register('validator', Validator::class)
 $container->register('csrf', CsrfService::class)
     ->addArgument(new SR('session'));
 
+$container->register('auth', Auth::class)
+    ->addArgument(new SR('repository.user'))
+    ->addArgument(new SR('repository.login'));
+
 
 // middleware
 
@@ -119,8 +126,16 @@ $container->register('repository.user', UserRepository::class)
     ->addArgument(new SR('database'))
     ->addArgument(config('database.tables.user'));
 
+$container->register('repository.login', LoginRepository::class)
+    ->addArgument(new SR('database'))
+    ->addArgument(config('database.tables.login'));
+
 
 // controllers
 
 $container->register('UserController', UserController::class)
     ->addArgument(new SR('repository.user'));
+
+$container->register('LoginController', LoginController::class)
+    ->addArgument(new SR('repository.user'))
+    ->addArgument(new SR('auth'));

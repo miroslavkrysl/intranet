@@ -43,4 +43,12 @@ interface UserRepositoryInterface
      * @return int
      */
     public function delete(int $userId): bool;
+
+    /**
+     * Verify the user's password.
+     * @param string $password
+     * @param string $hash
+     * @return bool
+     */
+    public function verifyPassword(string $password, string $hash): bool;
 }

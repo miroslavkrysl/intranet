@@ -16,7 +16,8 @@ return [
         'username' => env('database.username'),
         'password' => env('database.password'),
         'tables' => [
-            'user' => 'user'
+            'user' => 'user',
+            'login' => 'login'
         ]
     ],
     'cookie' => [

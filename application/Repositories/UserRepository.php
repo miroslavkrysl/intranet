@@ -6,6 +6,7 @@ namespace Intranet\Repositories;
 
 use Core\Contracts\Database\DatabaseInterface;
 use Intranet\Contracts\Repositories\UserRepositoryInterface;
+use Intranet\Repositories\Exception\RepositoryException;
 
 
 class UserRepository implements UserRepositoryInterface
@@ -43,11 +44,12 @@ class UserRepository implements UserRepositoryInterface
         $query =
             "SELECT * ".
             "FROM $this->table ".
-            "WHERE id = :id;";
+            "WHERE id = :id ".
+            "AND deleted_at IS NULL;";
         $params = ['id' => $id];
 
         $this->database->execute($query, $params);
-        return $this->database->fetch();
+        return $this->database->fetch() ?? null;
     }
 
     /**
@@ -60,11 +62,12 @@ class UserRepository implements UserRepositoryInterface
         $query =
             "SELECT * ".
             "FROM $this->table ".
-            "WHERE username = :username;";
+            "WHERE username = :username ".
+            "AND deleted_at IS NULL;";
         $params = ['username' => $username];
 
         $this->database->execute($query, $params);
-        return $this->database->fetch();
+        return $this->database->fetch() ?? null;
     }
 
     /**
@@ -77,11 +80,12 @@ class UserRepository implements UserRepositoryInterface
         $query =
             "SELECT * ".
             "FROM $this->table ".
-            "WHERE email = :email;";
+            "WHERE email = :email ".
+            "AND deleted_at IS NULL;";
         $params = ['email' => $email];
 
         $this->database->execute($query, $params);
-        return $this->database->fetch();
+        return $this->database->fetch() ?? null;
     }
 
     /**
@@ -145,5 +149,16 @@ class UserRepository implements UserRepositoryInterface
         $this->database->execute($query, $params);
 
         return $this->database->count() > 0;
+    }
+
+    /**
+     * Verify the user's password.
+     * @param string $password
+     * @param string $hash
+     * @return bool
+     */
+    public function verifyPassword(string $password, string $hash): bool
+    {
+        return \password_verify($password, $hash);
     }
 }

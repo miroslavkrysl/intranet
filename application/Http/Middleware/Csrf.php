@@ -9,7 +9,7 @@ use Core\Contracts\Http\ResponseInterface;
 use Core\Http\Middleware;
 use Intranet\Services\Csrf\Csrf as CsrfService;
 
-class Csrf extends Middleware
+class Csrf
 {
     /**
      * Service for handling csrf tokens.
@@ -30,26 +30,24 @@ class Csrf extends Middleware
     /**
      * Middleware before method.
      * @param RequestInterface $request
-     * @return bool
+     * @return ResponseInterface|null
      */
-    public function before(RequestInterface $request): bool
+    public function before(RequestInterface $request)
     {
         if ($request->method() == 'get'){
-            return true;
+            return null;
         }
 
         $token = $request->post('_token') ?? $request->header('X-CSRF-TOKEN');
 
         if ($token and $this->csrf->matches($token)) {
-            return true;
+            return null;
         }
 
         $response = $request->ajax() ?
             \response(['error' => \text('csrf.inactive')]) :
             \response(\view('base.wide-message', ['message' => \text('csrf.inactive')]));
 
-        $this->setResponse($response);
-
-        return false;
+        return $response;
     }
 }
