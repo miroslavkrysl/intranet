@@ -33,7 +33,7 @@ class CookieManager implements CookieManagerInterface
      */
     public function get(string $key)
     {
-        if (!$this->($key)) {
+        if (!$this->has($key)) {
             throw new CookieNotExistsException('Cookie ' . $key . ' does not exist.');
         }
         return $_COOKIE[$key];
