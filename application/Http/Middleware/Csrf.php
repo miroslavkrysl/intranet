@@ -45,8 +45,8 @@ class Csrf
         }
 
         $response = $request->ajax() ?
-            \response(['error' => \text('csrf.inactive')]) :
-            \response(\view('base.wide-message', ['message' => \text('csrf.inactive')]));
+            \jsonError(401, \text('csrf.inactive')) :
+            \error(401, \text('csrf.inactive'));
 
         return $response;
     }

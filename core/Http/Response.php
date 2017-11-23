@@ -5,12 +5,13 @@ namespace Core\Http;
 
 
 use Core\Contracts\Http\ResponseInterface;
+use Core\Contracts\View\ViewInterface;
 
 
 /**
  * Base response class.
  */
-class Response implements ResponseInterface
+abstract class Response implements ResponseInterface
 {
     /**
      * Array of response headers.
@@ -19,10 +20,10 @@ class Response implements ResponseInterface
     private $headers;
 
     /**
-     * Response content.
-     * @var mixed
+     * Response data.
+     * @var array
      */
-    private $content;
+    protected $data;
 
     /**
      * Response status code.
@@ -30,14 +31,18 @@ class Response implements ResponseInterface
      */
     private $status;
 
-
-    public function __construct(string $content = null, array $headers = null, int $status = 200)
+    /**
+     * Response constructor.
+     * @param array $data
+     * @param array|null $headers
+     * @param int $status
+     */
+    public function __construct(array $data = [], array $headers = [], int $status = 200)
     {
-        $this->content = $content;
-        $this->status = $status;
+        $this->data = $data;
         $this->headers = $headers;
+        $this->status = $status;
     }
-
 
     /**
      * Send response.
@@ -52,21 +57,29 @@ class Response implements ResponseInterface
     /**
      * Send content.
      */
-    private function sendContent()
-    {
-        echo $this->content;
-    }
+    protected abstract function sendContent();
 
     /**
-     * Set response header.
-     * @param string $header
+     * Set or get the response header or headers.
+     * @param string|array $header
      * @param string $value
-     * @return self
+     * @return array|mixed|null
      */
-    public function header(string $header, string $value)
+    public function header($header = null, string $value = null)
     {
-        $this->headers[$header] = $value;
-        return $this;
+        if (\is_array($header)) {
+            $this->headers = \array_merge($this->headers, $header);
+        }
+        else if (\is_string($header)) {
+            if (\is_null($value)) {
+                return $this->headers[$header];
+            }
+
+            $this->headers[$header] = $value;
+        }
+        else {
+            return $this->headers;
+        }
     }
 
     /**
@@ -88,5 +101,23 @@ class Response implements ResponseInterface
     {
         $this->status = $status;
         return $this;
+    }
+
+    /**
+     * Get or set the response data.
+     * @param string $key
+     * @param array|mixed $value
+     * @return array|mixed|null
+     */
+    public function data(string $key = null, $value = null)
+    {
+        if (\is_null($key)) {
+            return $this->data;
+        }
+        if (\is_null($value)) {
+            return $this->data[$key];
+        }
+
+        $this->data[$key] = $value;
     }
 }

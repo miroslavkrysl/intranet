@@ -37,9 +37,9 @@ class LoginController
      * @param RequestInterface $request
      * @return ResponseInterface
      */
-    public function index(RequestInterface $request)
+    public function showLoginForm(RequestInterface $request)
     {
-        return \response(\view('login'));
+        return \html('login');
     }
 
     /**
@@ -65,16 +65,14 @@ class LoginController
         $errors = $request->errors();
 
         if (!$valid) {
-            return \response(\view('login', ['errors' => $errors]));
+            return \html('login', ['errors' => $errors]);
         }
 
-        \var_dump($request->username);
         $user = $this->userRepository->findByUsername($request->username);
-        \var_dump($user);
 
         if (!$this->userRepository->verifyPassword($request->password, $user['password'])) {
             $errors = ['password' => [\text('login.wrong_password')]];
-            return \response(\view('login', ['errors' => $errors]));
+            return \html('login', ['errors' => $errors]);
         }
 
         $this->auth->login($user['id']);

@@ -152,8 +152,8 @@ class Route implements RouteInterface
     private function makePattern(string $uri): string
     {
         $pattern = preg_replace('/\//', '\\/', $uri);
-        $pattern = preg_replace('/\{([a-z0-9]+)\}/', '(?<${1}>[^#&\/]+)', $pattern);
-        $pattern = preg_replace('/\{([a-z0-9]+):([^\}]+)\}/', '(?<${1}>${2})', $pattern);
+        $pattern = preg_replace('/\{([a-z0-9_]+)\}/', '(?<${1}>[^#&\/]+)', $pattern);
+        $pattern = preg_replace('/\{([a-z0-9_]+):([^\}]+)\}/', '(?<${1}>${2})', $pattern);
         $pattern = '/^' . $pattern . '$/i';
         return $pattern;
     }

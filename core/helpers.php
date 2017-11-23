@@ -97,55 +97,77 @@ function cookie(string $key = null, $value = null)
 
 /**
  * Get response using data.
- * @param string|array|object null $data
- * @return ResponseFactoryInterface|ResponseInterface
+ *
+ * @return ResponseFactoryInterface
  */
-function response($data = null, int $status = 200, $headers = [])
+function response()
 {
-    if (is_null($data)) {
-        return app('response');
-    }
-    if (is_string($data)) {
-        return app('response')->html($data, $status, $headers);
-    }
-    return app('response')->json($data, $status, $headers);
+    return app('response');
+}
+
+/**
+ * Get a html response.
+ * @param string $viewName
+ * @param array $data
+ * @return ResponseInterface
+ */
+function html(string $viewName, array $data = [])
+{
+    return response()->html($viewName, $data);
+}
+
+/**
+ * Get a json response.
+ * @param array $data
+ * @return ResponseInterface
+ */
+function json(array $data = [])
+{
+    return response()->json($data);
 }
 
 
 /**
- * Render the view, or get the view service instance.
- * @param string $key
- * @param mixed $default
- * @return string|ViewInterface
- */
-function view(string $name = null, $data = [])
-{
-    if (is_null($name)) {
-        return app('view');
-    }
-
-    return view()->render($name, $data);
-}
-
-
-/**
- * Get redirection response.
+ * Get a redirection response.
  * @param string $url
  * @return ResponseInterface
  */
 function redirect(string $url) {
-    return app('response')->redirect($url);
+    return response()->redirect($url);
 }
 
 
 /**
- * Get error response.
+ * Get an error response.
  * @param int $code
+ * @param string|null $message
  * @return ResponseInterface
  */
-function error(int $code)
+function error(int $code, string $message = null)
 {
-    return app('response')->error($code);
+    return response()->error($code, $message);
+}
+
+/**
+ * Get a jsonError response.
+ * @param int $code
+ * @param string|null $message
+ * @return ResponseInterface
+ */
+function jsonError(int $code, string $message = null)
+{
+    return response()->jsonError($code, $message);
+}
+
+/**
+ * Get a download response.
+ * @param string $filename
+ * @param string|null $name
+ * @return ResponseInterface
+ */
+function download(string $filename, string $name = null)
+{
+    return response()->download($filename, $name);
 }
 
 

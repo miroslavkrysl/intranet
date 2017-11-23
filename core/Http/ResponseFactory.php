@@ -4,19 +4,13 @@
 namespace Core\Http;
 
 
-use Core\Container\Container;
 use Core\Contracts\Http\ResponseFactoryInterface;
 use Core\Contracts\Http\ResponseInterface;
-use Core\Contracts\View\ViewInterface;
+use Core\Contracts\View\ViewFactoryInterface;
+
 
 class ResponseFactory implements ResponseFactoryInterface
 {
-    /**
-     * Global container instance.
-     * @var Container
-     */
-    private $container;
-
     /**
      * Texts corresponding to status codes.
      * @var array
@@ -84,26 +78,36 @@ class ResponseFactory implements ResponseFactoryInterface
         510 => 'Not Extended',
         511 => 'Network Authentication Required',
     );
+    /**
+     * @var ViewFactoryInterface
+     */
+    private $viewFactory;
 
     /**
      * ResponseFactory constructor.
-     * @param Container $container
+     * @param ViewFactoryInterface $viewFactory
      */
-    public function __construct(Container $container)
+    public function __construct(ViewFactoryInterface $viewFactory)
     {
-        $this->container = $container;
+        $this->viewFactory = $viewFactory;
     }
 
     /**
      * Create a new html response.
-     * @param string $content
+     * @param string $viewName
+     * @param array $data
      * @param int $status
      * @param array $headers
      * @return ResponseInterface
      */
-    public function html(string $content, int $status = 200, array $headers = []): ResponseInterface
+    public function html(string $viewName, array $data = [], int $status = 200, array $headers = []): ResponseInterface
     {
-        return new Response($content, $headers, $status);
+        $view = $this->viewFactory->view($viewName);
+        $response = new HtmlResponse($view, $data);
+        $response->status($status);
+        $response->header($headers);
+
+        return $response;
     }
 
     /**
@@ -114,11 +118,11 @@ class ResponseFactory implements ResponseFactoryInterface
      * @param int $options
      * @return ResponseInterface
      */
-    public function json(array $data = [], int $status = 200, array $headers = [], $options = 0): ResponseInterface
+    public function json(array $data = [], int $status = 200, array $headers = []): ResponseInterface
     {
-        $content = \json_encode($data, $options);
-        $response = (new Response($content, $headers, $status))
-            ->header('Content-Type', 'application/json');
+        $response = new JsonResponse($data);
+        $response->status($status);
+        $response->header($headers);
 
         return $response;
     }
@@ -128,79 +132,66 @@ class ResponseFactory implements ResponseFactoryInterface
      * @param string $filename
      * @param string $name
      * @param array $headers
-     * @param string $disposition
      * @return ResponseInterface
      */
-    public function download(string $filename, string $name = null, array $headers = [], $disposition = 'attachment'): ResponseInterface
+    public function download(string $filename, string $name = null, array $headers = []): ResponseInterface
     {
-        $content = \file_get_contents($filename);
-        $mimeType = \mime_content_type($filename);
-        $name = $name ? $name : \basename($filename);
-
-        $response = (new Response($content, $headers))
-            ->header('Content-Type', $mimeType)
-            ->header('Content-disposition', 'attachment; filename="' . $name . '"');
+        $response = new DownloadResponse($filename, $name);
+        $response->header($headers);
 
         return $response;
     }
 
+    /**
+     * Create a new redirection response.
+     * @param string $path
+     * @param int $status
+     * @param array $headers
+     * @return ResponseInterface
+     */
     public function redirect(string $path, int $status = 302, array $headers = []): ResponseInterface
     {
-        $response = (new Response())
-            ->status($status)
-            ->header('Location', $path)
-            ->header('Connection', 'close');
+        $response = new RedirectResponse($path);
+        $response->status($status);
+        $response->header($headers);
 
         return $response;
     }
-
 
     /**
      * Create a new error response.
      * @param int $status
-     * @param string|array $messages
+     * @param string $message
      * @param array $headers
      * @return ResponseInterface
      */
-    public function error(int $status, $messages = [], array $headers = []): ResponseInterface
+    public function error(int $status, string $message = null, array $headers = []): ResponseInterface
     {
-        $messages = \is_string($messages) ? [$messages] : $messages;
+        $message = $message ?? $status . " " . $this->statusTexts[$status];
 
         $data = [
             'title' => $status . ' ' . $this->statusTexts[$status],
-            'messages' => $messages ?: [$status . " " . $this->statusTexts[$status]]
+            'message' => $message
         ];
 
-        $content = $this->container
-                ->get('view')
-                ->render('base.wide-message', $data);
-
-        return new Response($content, $headers, $status);
+        return $this->html('base.wide-message', $data, $status, $headers);
     }
 
     /**
-     * Create a new whoops response.
+     * Create a new jsonError response.
      * @param int $status
-     * @param string|null $content
+     * @param string $message
      * @param array $headers
      * @return ResponseInterface
      */
-    public function whoops(string $text = null, int $status = 200, array $headers = []): ResponseInterface
+    public function jsonError(int $status, string $message = null, array $headers = []): ResponseInterface
     {
-        $content = $this->container
-            ->get('view')
-            ->render('base.whoops', [
-                'title' => 'Whoops!',
-                'text' => $text ?: text('base.whoops')
-            ]);
+        $message = $message ?? $status . " " . $this->statusTexts[$status];
 
-        return new Response($content, $headers, $status);
-    }
+        $data = [
+            'message' => $message
+        ];
 
-    /*
-    public function redirectToRoute($route, $parameters = [], $status = 302, $headers = []): ResponseInterface
-    {
-        // TODO: Implement redirectToRoute() method.
+        return $this->json($data, $status, $headers);
     }
-    */
 }

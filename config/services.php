@@ -14,6 +14,8 @@ use Core\Session\SessionManager;
 use Core\Validation\Validator;
 use Core\View\TwigView;
 
+use Core\View\TwigViewFactory;
+use Intranet\Http\Controllers\DashboardController;
 use Intranet\Http\Controllers\LoginController;
 use Intranet\Http\Controllers\UserController;
 use Intranet\Http\Middleware\Csrf as CsrfMiddleware;
@@ -56,13 +58,15 @@ $container->register('router', \Core\Routing\Router::class)
 
 // responses
 $container->register('response', \Core\Http\ResponseFactory::class)
-    ->addArgument(new SR('container'));
+    ->addArgument(new SR('view'));
 
 
 // view
-$container->register('view', TwigView::class)
-    ->addArgument(new SR('language'))
-    ->addArgument(path('views'));
+$container->register('view', TwigViewFactory::class)
+    ->addArgument(path('views'))
+    ->addCall('registerFunction', ['_text', [new SR('language'), 'get']])
+    ->addCall('registerFunction', ['_config', [new SR('config'), 'get']])
+    ->addCall('registerFunction', ['_token', [new SR('csrf'), 'token']]);
 
 
 // language
@@ -139,3 +143,5 @@ $container->register('UserController', UserController::class)
 $container->register('LoginController', LoginController::class)
     ->addArgument(new SR('repository.user'))
     ->addArgument(new SR('auth'));
+
+$container->register('DashboardController', DashboardController::class);

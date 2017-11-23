@@ -7,3 +7,8 @@ function csrf_token()
 {
     return app('csrf')->token();
 }
+
+function auth()
+{
+    return app('auth');
+}

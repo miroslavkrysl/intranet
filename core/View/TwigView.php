@@ -4,12 +4,7 @@
 namespace Core\View;
 
 
-use Core\Container\Container;
-use Core\Contracts\Language\LanguageInterface;
 use Core\Contracts\View\ViewInterface;
-use Twig_Environment;
-use Twig_Extension_Debug;
-use Twig_Loader_Filesystem;
 
 
 /**
@@ -18,49 +13,26 @@ use Twig_Loader_Filesystem;
 class TwigView implements ViewInterface
 {
     /**
-     * @var Twig_Environment
+     * @var \Twig_TemplateWrapper
      */
-    private $twigEnv;
-    /**
-     * @var LanguageInterface
-     */
-    private $language;
+    private $templateWrapper;
 
     /**
      * TwigView constructor.
-     * @param LanguageInterface $language
-     * @param string $viewsFolderPath
+     * @param \Twig_TemplateWrapper $templateWrapper
      */
-    public function __construct(LanguageInterface $language, string $viewsFolderPath)
+    public function __construct(\Twig_TemplateWrapper $templateWrapper)
     {
-        $this->language = $language;
-
-        $loader = new Twig_Loader_Filesystem($viewsFolderPath);
-        $this->twigEnv = new Twig_Environment($loader);
-
-        $this->registerFunctions();
+        $this->templateWrapper = $templateWrapper;
     }
 
     /**
-     * Find the specified view, push the data to the view and return result.
-     * @param string $name
+     * Render the view with given data.
      * @param array $data
      * @return string
      */
-    public function render(string $name, array $data = []): string
+    public function render(array $data = []): string
     {
-        $name = \preg_replace('/\./', '/', $name);
-        $name .= '.twig';
-        return $this->twigEnv->render($name, $data);
-    }
-
-    /**
-     * Register function for using them in templates.
-     */
-    private function registerFunctions()
-    {
-        $this->twigEnv->addFunction(new \Twig_Function('_text', [$this->language, 'get']));
-        $this->twigEnv->addFunction(new \Twig_Function('_config', 'config'));
-        $this->twigEnv->addFunction(new \Twig_Function('_token', 'csrf_token'));
+        return $this->templateWrapper->render($data);
     }
 }

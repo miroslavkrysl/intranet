@@ -8,11 +8,13 @@ interface ResponseFactoryInterface
 {
     /**
      * Create a new html response.
-     * @param string $content
+     * @param string $viewName
+     * @param array $data
      * @param int $status
      * @param array $headers
+     * @return ResponseInterface
      */
-    public function html(string $content, int $status = 200, array $headers = []): ResponseInterface;
+    public function html(string $viewName, array $data = [], int $status = 200, array $headers = []): ResponseInterface;
 
     /**
      * Create a new json response.
@@ -22,17 +24,16 @@ interface ResponseFactoryInterface
      * @param int $options
      * @return ResponseInterface
      */
-    public function json(array $data = [], int $status = 200, array $headers = [], $options = 0): ResponseInterface;
+    public function json(array $data = [], int $status = 200, array $headers = []): ResponseInterface;
 
     /**
      * Create a new file download response.
      * @param string $filename
      * @param string $name
      * @param array $headers
-     * @param string $disposition
      * @return ResponseInterface
      */
-    public function download(string $filename, string $name = null, array $headers = [], $disposition = 'attachment'): ResponseInterface;
+    public function download(string $filename, string $name = null, array $headers = []): ResponseInterface;
 
     /**
      * Create a new redirection response.
@@ -46,21 +47,20 @@ interface ResponseFactoryInterface
     /**
      * Create a new error response.
      * @param int $status
-     * @param string|array $messages
+     * @param string $message
      * @param array $headers
      * @return ResponseInterface
-     * @internal param null|string $content
      */
-    public function error(int $status, $messages = [], array $headers = []): ResponseInterface;
+    public function error(int $status, string $message = null, array $headers = []): ResponseInterface;
 
     /**
-     * Create a new whoops response.
-     * @param string $text
+     * Create a new jsonError response.
      * @param int $status
+     * @param string $message
      * @param array $headers
      * @return ResponseInterface
      */
-    public function whoops(string $text = null, int $status = 200, array $headers = []): ResponseInterface;
+    public function jsonError(int $status, string $message = null, array $headers = []): ResponseInterface;
 
     // TODO: redirection to route
     //public function redirectToRoute($route, $parameters = [], $status = 302, $headers = []): ResponseFactoryInterface;

@@ -5,15 +5,14 @@ namespace Core\Contracts\View;
 
 
 /**
- * Interface for view maker.
+ * Interface for the view.
  */
 interface ViewInterface
 {
     /**
-     * Find the specified view, push the data to the view and return result.
-     * @param string $name
+     * Render the view with given data.
      * @param array $data
      * @return string
      */
-    public function render(string $name, array $data = []): string;
+    public function render(array $data = []): string;
 }
