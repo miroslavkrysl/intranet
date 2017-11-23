@@ -7,7 +7,7 @@ var tildeImporter = require('node-sass-tilde-importer');
 
 var scripts = [
     'node_modules/jquery/dist/jquery.min.js',
-    'node_modules/bootstrap-v4-dev/dist/js/bootstrap.min.js',
+    'node_modules/bootstrap/dist/js/bootstrap.min.js',
     'resources/assets/js/*.js'
 ];
 

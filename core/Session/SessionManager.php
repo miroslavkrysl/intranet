@@ -59,7 +59,7 @@ class SessionManager implements SessionManagerInterface
      */
     public function unset(string $key)
     {
-        $this->unset($_SESSION[$key]);
+        unset($_SESSION[$key]);
     }
 
 

@@ -93,6 +93,7 @@ class Validator implements ValidatorInterface
 
                 // snake_case to camelCase
                 $method = \lcfirst(\implode('', \array_map('ucfirst', \explode('_', $rule))));
+                $fieldCC = \lcfirst(\implode('', \array_map('ucfirst', \explode('_', $field))));
 
                 if (!\method_exists($this, $method)) {
                     throw new ValidatorException(\sprintf('Validation rule %s does not exist.', $method));
@@ -100,7 +101,7 @@ class Validator implements ValidatorInterface
 
                 $reflectionMethod = new \ReflectionMethod($this, $method);
 
-                $params['value'] = $entity->$field ?? null;
+                $params['value'] = $entity->$field ?? $entity->$fieldCC ??  null;
                 $args = [];
 
                 foreach ($reflectionMethod->getParameters() as $parameter) {

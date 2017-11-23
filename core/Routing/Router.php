@@ -171,8 +171,8 @@ class Router implements RouterInterface
 
             $result = \call_user_func_array(array($instance, $method), $parameters);
 
-            if (!$result) {
-                return $instance->getResponse() ?: $this->container->get('response')->whoops();
+            if ($result) {
+                return $result;
             }
         }
 

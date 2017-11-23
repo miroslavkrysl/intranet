@@ -167,7 +167,7 @@ class ResponseFactory implements ResponseFactoryInterface
         $messages = \is_string($messages) ? [$messages] : $messages;
 
         $data = [
-            'title' => [$status . ' ' . $this->statusTexts[$status]],
+            'title' => $status . ' ' . $this->statusTexts[$status],
             'messages' => $messages ?: [$status . " " . $this->statusTexts[$status]]
         ];
 

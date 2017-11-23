@@ -1,9 +1,6 @@
 {% extends "layouts/base.twig" %}
 
 {% block body %}
-    {% for message in app_messages %}
-        {{ include('components/message.twig') }}
-    {% endfor %}
 
     <div class="container">
         {% block content %}

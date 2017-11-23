@@ -5,6 +5,7 @@ namespace Core\View;
 
 
 use Core\Container\Container;
+use Core\Contracts\Language\LanguageInterface;
 use Core\Contracts\View\ViewInterface;
 use Twig_Environment;
 use Twig_Extension_Debug;
@@ -20,19 +21,20 @@ class TwigView implements ViewInterface
      * @var Twig_Environment
      */
     private $twigEnv;
-
     /**
-     * Global container instance.
-     * @var Container
+     * @var LanguageInterface
      */
-    private $container;
+    private $language;
 
     /**
      * TwigView constructor.
+     * @param LanguageInterface $language
+     * @param string $viewsFolderPath
      */
-    public function __construct(Container $container, string $viewsFolderPath)
+    public function __construct(LanguageInterface $language, string $viewsFolderPath)
     {
-        $this->container = $container;
+        $this->language = $language;
+
         $loader = new Twig_Loader_Filesystem($viewsFolderPath);
         $this->twigEnv = new Twig_Environment($loader);
 
@@ -57,7 +59,7 @@ class TwigView implements ViewInterface
      */
     private function registerFunctions()
     {
-        $this->twigEnv->addFunction(new \Twig_Function('_text', 'text'));
+        $this->twigEnv->addFunction(new \Twig_Function('_text', [$this->language, 'get']));
         $this->twigEnv->addFunction(new \Twig_Function('_config', 'config'));
         $this->twigEnv->addFunction(new \Twig_Function('_token', 'csrf_token'));
     }

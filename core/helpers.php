@@ -116,7 +116,7 @@ function response($data = null, int $status = 200, $headers = [])
  * Render the view, or get the view service instance.
  * @param string $key
  * @param mixed $default
- * @return ResponseInterface|ViewInterface
+ * @return string|ViewInterface
  */
 function view(string $name = null, $data = [])
 {

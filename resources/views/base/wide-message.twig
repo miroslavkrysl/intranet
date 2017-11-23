@@ -12,4 +12,8 @@
         {% endfor %}
     {% endif %}
 
+    {% if message is defined %}
+        <p class="lead text-center m-5">{{ message }}</p>
+    {% endif %}
+
 {% endblock %}

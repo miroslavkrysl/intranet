@@ -104,9 +104,9 @@ class PDOWrapper implements DatabaseInterface
 
     /**
      * Get first row from last result set as an array indexed by column name.
-     * @return array Associative array containing result row
+     * @return array|false Associative array containing result row. False on failure
      */
-    public function fetch(): array
+    public function fetch()
     {
         return $this->statement ? $this->statement->fetch() : null;
     }
@@ -127,5 +127,14 @@ class PDOWrapper implements DatabaseInterface
     public function count(): int
     {
         return $this->statement ? $this->statement->rowCount() : 0;
+    }
+
+    /**
+     * Get id of the last inserted record.
+     * @return mixed
+     */
+    public function lastInsertId()
+    {
+        return $this->connection->lastInsertId();
     }
 }

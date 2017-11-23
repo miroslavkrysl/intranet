@@ -28,7 +28,7 @@ interface CookieManagerInterface
      * @param string $key
      * @return bool
      */
-    public function isset(string $key): bool;
+    public function has(string $key): bool;
 
     /**
      * Unset specified cookie.

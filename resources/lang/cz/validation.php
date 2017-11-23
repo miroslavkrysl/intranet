@@ -1,11 +1,11 @@
 <?php
 return [
-    'minLength' => [
+    'min_length' => [
         '1' => ':Field musí mít alespoň :min znak.',
         '2-4' => ':Field musí mít alespoň :min znaky.',
         '5-*' => ':Field musí mít alespoň :min znaků.'
     ],
-    'maxLength' => [
+    'max_length' => [
         '1' => ':Field může mít maximálně :max znak.',
         '2-4' => ':Field může mít maximálně :max znaky.',
         '5-*' => ':Field může mít maximálně :max znaků.'

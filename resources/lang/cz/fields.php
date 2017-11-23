@@ -1,6 +1,6 @@
 <?php
 return [
-    'username' => 'uživatel',
+    'username' => 'uživatelské jméno',
     'email' => 'e-mail',
     'password' => 'heslo'
 ];

@@ -33,7 +33,7 @@ class CookieManager implements CookieManagerInterface
      */
     public function get(string $key)
     {
-        if (!$this->isset($key)) {
+        if (!$this->($key)) {
             throw new CookieNotExistsException('Cookie ' . $key . ' does not exist.');
         }
         return $_COOKIE[$key];
@@ -44,9 +44,9 @@ class CookieManager implements CookieManagerInterface
      * @param string $key
      * @return bool
      */
-    public function isset(string $key): bool
+    public function has(string $key): bool
     {
-        return $this->isset($_COOKIE[$key]);
+        return isset($_COOKIE[$key]);
     }
 
     /**
@@ -55,6 +55,6 @@ class CookieManager implements CookieManagerInterface
      */
     public function unset(string $key)
     {
-        $this->unset($_COOKIE[$key]);
+        unset($_COOKIE[$key]);
     }
 }
