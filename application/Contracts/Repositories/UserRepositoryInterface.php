@@ -10,13 +10,6 @@ namespace Intranet\Contracts\Repositories;
 interface UserRepositoryInterface
 {
     /**
-     * Find user by id.
-     * @param int $id
-     * @return array|null
-     */
-    public function findById(int $id);
-
-    /**
      * Find user by username.
      * @param string $username
      * @return array|null
@@ -39,10 +32,20 @@ interface UserRepositoryInterface
 
     /**
      * Delete the user from database.
-     * @param int $userId
-     * @return int
+     * @param string $username
+     * @return bool
      */
-    public function delete(int $userId): bool;
+    public function delete(string $username): bool;
+
+    /**
+     * Find all users.
+     * @param int $limit
+     * @param int $offset
+     * @param string|null $sortBy
+     * @param bool $des
+     * @return array
+     */
+    public function findAll(int $limit = null, int $offset = null, string $sortBy = null, bool $des = false): array;
 
     /**
      * Verify the user's password.

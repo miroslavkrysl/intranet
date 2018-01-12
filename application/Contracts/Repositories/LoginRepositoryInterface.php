@@ -17,29 +17,30 @@ interface LoginRepositoryInterface
     public function findById(int $id);
 
     /**
-     * Find login by userId.
-     * @param int $userId
+     * Find login by username.
+     * @param string $username
      * @return array|null
      */
-    public function findByUserId(int $userId);
+    public function findByUsername(string $username);
 
     /**
      * Save login to database.
      * @param array $login
-     * @return mixed
+     * @return bool
      */
     public function save(array $login);
 
     /**
      * Delete the login from the database.
-     * @param int $loginId
-     * @return int
+     * @param int $id
+     * @return bool
      */
-    public function delete(int $loginId): bool;
+    public function delete(int $id): bool;
 
     /**
      * Delete all logins older than $days.
      * @param int $days
+     * @return int Number of deleted logins
      */
-    public function deleteOlder(int $days);
+    public function deleteOlder(int $days): int;
 }
