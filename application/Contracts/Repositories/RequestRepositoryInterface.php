@@ -14,6 +14,18 @@ interface RequestRepositoryInterface
     public function findById(int $id);
 
     /**
+     * Find requests by username.
+     * @param string $username
+     * @param array|null $orderBy
+     * @param bool $desc
+     * @param int|null $limit
+     * @param int|null $offset
+     * @return array
+     */
+    public function findByUsername(string $username, array $orderBy = null, bool $desc = false, int $limit = null, int $offset = null): array ;
+
+
+    /**
      * Find requests by car name.
      * @param string $name
      * @param array|null $orderBy

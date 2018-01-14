@@ -14,6 +14,16 @@ interface CarRepositoryInterface
     public function findByName(string $name);
 
     /**
+     * Find all cars.
+     * @param array|null $orderBy
+     * @param bool $desc
+     * @param int|null $limit
+     * @param int|null $offset
+     * @return array
+     */
+    public function findAll(array $orderBy = null, bool $desc = false, int $limit = null, int $offset = null): array;
+
+    /**
      * Save car to database.
      * @param array $car
      * @return boolean
@@ -26,14 +36,4 @@ interface CarRepositoryInterface
      * @return bool
      */
     public function delete(string $name): bool;
-
-    /**
-     * Find all cars.
-     * @param int $limit
-     * @param int $offset
-     * @param string|null $sortBy
-     * @param bool $des
-     * @return array
-     */
-    public function findAll(int $limit = null, int $offset = null, string $sortBy = null, bool $des = false): array;
 }

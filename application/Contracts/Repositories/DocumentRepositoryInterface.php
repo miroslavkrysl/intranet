@@ -14,11 +14,25 @@ interface DocumentRepositoryInterface
     public function findById(int $id);
 
     /**
-     * Find document by username.
+     * Find documents by username.
      * @param string $username
-     * @return array|null
+     * @param array|null $orderBy
+     * @param bool $desc
+     * @param int|null $limit
+     * @param int|null $offset
+     * @return array
      */
-    public function findByUsername(string $username);
+    public function findByUsername(string $username, array $orderBy = null, bool $desc = false, int $limit = null, int $offset = null): array ;
+
+    /**
+     * Find all documents.
+     * @param array|null $orderBy
+     * @param bool $desc
+     * @param int|null $limit
+     * @param int|null $offset
+     * @return array
+     */
+    public function findAll(array $orderBy = null, bool $desc = false, int $limit = null, int $offset = null): array;
 
     /**
      * Save document to database.
@@ -33,14 +47,4 @@ interface DocumentRepositoryInterface
      * @return bool
      */
     public function delete(int $id): bool;
-
-    /**
-     * Find all documents.
-     * @param int $limit
-     * @param int $offset
-     * @param string|null $sortBy
-     * @param bool $des
-     * @return array
-     */
-    public function findAll(int $limit = null, int $offset = null, string $sortBy = null, bool $des = false): array;
 }

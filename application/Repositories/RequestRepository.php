@@ -51,6 +51,39 @@ class RequestRepository implements RequestRepositoryInterface
     }
 
     /**
+     * Find requests by username.
+     * @param string $username
+     * @param array|null $orderBy
+     * @param bool $desc
+     * @param int|null $limit
+     * @param int|null $offset
+     * @return array
+     */
+    public function findByUsername(string $username, array $orderBy = null, bool $desc = false, int $limit = null, int $offset = null): array
+    {
+        $query =
+            "SELECT * ".
+            "FROM $this->table ".
+            "WHERE user_username = :user_username ".
+            ($orderBy == null ? "" : "ORDER BY :order_by ").
+            ($desc ? "DESC " : "").
+            ($limit == null ? "" : "LIMIT :limit ").
+            ($offset == null ? "" : "OFFSET :offset ").
+            ";";
+        \var_dump($query);
+
+        $params = [
+            'order_by' => \implode(", ", $orderBy),
+            'limit' => $limit,
+            'offset' => $offset,
+            'user_username' => $username
+        ];
+
+        $this->database->execute($query, $params);
+        return $this->database->fetchAll() ?? [];
+    }
+
+    /**
      * Find requests by car name.
      * @param string $name
      * @param array|null $orderBy
