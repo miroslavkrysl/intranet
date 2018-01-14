@@ -145,4 +145,12 @@ interface ValidatorInterface
      * @return bool
      */
     public function exists($value, string $table, string $column): bool;
+
+    /**
+     * Check whether the values are equal.
+     * @param $value
+     * @param string $pattern
+     * @return bool
+     */
+    public function equals($value, string $pattern): bool;
 }

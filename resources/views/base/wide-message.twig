@@ -1,19 +1,33 @@
-{% extends "layouts/app.twig" %}
+{% extends "layouts/base.twig" %}
 
-{% block content %}
+{% block body %}
 
     {% if heading is defined %}
         <h1>{{ heading }}</h1>
     {% endif %}
 
-    {% if messages is defined %}
-        {% for message in messages %}
-            <p class="lead text-center m-5">{{ message }}</p>
-        {% endfor %}
-    {% endif %}
+    {% if messages is defined and messages is iterable %}
 
-    {% if message is defined %}
-        <p class="lead text-center m-5">{{ message }}</p>
+        {% for message in messages %}
+
+            {% if message is iterable %}
+
+                {% for m in message %}
+                    <p class="lead text-center m-5">{{ m }}</p>
+                {% endfor %}
+
+            {% else %}
+
+                <p class="lead text-center m-5">{{ message }}</p>
+
+            {% endif %}
+
+        {% endfor %}
+
+    {% elseif messages is defined %}
+
+        <p class="lead text-center m-5">{{ messages }}</p>
+
     {% endif %}
 
 {% endblock %}

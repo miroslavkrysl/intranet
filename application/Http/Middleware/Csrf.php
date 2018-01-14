@@ -43,7 +43,7 @@ class Csrf
             return null;
         }
 
-        $response = $request->ajax() ?
+        $response = $request->json() ?
             \jsonError(401, \text('csrf.inactive')) :
             \error(401, \text('csrf.inactive'));
 

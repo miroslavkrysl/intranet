@@ -161,17 +161,17 @@ class ResponseFactory implements ResponseFactoryInterface
     /**
      * Create a new error response.
      * @param int $status
-     * @param string $message
+     * @param string|array $errors
      * @param array $headers
      * @return ResponseInterface
      */
-    public function error(int $status, string $message = null, array $headers = []): ResponseInterface
+    public function error(int $status, $errors = null, array $headers = []): ResponseInterface
     {
-        $message = $message ?? $status . " " . $this->statusTexts[$status];
+        $errors = $errors ?? $status . " " . $this->statusTexts[$status];
 
         $data = [
             'title' => $status . ' ' . $this->statusTexts[$status],
-            'message' => $message
+            'messages' => $errors
         ];
 
         return $this->html('base.wide-message', $data, $status, $headers);
@@ -180,16 +180,16 @@ class ResponseFactory implements ResponseFactoryInterface
     /**
      * Create a new jsonError response.
      * @param int $status
-     * @param string $message
+     * @param string|array|null $message
      * @param array $headers
      * @return ResponseInterface
      */
-    public function jsonError(int $status, string $message = null, array $headers = []): ResponseInterface
+    public function jsonError(int $status, $errors = null, array $headers = []): ResponseInterface
     {
-        $message = $message ?? $status . " " . $this->statusTexts[$status];
+        $errors = $errors ?? $status . " " . $this->statusTexts[$status];
 
         $data = [
-            'message' => $message
+            'errors' => $errors
         ];
 
         return $this->json($data, $status, $headers);

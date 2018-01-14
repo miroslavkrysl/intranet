@@ -8,6 +8,9 @@
 
     <div class="navbar-nav flex-row">
         <a class="nav-item active nav-link px-2 px-sm-3" href="/">{{ _text('app.home')|capitalize }}</a>
+        {% if _user.canManageUsers(_auth.user().username) %}
+            <a class="nav-item nav-link px-2 px-sm-3" href="/users">{{ _text('app.users')|capitalize }}</a>
+        {% endif %}
         <a class="nav-item nav-link px-2 px-sm-3" href="/documents">{{ _text('app.documents')|capitalize }}</a>
         <a class="nav-item nav-link px-2 px-sm-3" href="/requests">{{ _text('app.requests')|capitalize }}</a>
     </div>
@@ -16,10 +19,10 @@
         <div class="nav-item dropdown">
             <button class="btn btn-outline-primary dropdown-toggle" href="#" data-toggle="dropdown">
                 <i class="fa fa-user-circle" aria-hidden="true"></i>
-                {{ _auth().user().username }}
+                {{ _auth.user().username }}
             </button>
             <div class="dropdown-menu dropdown-menu-right">
-                <a class="dropdown-item" href="/uzivatel/nastaveni">
+                <a class="dropdown-item" href="/user/settings">
                     <i class="fa fa-cog" aria-hidden="true"></i>
                     {{ _text('app.settings')|capitalize }}
                 </a>
@@ -37,7 +40,7 @@
 
     <button class="btn btn-outline-primary dropdown-toggle d-lg-none my-3" type="button" data-toggle="collapse" data-target="#nav-user-menu" aria-expanded="false" aria-controls="collapseExample">
         <i class="fa fa-user-circle" aria-hidden="true"></i>
-        {{ _auth().user().username }}
+        {{ _auth.user().username }}
     </button>
 
     <div class="collapse w-100 d-lg-none" id="nav-user-menu">

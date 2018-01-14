@@ -8,10 +8,10 @@ use Intranet\Services\Auth\Auth;
 
 
 /**
- * Redirect non-logged users to login page.
+ * Restrict access according to permissions.
  * @package Intranet\Http\Middleware
  */
-class RedirectNonLogged
+class RestrictAccess
 {
     /**
      * @var Auth
@@ -32,7 +32,7 @@ class RedirectNonLogged
      * @param RequestInterface $request
      * @return ResponseInterface|null
      */
-    public function before(RequestInterface $request)
+    public function before(RequestInterface $request, array $permissions)
     {
         if (!$this->auth->isLogged()){
             return \redirect('/login');

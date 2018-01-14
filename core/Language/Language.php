@@ -116,7 +116,7 @@ class Language implements LanguageInterface
 
         if (\is_array($translation)) {
             if (\is_null($count)) {
-                throw new LanguageException(\sprintf('In translation %s you must define count.'), $key);
+                throw new LanguageException(\sprintf('In translation %s you must define count.', $key));
             }
 
             $translation = $this->selectByCount($translation, $count);

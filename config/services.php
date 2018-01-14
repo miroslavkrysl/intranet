@@ -21,7 +21,7 @@ use Intranet\Http\Controllers\LoginController;
 use Intranet\Http\Controllers\RequestController;
 use Intranet\Http\Controllers\UserController;
 use Intranet\Http\Middleware\Csrf as CsrfMiddleware;
-use Intranet\Http\Middleware\RedirectNonLogged;
+use Intranet\Http\Middleware\RestrictToLogged;
 use Intranet\Repositories\LoginRepository;
 use Intranet\Repositories\UserRepository;
 use Intranet\Services\Auth\Auth;
@@ -70,8 +70,9 @@ $container->register('view', TwigViewFactory::class)
     ->addCall('registerFunction', ['_text', [new SR('language'), 'get']])
     ->addCall('registerFunction', ['_config', [new SR('config'), 'get']])
     ->addCall('registerFunction', ['_token', [new SR('csrf'), 'token']])
-    ->addCall('registerFunction', ['_auth', new SR('auth')])
-    ->addCall('registerFunction', ['_copyright', 'copyright']);
+    ->addCall('registerFunction', ['_copyright', 'copyright'])
+    ->addCall('registerGlobal', ['_auth', new SR('auth')])
+    ->addCall('registerGlobal', ['_user', new SR('repository.user')]);
 
 
 // language
@@ -129,7 +130,7 @@ $container->register('auth', Auth::class)
 $container->register('middleware.csrf', CsrfMiddleware::class)
     ->addArgument(new SR('csrf'));
 
-$container->register('middleware.redirectNonLogged', RedirectNonLogged::class)
+$container->register('middleware.RestrictToLogged', RestrictToLogged::class)
     ->addArgument(new SR('auth'));
 
 
@@ -145,20 +146,34 @@ $container->register('repository.login', LoginRepository::class)
     ->addArgument(new SR('database'))
     ->addArgument(config('database.tables.login'));
 
+$container->register('repository.request', LoginRepository::class)
+    ->addArgument(new SR('database'))
+    ->addArgument(config('database.tables.request'));
+
+$container->register('repository.document', LoginRepository::class)
+    ->addArgument(new SR('database'))
+    ->addArgument(config('database.tables.document'));
+
+$container->register('repository.car', LoginRepository::class)
+    ->addArgument(new SR('database'))
+    ->addArgument(config('database.tables.car'));
+
 
 // controllers
 
-$container->register('UserController', UserController::class)
-    ->addArgument(new SR('repository.user'))
-    ->addArgument(new SR('auth'));
+$container->register('DashboardController', DashboardController::class)
+    ->addArgument(new SR('repository.user'));
 
 $container->register('LoginController', LoginController::class)
     ->addArgument(new SR('repository.user'))
     ->addArgument(new SR('auth'));
 
-$container->register('DashboardController', DashboardController::class)
-    ->addArgument(new SR('repository.user'));
+$container->register('UserController', UserController::class)
+    ->addArgument(new SR('repository.user'))
+    ->addArgument(new SR('auth'));
 
-$container->register('RequestController', RequestController::class);
+//$container->register('RequestController', RequestController::class);
 
-$container->register('DocumentController', DocumentController::class);
+//$container->register('DocumentController', DocumentController::class);
+
+//$container->register('CarController', CarController::class);

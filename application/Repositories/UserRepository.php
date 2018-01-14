@@ -114,9 +114,9 @@ class UserRepository implements UserRepositoryInterface
     /**
      * Save user to database.
      * @param array $user
-     * @return bool
+     * @return array User
      */
-    public function save(array $user): bool
+    public function save(array $user): array
     {
 
         $query =
@@ -146,7 +146,7 @@ class UserRepository implements UserRepositoryInterface
 
         $this->database->execute($query, $params);
 
-        return $this->database->count() > 0;
+        return $user;
     }
 
     /**

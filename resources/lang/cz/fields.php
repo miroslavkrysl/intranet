@@ -2,5 +2,8 @@
 return [
     'username' => 'uživatelské jméno',
     'email' => 'e-mail',
-    'password' => 'heslo'
+    'password' => 'heslo',
+    'name' => 'jméno',
+    'role' => 'role',
+    'token' => 'kontrolní token'
 ];

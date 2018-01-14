@@ -28,16 +28,16 @@ interface RouteInterface
     public function action();
 
     /**
-     * Set route to accept only ajax requests.
+     * Set route to accept only json requests.
      * @return self
      */
-    public function ajaxOnly();
+    public function jsonOnly();
 
     /**
      * Check if the route accepts only ajax requests.
      * @return bool
      */
-    public function isAjaxOnly(): bool;
+    public function isJsonOnly(): bool;
 
     /**
      * Check if the route matches given request.

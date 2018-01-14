@@ -79,6 +79,7 @@ class Validator implements ValidatorInterface
      */
     public function validate($entity, array $rules): bool
     {
+        $this->errors = [];
         $valid = true;
 
         foreach ($rules as $field => $fieldRules) {
@@ -119,7 +120,11 @@ class Validator implements ValidatorInterface
 
                     $this->errors[$field][$rule] =
                         $params['message'] ??
-                        $this->language->get($this->langPrefixMessages . '.' . $method, $args);
+                        $this->language->get($this->langPrefixMessages . '.' . $rule, $args, $args['min'] ?? $args['max'] ?? null);
+
+                    if ($rule == 'required') {
+                        break;
+                    }
                 }
             }
         }
@@ -274,7 +279,7 @@ class Validator implements ValidatorInterface
      */
     public function minLength($value, int $min): bool
     {
-        return \count($value) >= $min;
+        return \strlen($value) >= $min;
     }
 
     /**
@@ -285,7 +290,7 @@ class Validator implements ValidatorInterface
      */
     public function maxLength($value, int $max): bool
     {
-        return \count($value) <= $max;
+        return \strlen($value) <= $max;
     }
 
     /**
@@ -296,7 +301,7 @@ class Validator implements ValidatorInterface
      */
     public function regex($value, string $pattern): bool
     {
-        return \preg_match($value, $pattern);
+        return \preg_match($pattern, $value);
     }
 
     /**
@@ -316,5 +321,16 @@ class Validator implements ValidatorInterface
         ];
         $this->database->execute($query, $params);
         return $this->database->count() > 0;
+    }
+
+    /**
+     * Check whether the values are equal.
+     * @param $value
+     * @param string $pattern
+     * @return bool
+     */
+    public function equals($value, string $pattern): bool
+    {
+        return $value == $pattern;
     }
 }

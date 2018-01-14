@@ -36,9 +36,9 @@ interface UserRepositoryInterface
     /**
      * Save user to database.
      * @param array $user
-     * @return bool
+     * @return array User
      */
-    public function save(array $user): bool;
+    public function save(array $user): array;
 
     /**
      * Delete the user from database.

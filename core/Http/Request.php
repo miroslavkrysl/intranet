@@ -16,10 +16,29 @@ use Core\Validation\Validator;
  */
 class Request implements RequestInterface
 {
-    private $ajax;
+    /**
+     * @var bool
+     */
+    private $json;
+
+    /**
+     * @var string
+     */
     private $method;
+
+    /**
+     * @var string
+     */
     private $uri;
+
+    /**
+     * @var string
+     */
     private $query;
+
+    /**
+     * @var string
+     */
     private $fragment;
 
     /**
@@ -76,8 +95,7 @@ class Request implements RequestInterface
      */
     public function createFromGlobals()
     {
-        $this->ajax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) &&
-            strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
+        $this->json = \in_array('application/json', \explode(',', \explode(';', $_SERVER['HTTP_ACCEPT'])[0]));
 
         $this->method = \strtolower($_SERVER['REQUEST_METHOD']);
 
@@ -91,12 +109,12 @@ class Request implements RequestInterface
     }
 
     /**
-     * Returns true if the request is send by ajax.
+     * Returns true if the request accept json.
      * @return bool
      */
-    public function ajax(): bool
+    public function json(): bool
     {
-        return $this->ajax;
+        return $this->json;
     }
 
     /**
@@ -145,7 +163,7 @@ class Request implements RequestInterface
         if (\is_null($key)) {
             return $this->get->get();
         }
-        return $this->get->has($key) ? $this->get->get('') : null;
+        return $this->get->has($key) ? $this->get->get($key) : null;
     }
 
     /**
@@ -211,7 +229,7 @@ class Request implements RequestInterface
      */
     public function __get($name)
     {
-        return $this->post($name) ?? $this->route()->parameter($name);
+        return $this->post($name) ?? $this->get($name) ?? $this->route()->parameter($name);
     }
 
     /**

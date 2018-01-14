@@ -43,10 +43,18 @@ class TwigViewFactory implements ViewFactoryInterface
     }
 
     /**
-     * Register function for using them in templates.
+     * Register function for using it in templates.
      */
     public function registerFunction(string $alias, callable $function)
     {
         $this->twigEnv->addFunction(new \Twig_Function($alias, $function));
+    }
+
+    /**
+     * Register global for using it in templates.
+     */
+    public function registerGlobal(string $alias, $global)
+    {
+        $this->twigEnv->addGlobal($alias, $global);
     }
 }

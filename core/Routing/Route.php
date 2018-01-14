@@ -51,10 +51,10 @@ class Route implements RouteInterface
     private $controllerMethod;
 
     /**
-     * True if route accepts only ajax requests.
+     * True if route accepts only json requests.
      * @var bool
      */
-    private $onlyAjax;
+    private $onlyJson;
 
     /**
      * Route middleware.
@@ -89,7 +89,7 @@ class Route implements RouteInterface
         $this->pattern = $this->makePattern($uri);
         $this->action = $action;
         $this->parseAction($action);
-        $this->onlyAjax = false;
+        $this->onlyJson = false;
     }
 
     /**
@@ -167,14 +167,14 @@ class Route implements RouteInterface
     {
         return preg_match($this->pattern, $request->uri())
             && $this->method() == $request->method()
-            && ($this->isAjaxOnly() ? $request->ajax() : true);
+            && ($this->isJsonOnly() ? $request->json() : true);
     }
 
     /**
      * Set route to accept only ajax requests.
      * @return self
      */
-    public function ajaxOnly()
+    public function jsonOnly()
     {
         $this->onlyAjax = true;
         return $this;
@@ -184,9 +184,9 @@ class Route implements RouteInterface
      * Check if the route accepts only ajax requests.
      * @return bool
      */
-    public function isAjaxOnly(): bool
+    public function isJsonOnly(): bool
     {
-        return $this->onlyAjax;
+        return $this->onlyJson;
     }
 
     /**

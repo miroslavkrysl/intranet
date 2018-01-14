@@ -1,0 +1,54 @@
+{% extends "layouts/app.twig" %}
+{% import "macros/form.twig" as form %}
+
+{% block content %}
+
+    <div class="card">
+        <form class="card-body" action="/uzivatel" method="POST">
+            <h1 class="card-title">usernew</h1>
+            {{ form.csrf() }}
+            <div class="form-group row">
+                <label for="input-username" class="col-sm-5 col-lg-2 col-form-label">Uživatelské jméno</label>
+                <div class="col-sm-7 col-lg-10">
+                    <input type="text" class="form-control" id="input-username" name="username">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="input-email" class="col-sm-5 col-lg-2 col-form-label">E-mail</label>
+                <div class="col-sm-7 col-lg-10">
+                    <input type="email" class="form-control" id="input-email" name="email">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="input-name" class="col-sm-5 col-lg-2 col-form-label">Jméno a příjmení</label>
+                <div class="col-sm-7 col-lg-10">
+                    <input type="text" class="form-control" id="input-name" name="name">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="input-password" class="col-sm-5 col-lg-2 col-form-label">heslo</label>
+                <div class="col-sm-7 col-lg-10">
+                    <input type="password" class="form-control" id="input-password" name="password">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="input-role" class="col-sm-5 col-lg-2 col-form-label">role</label>
+                <div class="col-sm-7 col-lg-10">
+                    <input type="text" class="form-control" id="input-role" name="role">
+                </div>
+            </div>
+            <hr />
+            <div class="form-group row">
+                <button type="submit" class="btn btn-primary">Uložit</button>
+            </div>
+        </form>
+
+        {% if errors is defined %}
+            {% for field, messages in errors%}
+                {% for message in messages %}
+                    <p class="alert alert-danger">{{ message }}</p>
+                {% endfor %}
+            {% endfor %}
+        {% endif %}
+    </div>
+{% endblock %}

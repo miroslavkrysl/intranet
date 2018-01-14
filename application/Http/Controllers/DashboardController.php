@@ -28,7 +28,6 @@ class DashboardController
 
     public function showDashboard(RequestInterface $request)
     {
-        \var_dump($this->userRepository->findAll(["name"], true, 1, 2));
         return \html('dashboard');
     }
 }

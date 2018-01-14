@@ -139,21 +139,21 @@ function redirect(string $url) {
 /**
  * Get an error response.
  * @param int $code
- * @param string|null $message
+ * @param string|array $errors
  * @return ResponseInterface
  */
-function error(int $code, string $message = null)
+function error(int $code, $errors = null)
 {
-    return response()->error($code, $message);
+    return response()->error($code, $errors);
 }
 
 /**
  * Get a jsonError response.
  * @param int $code
- * @param string|null $message
+ * @param string|array|null $message
  * @return ResponseInterface
  */
-function jsonError(int $code, string $message = null)
+function jsonError(int $code, $message = null)
 {
     return response()->jsonError($code, $message);
 }

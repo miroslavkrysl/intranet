@@ -47,20 +47,20 @@ interface ResponseFactoryInterface
     /**
      * Create a new error response.
      * @param int $status
-     * @param string $message
+     * @param string|array $message
      * @param array $headers
      * @return ResponseInterface
      */
-    public function error(int $status, string $message = null, array $headers = []): ResponseInterface;
+    public function error(int $status, $message = null, array $headers = []): ResponseInterface;
 
     /**
      * Create a new jsonError response.
      * @param int $status
-     * @param string $message
+     * @param string|array|null $message
      * @param array $headers
      * @return ResponseInterface
      */
-    public function jsonError(int $status, string $message = null, array $headers = []): ResponseInterface;
+    public function jsonError(int $status, $message = null, array $headers = []): ResponseInterface;
 
     // TODO: redirection to route
     //public function redirectToRoute($route, $parameters = [], $status = 302, $headers = []): ResponseFactoryInterface;
