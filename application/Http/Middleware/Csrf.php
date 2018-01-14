@@ -6,7 +6,6 @@ namespace Intranet\Http\Middleware;
 
 use Core\Contracts\Http\RequestInterface;
 use Core\Contracts\Http\ResponseInterface;
-use Core\Http\Middleware;
 use Intranet\Services\Csrf\Csrf as CsrfService;
 
 class Csrf

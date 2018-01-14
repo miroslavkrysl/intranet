@@ -11,31 +11,31 @@ interface LoginRepositoryInterface
 {
     /**
      * Find login by id.
-     * @param int $id
+     * @param string $id
      * @return array|null
      */
-    public function findById(int $id);
+    public function findById(string $id);
 
     /**
-     * Find login by username.
+     * Find all logins by username.
      * @param string $username
-     * @return array|null
+     * @return array
      */
-    public function findByUsername(string $username);
+    public function findByUsername(string $username): array;
 
     /**
      * Save login to database.
      * @param array $login
      * @return bool
      */
-    public function save(array $login);
+    public function save(array $login): bool;
 
     /**
      * Delete the login from the database.
-     * @param int $id
+     * @param string $id
      * @return bool
      */
-    public function delete(int $id): bool;
+    public function delete(string $id): bool;
 
     /**
      * Delete all logins older than $days.
@@ -43,4 +43,19 @@ interface LoginRepositoryInterface
      * @return int Number of deleted logins
      */
     public function deleteOlder(int $days): int;
+
+    /**
+     * Hash the login token.
+     * @param string $token
+     * @return string Hash.
+     */
+    public function hashToken(string $token): string;
+
+    /**
+     * Verify the login token..
+     * @param string $token
+     * @param string $hash
+     * @return bool
+     */
+    public function verifyToken(string $token, string $hash): bool;
 }

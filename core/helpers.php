@@ -4,7 +4,6 @@
 use Core\Contracts\Http\ResponseFactoryInterface;
 use Core\Contracts\Http\ResponseInterface;
 use Core\Contracts\Language\LanguageInterface;
-use Core\Contracts\View\ViewInterface;
 use Core\Application\Application;
 use Core\Contracts\Config\ConfigInterface;
 use Core\Contracts\Session\SessionManagerInterface;
@@ -260,4 +259,13 @@ function random_string(int $length = 16)
     }
 
     return $string;
+}
+
+/**
+ * Generate unique string.
+ * @return string
+ */
+function unique_string()
+{
+    return md5(uniqid(rand(), true));
 }

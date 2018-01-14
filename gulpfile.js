@@ -6,13 +6,14 @@ var sass = require('gulp-sass');
 var tildeImporter = require('node-sass-tilde-importer');
 
 var scripts = [
-    'node_modules/jquery/dist/jquery.min.js',
+    'node_modules/jquery/dist/jquery.slim.min.js',
+    'node_modules/popper.js/dist/umd/popper.min.js',
     'node_modules/bootstrap/dist/js/bootstrap.min.js',
-    'resources/assets/js/*.js'
+    'node_modules/jquery-datetimepicker/build/jquery.datetimepicker.full.min.js'
 ];
-
-var style = [
-    'resources/assets/sass/app.scss'
+var scss = [
+    'resources/assets/sass/app.scss',
+    'node_modules/jquery-datetimepicker/build/jquery.datetimepicker.min.css'
 ];
 
 function handleError(error) {
@@ -21,28 +22,36 @@ function handleError(error) {
 }
 
 gulp.task('js', function(){
+   gulp.src('resources/assets/js/*.js')
+       .pipe(concat('app.js'))
+       .pipe(gulp.dest('public/js/'));
    gulp.src(scripts)
-   .pipe(concat('app.js'))
-   .pipe(gulp.dest('public/js/'));
+       .pipe(gulp.dest('public/js/'));
 });
 
 gulp.task('scss', function(){
-   gulp.src(style)
-   .pipe(sass({
-      importer: tildeImporter
-   }))
-   .on('error', handleError)
-   .pipe(cleanCSS())
-   .pipe(gulp.dest('public/css/'));
+    gulp.src(scss)
+        .pipe(sass({
+            importer: tildeImporter
+        }))
+        .on('error', handleError)
+        .pipe(concat('app.css'))
+        .pipe(cleanCSS())
+        .pipe(gulp.dest('public/css/'));
 });
 
 gulp.task('watch', ['js', 'scss'], function() {
-    gulp.watch(['application/assets/js/*.js'], ['js']);
-    gulp.watch(['application/assets/sass/*.scss'], ['css']);
+    gulp.watch(['resources/assets/js/*.js'], ['js']);
+    gulp.watch(['resources/assets/sass/*.scss'], ['scss']);
+});
+
+gulp.task('fa', function() {
+    gulp.src('node_modules/font-awesome/fonts/**.*')
+        .pipe(gulp.dest('public/fonts/'));
 });
 
 gulp.task('bundle', ['js','scss'], function() {
 });
 
-gulp.task('default', ['js','scss'], function(){
+gulp.task('default', ['js','scss', 'fa'], function(){
 });

@@ -32,13 +32,12 @@ class LoginRepository implements LoginRepositoryInterface
         $this->table = $table;
     }
 
-
     /**
      * Find login by id.
-     * @param int $id
+     * @param string $id
      * @return array|null
      */
-    public function findById(int $id)
+    public function findById(string $id)
     {
         $query =
             "SELECT * ".
@@ -51,70 +50,61 @@ class LoginRepository implements LoginRepositoryInterface
     }
 
     /**
-     * Find login by userId.
-     * @param int $userId
-     * @return array|null
+     * Find all logins by username.
+     * @param string $username
+     * @return array
      */
-    public function findByUserId(int $userId)
+    public function findByUsername(string $username): array
     {
         $query =
             "SELECT * ".
             "FROM $this->table ".
-            "WHERE user_id = :user_id;";
-        $params = ['user_id' => $userId];
+            "WHERE user_username = :user_username;";
+        $params = ['user_username' => $username];
 
         $this->database->execute($query, $params);
-        return $this->database->fetch() ?? null;
+        return $this->database->fetchAll() ?? null;
     }
 
     /**
      * Save login to database.
      * @param array $login
-     * @return mixed
+     * @return bool
      */
-    public function save(array $login)
+    public function save(array $login): bool
     {
-        if (isset($login['id'])) {
-            $query =
-                "UPDATE $this->table ".
-                "SET ".
-                "token = :token, ".
-                "user_id = :user_id ".
-                "WHERE id = :id;";
-            $params = [
-                'token' => $login['token'],
-                'user_id' => $login['user_id'],
-                'id' => $login['id']
-            ];
-        }
-        else {
-            $query =
-                "INSERT INTO $this->table ".
-                "(token, user_id) ".
-                "VALUES ".
-                "(:token, :user_id);";
-            $params = [
-                'token' => $login['token'],
-                'user_id' => $login['user_id']
-            ];
-        }
+        $query =
+            "INSERT INTO $this->table ".
+            "(id, token, user_username) ".
+            "VALUES ".
+            "(:id, :token, :user_username) ".
+            "ON DUPLICATE KEY UPDATE ".
+            "token = :token1, ".
+            "user_username = :user_username1;";
+        $params = [
+            'id' => $login['id'],
+            'token' => $login['token'],
+            'user_username' => $login['user_username'],
+            'token1' => $login['token'],
+            'user_username1' => $login['user_username']
+        ];
 
         $this->database->execute($query, $params);
 
-        return $this->database->lastInsertedId();
+        return $this->database->count() > 0;
     }
 
     /**
      * Delete the login from the database.
-     * @param int $loginId
-     * @return int
+     * @param string $id
+     * @return bool
      */
-    public function delete(int $loginId): bool
+    public function delete(string $id): bool
     {
         $query =
             "DELETE FROM $this->table ".
             "WHERE id = :id;";
-        $params = ['id' => $loginId];
+        $params = ['id' => $id];
 
         $this->database->execute($query, $params);
 
@@ -124,13 +114,36 @@ class LoginRepository implements LoginRepositoryInterface
     /**
      * Delete all logins older than $days.
      * @param int $days
+     * @return int Number of deleted logins
      */
-    public function deleteOlder(int $days)
+    public function deleteOlder(int $days): int
     {
         $query =
             "DELETE FROM $this->table ".
             "WHERE updated_at <= (NOW() - INTERVAL $days DAY);";
 
         $this->database->execute($query);
+        return $this->database->count();
+    }
+
+    /**
+     * Hash the login token.
+     * @param string $token
+     * @return string Hash.
+     */
+    public function hashToken(string $token): string
+    {
+        return \password_hash($token, \PASSWORD_DEFAULT);
+    }
+
+    /**
+     * Verify the login token..
+     * @param string $token
+     * @param string $hash
+     * @return bool
+     */
+    public function verifyToken(string $token, string $hash): bool
+    {
+        return \password_verify($token, $hash);
     }
 }

@@ -18,7 +18,7 @@ class RedirectResponse extends Response
             'Connection' => 'close'
         ];
 
-        parent::__construct(null, $headers);
+        parent::__construct([], $headers);
     }
 
     /**

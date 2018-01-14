@@ -75,7 +75,7 @@ class LoginController
             return \html('login', ['errors' => $errors]);
         }
 
-        $this->auth->login($user['id']);
+        $this->auth->login($user['username'], $request->remember ?? false);
 
         return \redirect('/');
     }

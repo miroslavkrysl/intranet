@@ -2,11 +2,18 @@
 
 {% block body %}
 
-    <>
-    <div class="container">
+    {% include "/components/navbar.twig" %}
+
+    <div class="container pt-3">
 
         {% block content %}
         {% endblock %}
     </div>
+
+    <footer class="p-3 bg-white border border-right-0 border-left-0 border-bottom-0">
+        <div class="container text-center">
+            <span class="font-weight-light text-secondary">{{ _copyright()|raw }}</span>
+        </div>
+    </footer>
 
 {% endblock %}

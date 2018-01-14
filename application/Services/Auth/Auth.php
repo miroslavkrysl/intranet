@@ -4,14 +4,16 @@
 namespace Intranet\Services\Auth;
 
 
+use Intranet\Contracts\Auth\AuthInterface;
 use Intranet\Contracts\Repositories\LoginRepositoryInterface;
 use Intranet\Contracts\Repositories\UserRepositoryInterface;
 use Intranet\Services\Auth\Exception\AuthException;
 
+
 /**
- * Service to hadle logins.
+ * Service to handle logins.
  */
-class Auth
+class Auth implements AuthInterface
 {
     /**
      * @var UserRepositoryInterface
@@ -23,35 +25,70 @@ class Auth
     private $loginRepository;
 
     /**
-     * @var bool
-     */
-    private $isLogged;
-
-    /**
      * Contains logged user.
      * @var array
      */
     private $user;
+    /**
+     * @var int
+     */
+    private $loginExpireDays;
 
     /**
      * Auth constructor.
      * @param UserRepositoryInterface $userRepository
      * @param LoginRepositoryInterface $loginRepository
+     * @param int $loginExpireDays
      */
-    public function __construct(UserRepositoryInterface $userRepository, LoginRepositoryInterface $loginRepository)
+    public function __construct(UserRepositoryInterface $userRepository, LoginRepositoryInterface $loginRepository, int $loginExpireDays)
     {
         $this->userRepository = $userRepository;
         $this->loginRepository = $loginRepository;
-        $this->deleteOldLogins();
-        $this->isLogged = $this->checkLogged();
+        $this->loginExpireDays = $loginExpireDays;
+        $this->deleteOldLogins($loginExpireDays);
+        $this->user = $this->loadUser();
     }
 
     /**
-     * Delete all expired logins.
+     * Login the user.
+     * @param $username
+     * @param bool $remember
      */
-    private function deleteOldLogins()
+    public function login($username, bool $remember = false)
     {
-        $this->loginRepository->deleteOlder(64);
+        if (!$this->userRepository->findByUsername($username)) {
+            throw new AuthException(\sprintf('User with username %s does not exist.', $username));
+        }
+
+        if ($remember) {
+            $login = [
+                'id' => \unique_string(),
+                'token' => "",
+                'user_username' => $username
+            ];
+
+            $this->setLogin($login);
+        }
+        else {
+            session('auth_username', $username);
+        }
+    }
+
+    /**
+     * Logout the user.
+     */
+    public function logout()
+    {
+        session()->unset('auth_username');
+
+        if (\cookie()->has('auth_id')) {
+            $loginId = \cookie('auth_id');
+            $this->loginRepository->delete($loginId);
+            \cookie()->unset('auth_id');
+        }
+        if (\cookie()->has('auth_token')) {
+            \cookie()->unset('auth_token');
+        }
     }
 
     /**
@@ -60,112 +97,80 @@ class Auth
      */
     public function isLogged(): bool
     {
-        return $this->isLogged;
+        return $this->user != null;
     }
 
     /**
-     * Login the user.
-     * @param $userId
-     * @param bool $remember
+     * Get the logged user.
+     * @return array|null
      */
-    public function login($userId, bool $remember = false)
+    public function user()
     {
-        if (!$this->userRepository->findById($userId)) {
-            throw new AuthException(\sprintf('User with id %d does not exist.', $userId));
-        }
-
-        if ($remember) {
-            $this->setToken($userId);
-        }
-        else {
-            session('login_user_id', $userId);
-        }
+        return $this->user;
     }
 
     /**
-     * Logout the user.
-     * @param $userId
-     * @param bool $remember
+     * Delete all logins older than $days.
+     * @param int|null $days
      */
-    public function logout()
+    public function deleteOldLogins(int $days = null)
     {
-        session()->unset('login_user_id');
-
-        if (\cookie()->has('login_id')) {
-            $loginId = \cookie('login_id');
-            $this->loginRepository->delete($loginId);
-            \cookie()->unset('login_id');
-        }
-        if (\cookie()->has('login_token')) {
-            \cookie()->unset('login_token');
-        }
+        $this->loginRepository->deleteOlder($days == null ? $this->loginExpireDays : $days);
     }
 
     /**
-     * Check whether the user is logged and set the logged user.
+     * Load the logged user.
+     * @return array|null
      */
-    private function checkLogged(): bool
+    private function loadUser()
     {
-        $userId = null;
+        $username = null;
 
-        if (session()->has('login_user_id')) {
-            $userId = session('login_user_id');
-        } else if (\cookie()->has('login_id') and \cookie()->has('login_token')) {
-            $loginId = \cookie('login_id');
-            $loginToken = \cookie('login_token');
-            $login = $this->loginRepository->findById($loginId);
+        if (session()->has('auth_username')) {
+            $username = session('auth_username');
+        }
+        else if (\cookie()->has('auth_id') and \cookie()->has('auth_token')) {
+            $id = \cookie('auth_id');
+            $token = \cookie('auth_token');
+            $login = $this->loginRepository->findById($id);
 
-            if (!$login) {
-                return false;
+            if (!$login or !$this->loginRepository->verifyToken($token, $login['token'])) {
+                $this->logout();
+                return null;
             }
 
-            if (!\password_verify($loginToken, $login['token'])) {
-                return false;
-            }
+            $username = $login['user_username'];
 
-            $userId = $login['user_id'];
-
-            $this->refreshToken($login);
+            $this->setLogin($login);
         }
         else {
-            return false;
+            return null;
         }
 
-        $this->user = $this->userRepository->findById($userId);
-
-        return !empty($this->user);
+        return $this->userRepository->findByUsername($username);
     }
 
     /**
-     * Set the token into cookie and into the database.
-     * @param $loginId
-     */
-    private function setToken(int $userId)
-    {
-        $token = \random_string(128);
-        $login = [
-            'user_id' => $userId,
-            'token' => \password_hash($token, \PASSWORD_DEFAULT)
-        ];
-
-        $loginId = $this->loginRepository->save($login);
-
-        \cookie('login_token', $token);
-        \cookie('login_id', $loginId);
-    }
-
-    /**
-     * Refresh the token in cookie and update in database.
+     * Set the login token and save it into the cookie and the database.
      * @param array $login
      */
-    private function refreshToken(array $login)
+    private function setLogin(array $login)
     {
         $token = \random_string(128);
-        $login['token'] = \password_hash($token, \PASSWORD_DEFAULT);
+        $login['token'] = $this->loginRepository->hashToken($token);
 
         $this->loginRepository->save($login);
 
-        \cookie('login_token', $token);
-        \cookie('login_id', $login['id']);
+        \cookie('auth_token', $token);
+        \cookie('auth_id', $login['id']);
+    }
+
+    /**
+     *
+     * @return mixed
+     */
+    public function __invoke()
+    {
+        return $this;
     }
 }

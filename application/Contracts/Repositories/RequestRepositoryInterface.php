@@ -16,35 +16,36 @@ interface RequestRepositoryInterface
     /**
      * Find requests by car name.
      * @param string $name
+     * @param array|null $orderBy
+     * @param bool $desc
      * @param int|null $limit
      * @param int|null $offset
-     * @param string|null $sortBy
-     * @param bool $des
      * @return array
      */
-    public function findByCarName(int $name, int $limit = null, int $offset = null, string $sortBy = null, bool $des = false): array;
+    public function findByCarName(int $name, array $orderBy = null, bool $desc = false, int $limit = null, int $offset = null): array;
 
     /**
      * Find requests by driver username.
      * @param string $username
+     * @param array|null $orderBy
+     * @param bool $desc
      * @param int|null $limit
      * @param int|null $offset
-     * @param string|null $sortBy
-     * @param bool $des
      * @return array
      */
-    public function findByDriverUsername(string $username, int $limit = null, int $offset = null, string $sortBy = null, bool $des = false): array ;
+    public function findByDriverUsername(string $username, array $orderBy = null, bool $desc = false, int $limit = null, int $offset = null): array ;
 
     /**
-     * Find requests where reserved from is after the given datetime.
-     * @param string $datetime
+     * Find requests where reserved from or to is between the given datetime.
+     * @param string $from
+     * @param string $to
+     * @param array|null $orderBy
+     * @param bool $desc
      * @param int|null $limit
      * @param int|null $offset
-     * @param string|null $sortBy
-     * @param bool $des
      * @return array
      */
-    public function findNewerThan(string $datetime, int $limit = null, int $offset = null, string $sortBy = null, bool $des = false): array;
+    public function findReservedFromBetween(string $from, string $to, array $orderBy = null, bool $desc = false, int $limit = null, int $offset = null): array;
 
     /**
      * Save request to database.

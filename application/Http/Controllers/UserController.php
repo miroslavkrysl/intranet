@@ -5,9 +5,9 @@ namespace Intranet\Http\Controllers;
 
 
 use Core\Contracts\Http\RequestInterface;
-use Core\Contracts\Http\ResponseFactoryInterface;
 use Core\Contracts\Http\ResponseInterface;
 use Intranet\Contracts\Repositories\UserRepositoryInterface;
+use Intranet\Services\Auth\Auth;
 
 class UserController
 {
@@ -17,14 +17,21 @@ class UserController
     private $userRepository;
 
     /**
+     * @var Auth
+     */
+    private $auth;
+
+    /**
      * UserController constructor.
-     * @param ResponseFactoryInterface $responseFactory
      * @param UserRepositoryInterface $userRepository
+     * @param Auth $auth
+     * @internal param ResponseFactoryInterface $responseFactory
      * @internal param ResponseInterface $response
      */
-    public function __construct(UserRepositoryInterface $userRepository)
+    public function __construct(UserRepositoryInterface $userRepository, Auth $auth)
     {
         $this->userRepository = $userRepository;
+        $this->auth = $auth;
     }
 
     /**
@@ -36,7 +43,6 @@ class UserController
     {
         $rules = [
             'username' => [
-                'required',
                 'exists' => [
                     'table' => 'user',
                     'column' => 'username'
@@ -45,9 +51,21 @@ class UserController
         ];
 
         if (!$request->validate($rules)) {
-            return \response()->error(404, $request->errors()['username']);
+            return \response()->error(404, $request->errors()['username']['exists']);
         }
 
-        return \response($this->userRepository->findByUsername($request->username));
+        $user = $this->userRepository->findByUsername($request->username);
+        unset($user->password);
+        return json($user);
+    }
+
+    /**
+     * Show the page with the the user settings.
+     * @param RequestInterface $request
+     * @return ResponseInterface
+     */
+    public function showSettings(RequestInterface $request)
+    {
+        return \response()->html('user_settings');
     }
 }

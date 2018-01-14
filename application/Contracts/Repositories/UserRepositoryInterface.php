@@ -24,6 +24,16 @@ interface UserRepositoryInterface
     public function findByEmail(string $email);
 
     /**
+     * Find all users.
+     * @param array|null $orderBy
+     * @param bool $desc
+     * @param int|null $limit
+     * @param int|null $offset
+     * @return array
+     */
+    public function findAll(array $orderBy = null, bool $desc = false, int $limit = null, int $offset = null): array;
+
+    /**
      * Save user to database.
      * @param array $user
      * @return bool
@@ -38,14 +48,11 @@ interface UserRepositoryInterface
     public function delete(string $username): bool;
 
     /**
-     * Find all users.
-     * @param int $limit
-     * @param int $offset
-     * @param string|null $sortBy
-     * @param bool $des
-     * @return array
+     * Hash the user's password.
+     * @param string $password
+     * @return string Hash.
      */
-    public function findAll(int $limit = null, int $offset = null, string $sortBy = null, bool $des = false): array;
+    public function hashPassword(string $password): string;
 
     /**
      * Verify the user's password.
@@ -54,4 +61,53 @@ interface UserRepositoryInterface
      * @return bool
      */
     public function verifyPassword(string $password, string $hash): bool;
+
+    /**
+     * Find all permissions that has the given user.
+     * @param string $username
+     * @return array
+     */
+    public function findPermissions(string $username): array;
+
+    /**
+     * Check whether the user can manage users.
+     * @param string $username
+     * @return bool
+     */
+    public function canManageUsers(string $username): bool;
+
+    /**
+     * Check whether the user can manage documents.
+     * @param string $username
+     * @return bool
+     */
+    public function canManageDocuments(string $username): bool;
+
+    /**
+     * Check whether the user can manage own documents.
+     * @param string $username
+     * @return bool
+     */
+    public function canManageOwnDocuments(string $username): bool;
+
+    /**
+     * Check whether the user can manage requests.
+     * @param string $username
+     * @return bool
+     */
+    public function canManageRequests(string $username): bool;
+
+    /**
+     * Check whether the user can manage own requests.
+     * @param string $username
+     * @return bool
+     */
+    public function canManageOwnRequests(string $username): bool;
+
+    /**
+     * Check whether the user can confirm requests.
+     * @param string $username
+     * @return bool
+     */
+    public function canConfirmRequests(string $username): bool;
 }

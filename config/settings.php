@@ -5,7 +5,7 @@ return [
         'name' => env('app.name'),
         'url' => env('app.url'),
         'locale' => 'cz',
-        'fallback-locale' => 'cz',
+        'fallback_locale' => 'cz',
         'webmaster' => 'mirek.krysl@seznam.cz'
     ],
     'database' => [
@@ -17,7 +17,14 @@ return [
         'password' => env('database.password'),
         'tables' => [
             'user' => 'user',
-            'login' => 'login'
+            'login' => 'login',
+            'car' => 'car',
+            'request' => 'request',
+            'document' => 'document',
+            'role' => 'role',
+            'role_permission' => 'role_permission',
+            'permission' => 'permission',
+            'user_can_drive' => 'user_can_drive'
         ]
     ],
     'cookie' => [
@@ -26,12 +33,15 @@ return [
         'domain' => env('app.url')
     ],
     'validator' => [
-        'lang-prefix-messages' => 'validation',
-        'lang-prefix-fields' => 'fields'
+        'lang_prefix_messages' => 'validation',
+        'lang_prefix_fields' => 'fields'
     ],
 
     // app
     'csrf' => [
         'expire' => 15 // minutes
+    ],
+    'auth' => [
+        'login_expire_days' => 64
     ]
 ];
