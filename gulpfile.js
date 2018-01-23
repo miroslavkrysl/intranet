@@ -6,7 +6,7 @@ var sass = require('gulp-sass');
 var tildeImporter = require('node-sass-tilde-importer');
 
 var scripts = [
-    'node_modules/jquery/dist/jquery.slim.min.js',
+    'node_modules/jquery/dist/jquery.min.js',
     'node_modules/popper.js/dist/umd/popper.min.js',
     'node_modules/bootstrap/dist/js/bootstrap.min.js',
     'node_modules/jquery-datetimepicker/build/jquery.datetimepicker.full.min.js'
@@ -23,7 +23,6 @@ function handleError(error) {
 
 gulp.task('js', function(){
    gulp.src('resources/assets/js/*.js')
-       .pipe(concat('app.js'))
        .pipe(gulp.dest('public/js/'));
    gulp.src(scripts)
        .pipe(gulp.dest('public/js/'));

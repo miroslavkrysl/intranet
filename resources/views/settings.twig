@@ -1,52 +1,60 @@
 {% extends "layouts/app.twig" %}
+{% import 'macros/form.twig' as form %}
 
 {% block content %}
 
     <div class="card">
-        <form class="card-body">
-            <h1 class="card-title">{{ _text('app.settings')|capitalize }}</h1>
+        <form class="card-body" id="settings-form" action="/user/{{ _auth.user().username }}" method="post" data-method="put">
+            {{ form.csrf() }}
+
+            <h1 class="card-title">{{ _text('app.menu.settings')|capitalize }}</h1>
             <div class="form-group row">
-                <label for="input-username" class="col-sm-5 col-lg-2 col-form-label">Uživatelské jméno</label>
+                <label for="input-username" class="col-sm-5 col-lg-2 col-form-label">{{ _text('fields.username')|capitalize }}</label>
                 <div class="col-sm-7 col-lg-10">
                     <input type="text" class="form-control" id="input-username" value="{{ _auth.user().username }}" disabled>
                 </div>
             </div>
             <div class="form-group row">
-                <label for="input-email" class="col-sm-5 col-lg-2 col-form-label">E-mail</label>
+                <label for="input-email" class="col-sm-5 col-lg-2 col-form-label">{{ _text('fields.email')|capitalize }}</label>
                 <div class="col-sm-7 col-lg-10">
                     <input type="email" class="form-control" id="input-email" value="{{ _auth.user().email }}" disabled>
                 </div>
             </div>
             <div class="form-group row">
-                <label for="input-name" class="col-sm-5 col-lg-2 col-form-label">Jméno a příjmení</label>
+                <label for="input-name" class="col-sm-5 col-lg-2 col-form-label">{{ _text('fields.name')|capitalize }}</label>
                 <div class="col-sm-7 col-lg-10">
                     <input type="text" class="form-control" id="input-name" name="name" value="{{ _auth.user().name }}">
                 </div>
             </div>
             <div class="form-group row">
-                <label for="input-newpassword1" class="col-sm-5 col-lg-2 col-form-label">Nové heslo</label>
+                <label for="input-password" class="col-sm-5 col-lg-2 col-form-label">{{ _text('fields.new_password')|capitalize }}</label>
                 <div class="col-sm-7 col-lg-10">
-                    <input type="password" class="form-control" id="input-newpassword1" name="newpassword1">
+                    <input type="password" class="form-control" id="input-password" name="password">
                 </div>
             </div>
             <div class="form-group row">
-                <label for="input-newpassword2" class="col-sm-5 col-lg-2 col-form-label">Nové heslo znovu</label>
+                <label for="input-newpassword1" class="col-sm-5 col-lg-2 col-form-label">{{ _text('fields.new_password_again')|capitalize }}</label>
                 <div class="col-sm-7 col-lg-10">
-                    <input type="password" class="form-control" id="input-newpassword2" name="newpassword2">
+                    <input type="password" class="form-control" id="input-password1" name="password1">
                 </div>
             </div>
+
+            <div id="settings-form-message-box"></div>
+
             <hr />
             <div class="form-group row">
-                <label for="input-password" class="col-sm-5 col-lg-2 col-form-label">Zadejte staré heslo</label>
+                <label for="input-_password" class="col-sm-5 col-lg-2 col-form-label">{{ _text('fields._password')|capitalize }}</label>
                 <div class="col-sm-5 col-lg-8">
-                    <input type="password" class="form-control" id="input-password" name="password">
+                    <input type="password" class="form-control" id="input-_password" name="_password">
                 </div>
                 <div class="col-12 col-sm-2">
                     <div class="text-center text-sm-right p-3 p-sm-0">
-                        <button type="submit" class="btn btn-primary">Uložit</button>
+                        <button type="submit" class="btn btn-primary">{{ _text('app.save') }}</button>
                     </div>
                 </div>
             </div>
         </form>
     </div>
+
+    <script src="/js/settings.js"></script>
 {% endblock %}

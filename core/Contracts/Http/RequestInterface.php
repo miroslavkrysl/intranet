@@ -53,6 +53,13 @@ interface RequestInterface
     public function post($key = null);
 
     /**
+     * Get the value from PUT or the array af all PUT inputs.
+     * @param string $key
+     * @return string|array|null
+     */
+    public function put($key = null);
+
+    /**
      * Get the request uploaded file info, or the array of all files info.
      * @return array|null
      */

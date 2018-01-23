@@ -196,7 +196,6 @@ class Route implements RouteInterface
      */
     public function run(RequestInterface $request): ResponseInterface
     {
-        $request->setRoute($this);
         $this->setParameters($request);
 
         $before = $this->runBeforeMiddleware($request);

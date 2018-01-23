@@ -21,11 +21,13 @@ use Intranet\Http\Controllers\LoginController;
 use Intranet\Http\Controllers\RequestController;
 use Intranet\Http\Controllers\UserController;
 use Intranet\Http\Middleware\Csrf as CsrfMiddleware;
+use Intranet\Http\Middleware\PasswordAuth;
 use Intranet\Http\Middleware\RestrictToLogged;
 use Intranet\Repositories\LoginRepository;
 use Intranet\Repositories\UserRepository;
 use Intranet\Services\Auth\Auth;
 use Intranet\Services\Csrf\Csrf as CsrfService;
+use Intranet\Services\Mail\Mail;
 
 /**
  * This file contains services registrations to the container.
@@ -124,6 +126,10 @@ $container->register('auth', Auth::class)
     ->addArgument(new SR('repository.login'))
     ->addArgument(\config('auth.login_expire_days'));
 
+$container->register('mail', Mail::class)
+    ->addArgument(new SR('validator'))
+    ->addArgument(\config('mail.from'));
+
 
 // middleware
 
@@ -132,6 +138,10 @@ $container->register('middleware.csrf', CsrfMiddleware::class)
 
 $container->register('middleware.RestrictToLogged', RestrictToLogged::class)
     ->addArgument(new SR('auth'));
+
+$container->register('middleware.PasswordAuth', PasswordAuth::class)
+    ->addArgument(new SR('auth'))
+    ->addArgument(new SR('repository.user'));
 
 
 // repositories

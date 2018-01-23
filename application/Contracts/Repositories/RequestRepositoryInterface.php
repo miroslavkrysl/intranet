@@ -7,6 +7,12 @@ namespace Intranet\Contracts\Repositories;
 interface RequestRepositoryInterface
 {
     /**
+     * Create new empty request represented as an array.
+     * @return array
+     */
+    public function create(): array;
+
+    /**
      * Find request by id.
      * @param int $id
      * @return array|null

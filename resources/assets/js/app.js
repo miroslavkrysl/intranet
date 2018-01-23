@@ -1,4 +1,65 @@
 
+$('document').ready(function () {
+
+    app = {
+
+        template : {
+            error : '<div class="error-message alert alert-danger"><div>',
+            success : '<div class="success-message alert alert-success"><div>',
+            message :
+            '<div class="message alert alert-primary alert-dismissible">' +
+            '   <button type="button" class="close" data-dismiss="alert">' +
+            '       <span>&times;</span>' +
+            '   </button>' +
+            '</div>'
+        },
+
+        messageBox : $('#message-box'),
+
+        setMessages : function (messageBox, messages, error) {
+            messageBox.children().slideUp(300, function () {
+                $(this).remove();
+            });
+
+            console.log(messageBox.children());
+
+            messages = Object.values(messages);
+
+            for (var i = 0; i < messages.length; i++) {
+                fieldMessages = Object.values(messages[i]);
+                for (var j = 0; j < fieldMessages.length; j++) {
+                    $(error ? app.template.error : app.template.success).text(fieldMessages[j]).appendTo(messageBox).hide().slideDown();
+                }
+            }
+        },
+
+        submitForm : function (form, success, error) {
+            form = $(form);
+            url = form.attr('action');
+            method = form.attr('data-method');
+            id = form.attr('id');
+
+            $.ajax({
+                url: url,
+                type: method,
+                dataType: 'json',
+                data: form.serialize(),
+                success: success,
+                error: error
+            });
+        }
+
+    };
+
+    $('#logout-form').submit(function (event) {
+        event.preventDefault();
+
+        app.submitForm($(this), function (response) {
+            window.location.href = '/';
+        }, null);
+    });
+});
+
 $('#datetimepicker-from').datetimepicker({
     format:'d.m.Y H:i',
         onShow:function( ct ){

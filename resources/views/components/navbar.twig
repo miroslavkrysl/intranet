@@ -7,12 +7,12 @@
     </a>
 
     <div class="navbar-nav flex-row">
-        <a class="nav-item active nav-link px-2 px-sm-3" href="/">{{ _text('app.home')|capitalize }}</a>
+        <a class="nav-item active nav-link px-2 px-sm-3" href="/">{{ _text('app.menu.home')|capitalize }}</a>
         {% if _user.canManageUsers(_auth.user().username) %}
-            <a class="nav-item nav-link px-2 px-sm-3" href="/users">{{ _text('app.users')|capitalize }}</a>
+            <a class="nav-item nav-link px-2 px-sm-3" href="/users">{{ _text('app.menu.users')|capitalize }}</a>
         {% endif %}
-        <a class="nav-item nav-link px-2 px-sm-3" href="/documents">{{ _text('app.documents')|capitalize }}</a>
-        <a class="nav-item nav-link px-2 px-sm-3" href="/requests">{{ _text('app.requests')|capitalize }}</a>
+        <a class="nav-item nav-link px-2 px-sm-3" href="/documents">{{ _text('app.menu.documents')|capitalize }}</a>
+        <a class="nav-item nav-link px-2 px-sm-3" href="/requests">{{ _text('app.menu.requests')|capitalize }}</a>
     </div>
 
     <div class="navbar-nav ml-lg-auto d-none d-lg-block">
@@ -24,14 +24,14 @@
             <div class="dropdown-menu dropdown-menu-right">
                 <a class="dropdown-item" href="/user/settings">
                     <i class="fa fa-cog" aria-hidden="true"></i>
-                    {{ _text('app.settings')|capitalize }}
+                    {{ _text('app.menu.settings')|capitalize }}
                 </a>
                 <div class="dropdown-divider"></div>
-                <form action="/logout" method="post">
+                <form id="logout-form" action="/logout" method="post" data-method="post">
                     {{ form.csrf() }}
                     <button type="submit" class="dropdown-item" href="/logout">
                         <i class="fa fa-sign-out" aria-hidden="true"></i>
-                        {{ _text('app.logout')|capitalize }}
+                        {{ _text('app.auth.logout')|capitalize }}
                     </button>
                 </form>
             </div>
@@ -46,12 +46,12 @@
     <div class="collapse w-100 d-lg-none" id="nav-user-menu">
         <a class="dropdown-item" href="/settings">
                 <i class="fa fa-cog" aria-hidden="true"></i>
-                {{ _text('app.settings')|capitalize }}
+                {{ _text('app.menu.settings')|capitalize }}
         </a>
         <div class="dropdown-divider"></div>
         <a class="dropdown-item" href="/logout">
             <i class="fa fa-sign-out" aria-hidden="true"></i>
-            {{ _text('app.logout')|capitalize }}
+            {{ _text('app.auth.logout')|capitalize }}
         </a>
     </div>
 </nav>

@@ -35,10 +35,4 @@ interface AuthInterface
      * @param int|null $days
      */
     public function deleteOldLogins(int $days = null);
-
-    /**
-     *
-     * @return mixed
-     */
-    public function __invoke();
 }

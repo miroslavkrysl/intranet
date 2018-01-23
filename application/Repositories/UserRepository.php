@@ -48,6 +48,17 @@ class UserRepository implements UserRepositoryInterface
     }
 
     /**
+     * Remove sensitive data from user array.
+     * @param array $user
+     * @return array
+     */
+    public function toPublic(array $user): array
+    {
+        unset($user['password'], $user['password_reset_token']);
+        return $user;
+    }
+
+    /**
      * Find user by username.
      * @param string $username
      * @return array|null
@@ -192,7 +203,7 @@ class UserRepository implements UserRepositoryInterface
      * @param string $username
      * @return array
      */
-    public function findPermissions(string $username): array
+    public function findPermissionsNames(string $username): array
     {
         $query =
             "SELECT p.name ".
@@ -212,64 +223,13 @@ class UserRepository implements UserRepositoryInterface
     }
 
     /**
-     * Check whether the user can manage users.
+     * Check whether the user has the permission.
      * @param string $username
+     * @param string $permission
      * @return bool
      */
-    public function canManageUsers(string $username): bool
+    public function hasPermission(string $username, string $permission): bool
     {
-        return \in_array('user_manage', $this->findPermissions($username));
-    }
-
-    /**
-     * Check whether the user can manage documents.
-     * @param string $username
-     * @return bool
-     */
-    public function canManageDocuments(string $username): bool
-    {
-        return \in_array('doc_manage', $this->findPermissions($username));
-    }
-
-    /**
-     * Check whether the user can manage own documents.
-     * @param string $username
-     * @return bool
-     */
-    public function canManageOwnDocuments(string $username): bool
-    {
-        return \in_array('doc_manage', $this->findPermissions($username)) or
-            \in_array('doc_own', $this->findPermissions($username));
-    }
-
-    /**
-     * Check whether the user can manage requests.
-     * @param string $username
-     * @return bool
-     */
-    public function canManageRequests(string $username): bool
-    {
-        return \in_array('req_manage', $this->findPermissions($username));
-    }
-
-    /**
-     * Check whether the user can manage own requests.
-     * @param string $username
-     * @return bool
-     */
-    public function canManageOwnRequests(string $username): bool
-    {
-        return \in_array('req_manage', $this->findPermissions($username)) or
-            \in_array('req_own', $this->findPermissions($username));
-    }
-
-    /**
-     * Check whether the user can confirm requests.
-     * @param string $username
-     * @return bool
-     */
-    public function canConfirmRequests(string $username): bool
-    {
-        return \in_array('req_confirm', $this->findPermissions($username));
+        return \in_array($permission, $this->findPermissionsNames($username));
     }
 }

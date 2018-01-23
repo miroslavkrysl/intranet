@@ -6,6 +6,7 @@ namespace Intranet\Http\Controllers;
 
 use Core\Contracts\Http\RequestInterface;
 use Core\Contracts\Http\ResponseInterface;
+use Intranet\Contracts\Auth\AuthInterface;
 use Intranet\Contracts\Repositories\UserRepositoryInterface;
 use Intranet\Services\Auth\Auth;
 
@@ -24,9 +25,9 @@ class LoginController
     /**
      * LoginController constructor.
      * @param UserRepositoryInterface $userRepository
-     * @param Auth $auth
+     * @param AuthInterface $auth
      */
-    public function __construct(UserRepositoryInterface $userRepository, Auth $auth)
+    public function __construct(UserRepositoryInterface $userRepository, AuthInterface $auth)
     {
         $this->userRepository = $userRepository;
         $this->auth = $auth;
@@ -65,19 +66,20 @@ class LoginController
         $errors = $request->errors();
 
         if (!$valid) {
-            return \html('login', ['errors' => $errors]);
+            return \jsonError(422, $errors);
         }
 
         $user = $this->userRepository->findByUsername($request->username);
 
         if (!$this->userRepository->verifyPassword($request->password, $user['password'])) {
             $errors = ['password' => [\text('login.wrong_password')]];
-            return \html('login', ['errors' => $errors]);
+            return \jsonError(422, $errors);
         }
 
         $this->auth->login($user['username'], $request->remember ?? false);
 
-        return \redirect('/');
+        unset($user['password'], $user['password_reset_token']);
+        return \json($user);
     }
 
     /**
@@ -88,6 +90,6 @@ class LoginController
     public function logout(RequestInterface $request)
     {
         $this->auth->logout();
-        return \redirect('/');
+        return \json();
     }
 }

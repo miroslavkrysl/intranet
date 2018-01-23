@@ -54,23 +54,28 @@ class Router implements RouterInterface
      */
     public function dispatch(RequestInterface $request): ResponseInterface
     {
+        $response = null;
+        $route = null;
+
+        foreach ($this->routes as $r) {
+            if ($r->matches($request)) {
+                $route = $r;
+                break;
+            }
+        }
+
+        if(!$route) {
+            return $this->container->get('response')->error(404);
+        }
+
+        $request->setRoute($route);
+
         $before = $this->runBeforeMiddleware($request);
         if ($before) {
             return $before;
         }
 
-        $response = null;
-
-        foreach ($this->routes as $route) {
-            if ($route->matches($request)) {
-                $response = $route->run($request);
-                break;
-            }
-        }
-
-        if(!$response) {
-            return $this->container->get('response')->error(404);
-        }
+        $response = $route->run($request);
 
         $after = $this->runAfterMiddleware($request);
         if ($after) {

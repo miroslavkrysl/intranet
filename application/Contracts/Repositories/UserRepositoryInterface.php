@@ -10,6 +10,13 @@ namespace Intranet\Contracts\Repositories;
 interface UserRepositoryInterface
 {
     /**
+     * Remove sensitive data from user array.
+     * @param array $user
+     * @return array
+     */
+    public function toPublic(array $user): array;
+
+    /**
      * Find user by username.
      * @param string $username
      * @return array|null
@@ -67,47 +74,13 @@ interface UserRepositoryInterface
      * @param string $username
      * @return array
      */
-    public function findPermissions(string $username): array;
+    public function findPermissionsNames(string $username): array;
 
     /**
-     * Check whether the user can manage users.
+     * Check whether the user has the permission.
      * @param string $username
+     * @param string $permission
      * @return bool
      */
-    public function canManageUsers(string $username): bool;
-
-    /**
-     * Check whether the user can manage documents.
-     * @param string $username
-     * @return bool
-     */
-    public function canManageDocuments(string $username): bool;
-
-    /**
-     * Check whether the user can manage own documents.
-     * @param string $username
-     * @return bool
-     */
-    public function canManageOwnDocuments(string $username): bool;
-
-    /**
-     * Check whether the user can manage requests.
-     * @param string $username
-     * @return bool
-     */
-    public function canManageRequests(string $username): bool;
-
-    /**
-     * Check whether the user can manage own requests.
-     * @param string $username
-     * @return bool
-     */
-    public function canManageOwnRequests(string $username): bool;
-
-    /**
-     * Check whether the user can confirm requests.
-     * @param string $username
-     * @return bool
-     */
-    public function canConfirmRequests(string $username): bool;
+    public function hasPermission(string $username, string $permission): bool;
 }

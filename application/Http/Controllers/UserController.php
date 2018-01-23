@@ -5,6 +5,7 @@ namespace Intranet\Http\Controllers;
 
 
 use Core\Contracts\Http\RequestInterface;
+use Intranet\Contracts\Auth\AuthInterface;
 use Intranet\Contracts\Repositories\UserRepositoryInterface;
 use Intranet\Services\Auth\Auth;
 
@@ -23,11 +24,11 @@ class UserController
     /**
      * UserController constructor.
      * @param UserRepositoryInterface $userRepository
-     * @param Auth $auth
+     * @param AuthInterface $auth
      * @internal param ResponseFactoryInterface $responseFactory
      * @internal param ResponseInterface $response
      */
-    public function __construct(UserRepositoryInterface $userRepository, Auth $auth)
+    public function __construct(UserRepositoryInterface $userRepository, AuthInterface $auth)
     {
         $this->userRepository = $userRepository;
         $this->auth = $auth;
@@ -40,7 +41,7 @@ class UserController
      */
     public function create(RequestInterface $request)
     {
-        if (!$this->userRepository->canManageUsers($this->auth->user()['username'])) {
+        if (!$this->userRepository->hasPermission($this->auth->user()['username'], 'user_manage')) {
             return \jsonError(403, \text('base.permission_denied'));
         }
 
@@ -116,10 +117,6 @@ class UserController
                 'regex' => [
                     'pattern' => "/[\w\.\-]{5,32}/"
                 ],
-                'unique' => [
-                    'table' => \config('database.tables.user'),
-                    'column' => 'username'
-                ]
             ],
             'name' => [
                 'max_length' => [
@@ -152,13 +149,13 @@ class UserController
 
         $user = $this->userRepository->findByUsername($request->username);
         $loggedUsername = $this->auth->user()['username'];
-        $canManage = $this->userRepository->canManageUsers($loggedUsername);
+        $canManage = $this->userRepository->hasPermission($loggedUsername, 'user_manage');
 
         if ($user['username'] != $loggedUsername and !$canManage) {
             return \jsonError(403, \text('base.permission_denied'));
         }
 
-        $user['name'] = $request->name ?? $user['name'];
+        $user['name'] = \is_null($request->name) ? $user['name'] : $request->name;
         $user['email'] = $request->email ?? $user['email'];
         $user['password'] = $request->password ? $this->userRepository->hashPassword($request->password) : $user['password'];
 
@@ -167,9 +164,9 @@ class UserController
         }
 
         $user = $this->userRepository->save($user);
-        unset($user['password']);
+        $user = $this->userRepository->toPublic($user);
 
-        return \json($user);
+        return \json(['user' => $user, 'message' => \text('app.user.update.success')]);
     }
 
     /**
@@ -179,7 +176,7 @@ class UserController
      */
     public function delete(RequestInterface $request)
     {
-        if (!$this->userRepository->canManageUsers($this->auth->user()['username'])) {
+        if (!$this->userRepository->hasPermission($this->auth->user()['username'], 'user_manage')) {
             return \jsonError(403, \text('base.permission_denied'));
         }
 
@@ -210,7 +207,7 @@ class UserController
      */
     public function list(RequestInterface $request)
     {
-        if (!$this->userRepository->canManageUsers($this->auth->user()['username'])) {
+        if (!$this->userRepository->hasPermission($this->auth->user()['username'], "user_manage")) {
             return \error(403, \text('base.permission_denied'));
         }
 

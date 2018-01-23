@@ -164,13 +164,4 @@ class Auth implements AuthInterface
         \cookie('auth_token', $token);
         \cookie('auth_id', $login['id']);
     }
-
-    /**
-     *
-     * @return mixed
-     */
-    public function __invoke()
-    {
-        return $this;
-    }
 }

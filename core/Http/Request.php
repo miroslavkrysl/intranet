@@ -54,6 +54,11 @@ class Request implements RequestInterface
     /**
      * @var DotArray
      */
+    private $put;
+
+    /**
+     * @var DotArray
+     */
     private $files;
 
     /**
@@ -73,7 +78,6 @@ class Request implements RequestInterface
      * @var RouteInterface
      */
     private $route;
-
     /**
      * Contains validation errors.
      * @var array
@@ -104,6 +108,9 @@ class Request implements RequestInterface
         $this->fragment = \parse_url($_SERVER['REQUEST_URI'], \PHP_URL_FRAGMENT);
         $this->get = new DotArray($_GET);
         $this->post = new DotArray($_POST);
+        $put = null;
+        parse_str(file_get_contents('php://input'), $put);
+        $this->put = new DotArray($put ?? []);
         $this->files = new DotArray($_FILES);
         $this->headers = \getallheaders();
     }
@@ -167,7 +174,7 @@ class Request implements RequestInterface
     }
 
     /**
-     * Get the value from POST inputs or the array af all GET inputs.
+     * Get the value from POST inputs or the array af all POST inputs.
      * @param string $key
      * @return string|array|null
      */
@@ -177,6 +184,19 @@ class Request implements RequestInterface
             return $this->post->get();
         }
         return $this->post->has($key) ? $this->post->get($key) : null;
+    }
+
+    /**
+     * Get the value from PUT inputs or the array af all PUT inputs.
+     * @param string $key
+     * @return string|array|null
+     */
+    public function put($key = null)
+    {
+        if (\is_null($key)) {
+            return $this->put->get();
+        }
+        return $this->put->has($key) ? $this->put->get($key) : null;
     }
 
     /**
@@ -229,7 +249,7 @@ class Request implements RequestInterface
      */
     public function __get($name)
     {
-        return $this->post($name) ?? $this->get($name) ?? $this->route()->parameter($name);
+        return $this->post($name) ?? $this->get($name) ?? $this->put($name) ?? $this->route()->parameter($name);
     }
 
     /**

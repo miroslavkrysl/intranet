@@ -37,14 +37,13 @@ class Csrf
             return null;
         }
 
-        $token = $request->post('_token') ?? $request->header('X-CSRF-TOKEN');
-
+        $token = $request->_token ?? $request->header('X-CSRF-TOKEN');
         if ($token and $this->csrf->matches($token)) {
             return null;
         }
 
         $response = $request->json() ?
-            \jsonError(401, \text('csrf.inactive')) :
+            \jsonError(401, ['csrf' => [\text('csrf.inactive')]]) :
             \error(401, \text('csrf.inactive'));
 
         return $response;

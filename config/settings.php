@@ -39,9 +39,12 @@ return [
 
     // app
     'csrf' => [
-        'expire' => 15 // minutes
+        'expire' => 720 // minutes
     ],
     'auth' => [
         'login_expire_days' => 64
+    ],
+    'mail' => [
+        'from' => env('mail.name') . "<" . env('mail.username') . "@" . env('app.url') . ">"
     ]
 ];

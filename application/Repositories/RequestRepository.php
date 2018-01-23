@@ -33,6 +33,26 @@ class RequestRepository implements RequestRepositoryInterface
     }
 
     /**
+     * Create new empty request represented as an array.
+     * @return array
+     */
+    public function create(): array
+    {
+        return array(
+            'id' => null,
+            'user_username' => null,
+            'car_name' => null,
+            'reserved_from' => null,
+            'reserved_to' => null,
+            'driver_username' => null,
+            'purpose' => null,
+            'destination' => null,
+            'passengers' => null,
+            'confirmed' => false,
+        );
+    }
+
+    /**
      * Find request by id.
      * @param int $id
      * @return array|null
@@ -193,9 +213,9 @@ class RequestRepository implements RequestRepositoryInterface
     {
         $query =
             "INSERT INTO $this->table ".
-            "(id, user_username, car_name, reserved_from, reserved_to, driver_username, purpose, destination, passengers) ".
+            "(id, user_username, car_name, reserved_from, reserved_to, driver_username, purpose, destination, passengers, confirmed) ".
             "VALUES ".
-            "(:id, :user_username, :car_name, :reserved_from, :reserved_to, :driver_username, :purpose, :destination, :passengers) ".
+            "(:id, :user_username, :car_name, :reserved_from, :reserved_to, :driver_username, :purpose, :destination, :passengers, :confirmed) ".
             "ON DUPLICATE KEY UPDATE ".
             "user_username = :user_username, ".
             "car_name = :car_name1, ".
@@ -204,7 +224,8 @@ class RequestRepository implements RequestRepositoryInterface
             "driver_username = :driver_username1, ".
             "purpose = :purpose1, ".
             "destination = :destination1, ".
-            "passengers = :passengers1;";
+            "passengers = :passengers1, ".
+            "confirmed = :confirmed1;";
 
         $params = [
             'id' => $request['id'] ?? null,
@@ -216,6 +237,7 @@ class RequestRepository implements RequestRepositoryInterface
             'purpose' => $request['purpose'],
             'destination' => $request['destination'],
             'passengers' => $request['passengers'],
+            'confirmed' => $request['confirmed'],
             'user_username1' => $request['user_username'],
             'car_name1' => $request['car_name'],
             'reserved_from1' => $request['reserved_from'],
@@ -223,7 +245,8 @@ class RequestRepository implements RequestRepositoryInterface
             'driver_username1' => $request['driver_username'],
             'purpose1' => $request['purpose'],
             'destination1' => $request['destination'],
-            'passengers1' => $request['passengers']
+            'passengers1' => $request['passengers'],
+            'confirmed1' => $request['confirmed']
         ];
 
         $this->database->execute($query, $params);
