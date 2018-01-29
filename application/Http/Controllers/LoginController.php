@@ -72,7 +72,7 @@ class LoginController
         $user = $this->userRepository->findByUsername($request->username);
 
         if (!$this->userRepository->verifyPassword($request->password, $user['password'])) {
-            $errors = ['password' => [\text('login.wrong_password')]];
+            $errors = ['password' => [\text('app.auth.password.wrong')]];
             return \jsonError(422, $errors);
         }
 

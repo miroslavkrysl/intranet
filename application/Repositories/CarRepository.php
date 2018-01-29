@@ -68,7 +68,6 @@ class CarRepository implements CarRepositoryInterface
             ($limit == null ? "" : "LIMIT :limit ").
             ($offset == null ? "" : "OFFSET :offset ").
             ";";
-        \var_dump($query);
 
         $params = [
             'order_by' => \implode(", ", $orderBy),
@@ -83,9 +82,9 @@ class CarRepository implements CarRepositoryInterface
     /**
      * Save car to database.
      * @param array $car
-     * @return boolean
+     * @return array
      */
-    public function save(array $car): bool
+    public function save(array $car): array
     {
         $query =
             "INSERT INTO $this->table ".
@@ -109,7 +108,7 @@ class CarRepository implements CarRepositoryInterface
 
         $this->database->execute($query, $params);
 
-        return $this->database->count() > 0;
+        return $car;
     }
 
     /**

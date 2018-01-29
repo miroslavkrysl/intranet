@@ -1,0 +1,133 @@
+{% extends "layouts/app.twig" %}
+{% import 'macros/form.twig' as form %}
+
+{% block content %}
+    <div class="p-2 row">
+        <div class="col-sm">
+            <h1>{{ _text('app.menu.users')|capitalize }}</h1>
+        </div>
+        <div class="col-sm-auto">
+            <button class="btn btn-info m-1" type="button" data-toggle="modal" data-target="#user-create-modal">{{ _text('app.user.create.action') }}</button>
+        </div>
+    </div>
+
+    <div class="card">
+        <div id='users-table' class="card-body">
+        </div>
+    </div>
+
+    <div class="modal fade" id="user-settings-modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"></h5>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="user-settings-form" action="/user" data-method="put">
+                        {{ form.csrf() }}
+                        <div class="form-group">
+                            <label for="input-username">{{ _text('fields.username')|capitalize }}</label>
+                            <input type="text" class="form-control" id="input-username" name="username" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="input-email">{{ _text('fields.email')|capitalize }}</label>
+                            <input type="email" class="form-control" id="input-email" name="email">
+                        </div>
+                        <div class="form-group">
+                            <label for="input-name">{{ _text('fields.name')|capitalize }}</label>
+                            <input type="text" class="form-control" id="input-name" name="name">
+                        </div>
+                        <div class="form-group">
+                            <label for="input-role_name">{{ _text('fields.role_name')|capitalize }}</label>
+                            <select class="form-control" id="input-role_name" name="role_name">
+                                {% for role in roles %}
+                                    <option>{{ role.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </form>
+                    <div id="user-settings-message-box"></div>
+                </div>
+                <div class="modal-footer">
+                    <button id="user-settings-delete" class="btn btn-danger mr-auto" data-toggle="modal" data-target="#user-delete-modal">{{ _text('app.delete')|capitalize }}</button>
+                    <button id="user-settings-submit" class="btn btn-primary">{{ _text('app.save')|capitalize }}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="user-create-modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">{{ _text('app.user.create.action') }}</h5>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="user-create-form" action="/user" data-method="post">
+                        {{ form.csrf() }}
+                        <div class="form-group">
+                            <label for="input-username">{{ _text('fields.username')|capitalize }}</label>
+                            <input type="text" class="form-control" id="input-username" name="username">
+                        </div>
+                        <div class="form-group">
+                            <label for="input-email">{{ _text('fields.email')|capitalize }}</label>
+                            <input type="email" class="form-control" id="input-email" name="email">
+                        </div>
+                        <div class="form-group">
+                            <label for="input-name">{{ _text('fields.name')|capitalize }}</label>
+                            <input type="text" class="form-control" id="input-name" name="name">
+                        </div>
+                        <div class="form-group">
+                            <label for="input-role_name">{{ _text('fields.role_name')|capitalize }}</label>
+                            <select class="form-control" id="input-role_name" name="role_name">
+                                {% for role in roles %}
+                                    <option>{{ role.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </form>
+                    <div id="user-create-message-box"></div>
+                </div>
+                <div class="modal-footer">
+                    <button id="user-create-submit" class="btn btn-primary">{{ _text('app.save')|capitalize }}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="user-delete-modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">{{ _text('app.user.delete.action')|capitalize }}</h5>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        {{ _text('app.user.delete.confirm') }} <span id="user-delete-modal-username" class="font-weight-bold"></span>?
+                    </p>
+                    <div id="user-delete-message-box"></div>
+                </div>
+                <div class="modal-footer">
+                    <button id="user-delete-no" type="submit" class="btn btn-primary mr-auto">{{ _text('app.no')|capitalize }}</button>
+
+                    <form id="user-delete-form" action="/user" data-method="delete">
+                        {{ form.csrf() }}
+                        <input name="username" hidden>
+                        <button id="user-delete-yes" class="btn btn-warning">{{ _text('app.yes')|capitalize }}</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/users.js"></script>
+{% endblock %}

@@ -21,7 +21,7 @@
                             <input class="form-control" type="password" name="password" placeholder="{{ _text('fields.password')|capitalize }}" required>
                         </div>
 
-                        <div id="login-form-error-box">
+                        <div id="login-form-message-box">
 
                         </div>
 
@@ -36,7 +36,46 @@
                                 <button type="submit" class="btn btn-primary">{{ _text('app.auth.login')|capitalize }}</button>
                             </div>
                         </div>
+
+                        <div class="pt-2 text-center">
+                            <a href="#" data-toggle="modal" data-target="#forgotten-password-modal">{{ _text('app.auth.password.forgotten') }}</a>
+                        </div>
                     </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="forgotten-password-modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">{{ _text('app.auth.password.forgotten_title') }}</h5>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <p>
+                        {{ _text('app.auth.password.forgotten_text') }}
+                    </p>
+
+                    <form id="forgotten-password-form" action="/user/send-change-password-email" data-method="post">
+                        {{ form.csrf() }}
+                        <div class="form-group">
+                            <label for="input-email">{{ _text('fields.email')|capitalize }}</label>
+                            <input type="text" class="form-control" id="input-email" name="email">
+                        </div>
+                    </form>
+
+                    <div id="forgotten-password-message-box"></div>
+                </div>
+                <div class="modal-footer">
+                    <p class="text-secondary">
+                        {{ _text('app.auth.password.forgotten_spam_text') }}
+                    </p>
+                    <button id="forgotten-password-submit" class="btn btn-primary">{{ _text('app.send')|capitalize }}</button>
                 </div>
             </div>
         </div>

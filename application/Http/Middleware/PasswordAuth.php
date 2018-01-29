@@ -39,6 +39,7 @@ class PasswordAuth
     public function before(RequestInterface $request)
     {
         $password = $request->_password;
+        $password = $request->_password;
         $user = $this->auth->user();
         $updatingUsername = $request->username;
 

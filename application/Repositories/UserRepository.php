@@ -105,20 +105,13 @@ class UserRepository implements UserRepositoryInterface
         $query =
             "SELECT * ".
             "FROM $this->table ".
-            ($orderBy == null ? "" : "ORDER BY :order_by ").
+            ($orderBy == null ? "" : "ORDER BY " . \implode(", ", $orderBy) . " ").
             ($desc ? "DESC " : "").
-            ($limit == null ? "" : "LIMIT :limit ").
-            ($offset == null ? "" : "OFFSET :offset ").
+            ($limit == null ? "" : "LIMIT $limit ").
+            ($offset == null ? "" : "OFFSET $offset ").
             ";";
-        \var_dump($query);
 
-        $params = [
-            'order_by' => \implode(", ", $orderBy),
-            'limit' => $limit,
-            'offset' => $offset
-        ];
-
-        $this->database->execute($query, $params);
+        $this->database->execute($query);
         return $this->database->fetchAll() ?? [];
     }
 
@@ -132,15 +125,16 @@ class UserRepository implements UserRepositoryInterface
 
         $query =
             "INSERT INTO $this->table ".
-            "(username, name, email, role_name, password, password_reset_token) ".
+            "(username, name, email, role_name, password, password_reset_token, password_reset_expire_at) ".
             "VALUES ".
-            "(:username, :name, :email, :role_name, :password, :password_reset_token) ".
+            "(:username, :name, :email, :role_name, :password, :password_reset_token, :password_reset_expire_at) ".
             "ON DUPLICATE KEY UPDATE ".
             "name = :name1, ".
             "email = :email1, ".
             "role_name = :role_name1, ".
             "password = :password1, ".
-            "password_reset_token = :password_reset_token1;";
+            "password_reset_token = :password_reset_token1, ".
+            "password_reset_expire_at = :password_reset_expire_at1;";
         $params = [
             'username' => $user['username'],
             'name' => $user['name'],
@@ -148,11 +142,13 @@ class UserRepository implements UserRepositoryInterface
             'role_name' => $user['role_name'],
             'password' => $user['password'],
             'password_reset_token' => $user['password_reset_token'],
+            'password_reset_expire_at' => $user['password_reset_expire_at'],
             'name1' => $user['name'],
             'email1' => $user['email'],
             'role_name1' => $user['role_name'],
             'password1' => $user['password'],
-            'password_reset_token1' => $user['password_reset_token']
+            'password_reset_token1' => $user['password_reset_token'],
+            'password_reset_expire_at1' => $user['password_reset_expire_at']
         ];
 
         $this->database->execute($query, $params);

@@ -36,21 +36,22 @@ $router->post('/logout', 'LoginController@logout')->jsonOnly()->middleware('Rest
 
 // user handling
 $router->post('/user', 'UserController@create')->jsonOnly()->middleware('RestrictToLogged');
-$router->put('/user/{username}', 'UserController@update')->jsonOnly()->middleware('RestrictToLogged')->middleware('PasswordAuth');
-$router->delete('/user/{username}', 'UserController@delete')->jsonOnly()->middleware('RestrictToLogged');
+$router->put('/user', 'UserController@update')->jsonOnly()->middleware('RestrictToLogged');
+$router->delete('/user', 'UserController@delete')->jsonOnly()->middleware('RestrictToLogged');
 $router->get('/users', 'UserController@list')->middleware('RestrictToLogged');
+$router->get('/users-table', 'UserController@usersTable')->jsonOnly()->middleware('RestrictToLogged');
 $router->get('/user/settings', 'UserController@showSettings')->middleware('RestrictToLogged');
 // password reset
 $router->get('/user/change-password', 'UserController@showChangePasswordForm');
 $router->put('/user/change-password', 'UserController@changePassword')->jsonOnly();
-$router->post('/user/send-reset-password-email', 'UserController@sendPasswordResetEmail')->jsonOnly();
+$router->post('/user/send-change-password-email', 'UserController@sendChangePasswordEmail')->jsonOnly();
 
 
 // request handling
 $router->post('/request', 'RequestController@create')->jsonOnly()->middleware('RestrictToLogged');
 $router->put('/request', 'RequestController@update')->jsonOnly()->middleware('RestrictToLogged');
 $router->delete('/request', 'RequestController@delete')->jsonOnly()->middleware('RestrictToLogged');
-$router->get('/requests', 'RequestController@list')->jsonOnly()->middleware('RestrictToLogged');
+$router->get('/requests', 'RequestController@list')->middleware('RestrictToLogged');
 
 
 // document handling
@@ -62,13 +63,6 @@ $router->get('/documents', 'DocumentController@list')->middleware('RestrictToLog
 
 // car handling
 $router->post('/car', 'CarController@create')->jsonOnly()->middleware('RestrictToLogged');
-$router->put('/car', 'CarController@update')->jsonOnly()->middleware('RestrictToLogged');
-$router->delete('/car', 'CarController@delete')->jsonOnly()->middleware('RestrictToLogged');
+$router->put('/car/{name}', 'CarController@update')->jsonOnly()->middleware('RestrictToLogged');
+$router->delete('/car/{name}', 'CarController@delete')->jsonOnly()->middleware('RestrictToLogged');
 $router->get('/cars', 'CarController@list')->middleware('RestrictToLogged');
-
-
-$router->get('/emailtest', function () {
-    $mail = app('mail');
-    $ok = $mail->send('mirek.krysl@seznam.cz', 'test', '<h1>Some fancy message</h1>');
-    return json(['ok' => $ok]);
-});

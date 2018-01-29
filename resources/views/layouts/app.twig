@@ -2,10 +2,11 @@
 
 {% block body %}
 
-    {% include "/components/navbar.twig" %}
+    {% if _auth.isLogged() %}
+        {% include "/components/navbar.twig" %}
+    {% endif %}
 
     <div class="container pt-3">
-        <div id="message-box"></div>
 
         {% block content %}
         {% endblock %}

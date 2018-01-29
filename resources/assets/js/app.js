@@ -11,7 +11,8 @@ $('document').ready(function () {
             '   <button type="button" class="close" data-dismiss="alert">' +
             '       <span>&times;</span>' +
             '   </button>' +
-            '</div>'
+            '</div>',
+            spinner : '<i class="fa fa-spinner fa-spin"></i>'
         },
 
         messageBox : $('#message-box'),
@@ -36,6 +37,7 @@ $('document').ready(function () {
         submitForm : function (form, success, error) {
             form = $(form);
             url = form.attr('action');
+            console.log(url);
             method = form.attr('data-method');
             id = form.attr('id');
 

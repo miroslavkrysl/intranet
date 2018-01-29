@@ -3,57 +3,76 @@
 
 {% block content %}
 
+    <h1>{{ _text('app.menu.settings')|capitalize }}</h1>
+
     <div class="card">
-        <form class="card-body" id="settings-form" action="/user/{{ _auth.user().username }}" method="post" data-method="put">
-            {{ form.csrf() }}
+        <div class="card-body">
+            <form id="settings-form" action="/user" method="post" data-method="put">
 
-            <h1 class="card-title">{{ _text('app.menu.settings')|capitalize }}</h1>
-            <div class="form-group row">
-                <label for="input-username" class="col-sm-5 col-lg-2 col-form-label">{{ _text('fields.username')|capitalize }}</label>
-                <div class="col-sm-7 col-lg-10">
-                    <input type="text" class="form-control" id="input-username" value="{{ _auth.user().username }}" disabled>
-                </div>
-            </div>
-            <div class="form-group row">
-                <label for="input-email" class="col-sm-5 col-lg-2 col-form-label">{{ _text('fields.email')|capitalize }}</label>
-                <div class="col-sm-7 col-lg-10">
-                    <input type="email" class="form-control" id="input-email" value="{{ _auth.user().email }}" disabled>
-                </div>
-            </div>
-            <div class="form-group row">
-                <label for="input-name" class="col-sm-5 col-lg-2 col-form-label">{{ _text('fields.name')|capitalize }}</label>
-                <div class="col-sm-7 col-lg-10">
-                    <input type="text" class="form-control" id="input-name" name="name" value="{{ _auth.user().name }}">
-                </div>
-            </div>
-            <div class="form-group row">
-                <label for="input-password" class="col-sm-5 col-lg-2 col-form-label">{{ _text('fields.new_password')|capitalize }}</label>
-                <div class="col-sm-7 col-lg-10">
-                    <input type="password" class="form-control" id="input-password" name="password">
-                </div>
-            </div>
-            <div class="form-group row">
-                <label for="input-newpassword1" class="col-sm-5 col-lg-2 col-form-label">{{ _text('fields.new_password_again')|capitalize }}</label>
-                <div class="col-sm-7 col-lg-10">
-                    <input type="password" class="form-control" id="input-password1" name="password1">
-                </div>
-            </div>
+                {{ form.csrf() }}
 
-            <div id="settings-form-message-box"></div>
-
-            <hr />
-            <div class="form-group row">
-                <label for="input-_password" class="col-sm-5 col-lg-2 col-form-label">{{ _text('fields._password')|capitalize }}</label>
-                <div class="col-sm-5 col-lg-8">
-                    <input type="password" class="form-control" id="input-_password" name="_password">
-                </div>
-                <div class="col-12 col-sm-2">
-                    <div class="text-center text-sm-right p-3 p-sm-0">
-                        <button type="submit" class="btn btn-primary">{{ _text('app.save') }}</button>
+                <div class="form-group row">
+                    <label for="input-username" class="col-sm-5 col-lg-2 col-form-label">{{ _text('fields.username')|capitalize }}</label>
+                    <div class="col-sm-7 col-lg-10">
+                        <input type="text" class="form-control" id="input-username" name="username" value="{{ _auth.user().username }}" readonly>
                     </div>
                 </div>
+                <div class="form-group row">
+                    <label for="input-email" class="col-sm-5 col-lg-2 col-form-label">{{ _text('fields.email')|capitalize }}</label>
+                    <div class="col-sm-7 col-lg-10">
+                        <input type="email" class="form-control" id="input-email" value="{{ _auth.user().email }}" disabled>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="input-name" class="col-sm-5 col-lg-2 col-form-label">{{ _text('fields.name')|capitalize }}</label>
+                    <div class="col-sm-7 col-lg-10">
+                        <input type="text" class="form-control" id="input-name" name="name" value="{{ _auth.user().name }}">
+                    </div>
+                </div>
+
+                <button type="button" id="#change-password" class="btn btn-warning mb-2" data-toggle="modal" data-target="#change-password-modal">{{ _text('app.user.change_password.action') }}</button>
+                <div id="settings-message-box"></div>
+
+                <hr />
+
+                <button type="submit" class="btn btn-primary ml-auto d-block">{{ _text('app.save') }}</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal fade" id="change-password-modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">{{ _text('app.user.change_password.action') }}</h5>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="change-password-form" action="/user/change-password" data-method="put">
+                        {{ form.csrf() }}
+                        <input type="username" name="username" value="{{ _auth.user().username }}" hidden>
+                        <div class="form-group">
+                            <label for="input-password">{{ _text('fields.new_password')|capitalize }}</label>
+                            <input type="password" class="form-control" id="input-password" name="password">
+                        </div>
+                        <div class="form-group">
+                            <label for="input-password-again">{{ _text('fields.new_password_again')|capitalize }}</label>
+                            <input type="password" class="form-control" id="input-password-again">
+                        </div>
+                        <div class="form-group">
+                            <label for="input-_password">{{ _text('fields._password')|capitalize }}</label>
+                            <input type="password" class="form-control" id="input-_password" name="_password">
+                        </div>
+                    </form>
+                    <div id="change-password-message-box"></div>
+                </div>
+                <div class="modal-footer">
+                    <button id="change-password-submit" class="btn btn-primary">{{ _text('app.save')|capitalize }}</button>
+                </div>
             </div>
-        </form>
+        </div>
     </div>
 
     <script src="/js/settings.js"></script>

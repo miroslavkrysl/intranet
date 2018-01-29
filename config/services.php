@@ -24,6 +24,7 @@ use Intranet\Http\Middleware\Csrf as CsrfMiddleware;
 use Intranet\Http\Middleware\PasswordAuth;
 use Intranet\Http\Middleware\RestrictToLogged;
 use Intranet\Repositories\LoginRepository;
+use Intranet\Repositories\RoleRepository;
 use Intranet\Repositories\UserRepository;
 use Intranet\Services\Auth\Auth;
 use Intranet\Services\Csrf\Csrf as CsrfService;
@@ -168,6 +169,10 @@ $container->register('repository.car', LoginRepository::class)
     ->addArgument(new SR('database'))
     ->addArgument(config('database.tables.car'));
 
+$container->register('repository.role', RoleRepository::class)
+    ->addArgument(new SR('database'))
+    ->addArgument(config('database.tables.role'));
+
 
 // controllers
 
@@ -180,7 +185,9 @@ $container->register('LoginController', LoginController::class)
 
 $container->register('UserController', UserController::class)
     ->addArgument(new SR('repository.user'))
-    ->addArgument(new SR('auth'));
+    ->addArgument(new SR('repository.role'))
+    ->addArgument(new SR('auth'))
+    ->addArgument(new SR('mail'));
 
 //$container->register('RequestController', RequestController::class);
 

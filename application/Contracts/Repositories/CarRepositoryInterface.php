@@ -26,9 +26,9 @@ interface CarRepositoryInterface
     /**
      * Save car to database.
      * @param array $car
-     * @return boolean
+     * @return array
      */
-    public function save(array $car): bool;
+    public function save(array $car): array;
 
     /**
      * Delete the car from the database.

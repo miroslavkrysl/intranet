@@ -1,0 +1,26 @@
+{% import 'macros/form.twig' as form %}
+
+<table class="table table-striped table-hover table-bordered">
+    <thead>
+    <tr>
+        <th scope="col">{{ _text('fields.username')|capitalize }}</th>
+        <th scope="col">{{ _text('fields.name')|capitalize }}</th>
+        <th scope="col">{{ _text('fields.email')|capitalize }}</th>
+        <th scope="col">{{ _text('fields.role_name')|capitalize }}</th>
+    </tr>
+    </thead>
+    <tbody>
+
+    {%  for user in users %}
+
+        <tr data-toggle="modal" data-target="#user-settings-modal">
+            <td data-field="username">{{ user.username }}</td>
+            <td data-field="name">{{ user.name }}</td>
+            <td data-field="email">{{ user.email }}</td>
+            <td data-field="role_name">{{ user.role_name }}</td>
+        </tr>
+
+    {% endfor %}
+
+    </tbody>
+</table>
