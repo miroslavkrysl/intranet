@@ -63,6 +63,7 @@ $router->get('/documents', 'DocumentController@list')->middleware('RestrictToLog
 
 // car handling
 $router->post('/car', 'CarController@create')->jsonOnly()->middleware('RestrictToLogged');
-$router->put('/car/{name}', 'CarController@update')->jsonOnly()->middleware('RestrictToLogged');
-$router->delete('/car/{name}', 'CarController@delete')->jsonOnly()->middleware('RestrictToLogged');
+$router->put('/car', 'CarController@update')->jsonOnly()->middleware('RestrictToLogged');
+$router->delete('/car', 'CarController@delete')->jsonOnly()->middleware('RestrictToLogged');
 $router->get('/cars', 'CarController@list')->middleware('RestrictToLogged');
+$router->get('/cars-table', 'CarController@carsTable')->jsonOnly()->middleware('RestrictToLogged');

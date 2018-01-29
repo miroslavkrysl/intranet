@@ -1,0 +1,132 @@
+{% extends "layouts/app.twig" %}
+{% import 'macros/form.twig' as form %}
+
+{% set can_manage_cars = _user.hasPermission(_auth.user().username, 'car_manage') %}
+
+{% block content %}
+    <div class="p-2 row">
+        <div class="col-sm">
+            <h1>{{ _text('app.menu.cars')|capitalize }}</h1>
+        </div>
+
+        {% if can_manage_cars %}
+            <div class="col-sm-auto">
+                <button class="btn btn-info m-1" type="button" data-toggle="modal" data-target="#car-create-modal">{{ _text('app.car.create.action') }}</button>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="card">
+        <div id='cars-table' class="card-body">
+        </div>
+    </div>
+
+    {% if can_manage_cars %}
+        <div class="modal fade" id="car-settings-modal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title"></h5>
+                        <button type="button" class="close" data-dismiss="modal">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="car-settings-form" action="/car" data-method="put">
+                            {{ form.csrf() }}
+                            <div class="form-group">
+                                <label for="input-name">{{ _text('fields.name')|capitalize }}</label>
+                                <input type="text" class="form-control" id="input-name" name="name" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="input-description">{{ _text('fields.description')|capitalize }}</label>
+                                <textarea class="form-control" id="input-description" name="description"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="input-manufacturer">{{ _text('fields.manufacturer')|capitalize }}</label>
+                                <input type="text" class="form-control" id="input-manufacturer" name="manufacturer">
+                            </div>
+                            <div class="form-group">
+                                <label for="input-model">{{ _text('fields.model')|capitalize }}</label>
+                                <input type="text" class="form-control" id="input-model" name="model">
+                            </div>
+                        </form>
+                        <div id="car-settings-message-box"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="car-settings-delete" class="btn btn-danger mr-auto" data-toggle="modal" data-target="#car-delete-modal">{{ _text('app.delete')|capitalize }}</button>
+                        <button id="car-settings-submit" class="btn btn-primary">{{ _text('app.save')|capitalize }}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="car-create-modal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">{{ _text('app.car.create.action') }}</h5>
+                        <button type="button" class="close" data-dismiss="modal">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="car-create-form" action="/car" data-method="post">
+                            {{ form.csrf() }}
+                            <div class="form-group">
+                                <label for="input-name">{{ _text('fields.name')|capitalize }}</label>
+                                <input type="text" class="form-control" id="input-name" name="name">
+                            </div>
+                            <div class="form-group">
+                                <label for="input-description">{{ _text('fields.description')|capitalize }}</label>
+                                <textarea class="form-control" id="input-description" name="description"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="input-manufacturer">{{ _text('fields.manufacturer')|capitalize }}</label>
+                                <input type="text" class="form-control" id="input-manufacturer" name="manufacturer">
+                            </div>
+                            <div class="form-group">
+                                <label for="input-model">{{ _text('fields.model')|capitalize }}</label>
+                                <input type="text" class="form-control" id="input-model" name="model">
+                            </div>
+                        </form>
+                        <div id="car-create-message-box"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="car-create-submit" class="btn btn-primary">{{ _text('app.save')|capitalize }}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="car-delete-modal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">{{ _text('app.car.delete.action')|capitalize }}</h5>
+                        <button type="button" class="close" data-dismiss="modal">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                            {{ _text('app.car.delete.confirm') }} <span id="car-delete-modal-name" class="font-weight-bold"></span>?
+                        </p>
+                        <div id="car-delete-message-box"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="car-delete-no" type="submit" class="btn btn-primary mr-auto">{{ _text('app.no')|capitalize }}</button>
+
+                        <form id="car-delete-form" action="/car" data-method="delete">
+                            {{ form.csrf() }}
+                            <input name="name" hidden>
+                            <button id="car-delete-yes" class="btn btn-warning">{{ _text('app.yes')|capitalize }}</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <script src="/js/cars.js"></script>
+{% endblock %}

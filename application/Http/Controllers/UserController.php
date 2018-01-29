@@ -107,7 +107,17 @@ class UserController
             'password_reset_expire_at' => null
         ];
 
-        $user = $this->userRepository->save($user);
+        $token = \random_string(128);
+        $user['password_reset_token'] = $this->userRepository->hashPassword($token);
+
+        $this->userRepository->save($user);
+
+        $url = \sprintf("%s/user/change-password?username=%s&token=%s", \config('app.url'), $user['username'], $token);
+        $subject = \text('app.user.create.mail.subject');
+        $message = \text('app.user.create.mail.message', ['url' => $url, 'username' => $user['username']]);
+
+        $this->mail->send($user['email'], $subject, $message);
+
         $user = $this->userRepository->toPublic($user);
 
         return \json(['user' => $user, 'message' => \text('app.user.create.success')]);
@@ -223,7 +233,7 @@ class UserController
             return \error(403, ['permission' => [\text('base.permission_denied')]]);
         }
 
-        $users = $this->userRepository->findAll();
+        $users = $this->userRepository->findAll(['name']);
         $roles = $this->roleRepository->findAll();
 
         return \html('users', ['users' => $users, 'roles' => $roles]);
@@ -240,7 +250,7 @@ class UserController
             return \jsonError(403, ['permission' => [\text('base.permission_denied')]]);
         }
 
-        $users = $this->userRepository->findAll();
+        $users = $this->userRepository->findAll(['name']);
         $roles = $this->roleRepository->findAll();
 
         return \html('components.users_table', ['users' => $users, 'roles' => $roles]);
@@ -326,9 +336,9 @@ class UserController
         else if ($request->token) {
             $hash = $user['password_reset_token'];
             $now = \strtotime('now');
-            $expire = \strtotime($user['password_expire_at']);
+            $expire = \strtotime($user['password_reset_expire_at']);
 
-            if (!$hash or !$expire or $now > $expire or !$this->userRepository->verifyPassword($request->token, $hash)){
+            if (!$hash or ($expire and $now > $expire) or !$this->userRepository->verifyPassword($request->token, $hash)){
                 return \jsonError(403, ['token' => [\text('app.user.change_password.invalid_token')]]);
             }
         }

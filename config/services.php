@@ -15,6 +15,7 @@ use Core\Validation\Validator;
 use Core\View\TwigView;
 
 use Core\View\TwigViewFactory;
+use Intranet\Http\Controllers\CarController;
 use Intranet\Http\Controllers\DashboardController;
 use Intranet\Http\Controllers\DocumentController;
 use Intranet\Http\Controllers\LoginController;
@@ -23,7 +24,10 @@ use Intranet\Http\Controllers\UserController;
 use Intranet\Http\Middleware\Csrf as CsrfMiddleware;
 use Intranet\Http\Middleware\PasswordAuth;
 use Intranet\Http\Middleware\RestrictToLogged;
+use Intranet\Repositories\CarRepository;
+use Intranet\Repositories\DocumentRepository;
 use Intranet\Repositories\LoginRepository;
+use Intranet\Repositories\RequestRepository;
 use Intranet\Repositories\RoleRepository;
 use Intranet\Repositories\UserRepository;
 use Intranet\Services\Auth\Auth;
@@ -157,15 +161,15 @@ $container->register('repository.login', LoginRepository::class)
     ->addArgument(new SR('database'))
     ->addArgument(config('database.tables.login'));
 
-$container->register('repository.request', LoginRepository::class)
+$container->register('repository.request', RequestRepository::class)
     ->addArgument(new SR('database'))
     ->addArgument(config('database.tables.request'));
 
-$container->register('repository.document', LoginRepository::class)
+$container->register('repository.document', DocumentRepository::class)
     ->addArgument(new SR('database'))
     ->addArgument(config('database.tables.document'));
 
-$container->register('repository.car', LoginRepository::class)
+$container->register('repository.car', CarRepository::class)
     ->addArgument(new SR('database'))
     ->addArgument(config('database.tables.car'));
 
@@ -193,4 +197,7 @@ $container->register('UserController', UserController::class)
 
 //$container->register('DocumentController', DocumentController::class);
 
-//$container->register('CarController', CarController::class);
+$container->register('CarController', CarController::class)
+    ->addArgument(new SR('repository.user'))
+    ->addArgument(new SR('repository.car'))
+    ->addArgument(new SR('auth'));

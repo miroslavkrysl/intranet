@@ -63,19 +63,13 @@ class CarRepository implements CarRepositoryInterface
         $query =
             "SELECT * ".
             "FROM $this->table ".
-            ($orderBy == null ? "" : "ORDER BY :order_by ").
+            ($orderBy == null ? "" : "ORDER BY " . \implode(", ", $orderBy) . " ").
             ($desc ? "DESC " : "").
-            ($limit == null ? "" : "LIMIT :limit ").
-            ($offset == null ? "" : "OFFSET :offset ").
+            ($limit == null ? "" : "LIMIT $limit ").
+            ($offset == null ? "" : "OFFSET $offset ").
             ";";
 
-        $params = [
-            'order_by' => \implode(", ", $orderBy),
-            'limit' => $limit,
-            'offset' => $offset
-        ];
-
-        $this->database->execute($query, $params);
+        $this->database->execute($query);
         return $this->database->fetchAll() ?? [];
     }
 
@@ -93,7 +87,7 @@ class CarRepository implements CarRepositoryInterface
             "(:name, :description, :manufacturer, :model) ".
             "ON DUPLICATE KEY UPDATE ".
             "description = :description1, ".
-            "manifacturer = :manifacturer1, ".
+            "manufacturer = :manufacturer1, ".
             "model = :model1;";
 
         $params = [

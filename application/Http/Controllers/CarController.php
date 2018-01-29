@@ -182,18 +182,26 @@ class CarController
     }
 
     /**
-     * Show page with listed users.
+     * Show page with listed cars.
      * @param RequestInterface $request
      * @return ResponseInterface
      */
     public function list(RequestInterface $request)
     {
-        if (!$this->userRepository->hasPermission($this->auth->user()['username'], "user_manage")) {
-            return \error(403, \text('base.permission_denied'));
-        }
+        $cars = $this->carRepository->findAll(['name']);
 
-        $users = $this->userRepository->findAll('name', false);
+        return \html('cars', ['cars' => $cars]);
+    }
 
-        return \html('users', ['users' => $users]);
+    /**
+     * Show table with listed cars.
+     * @param RequestInterface $request
+     * @return ResponseInterface
+     */
+    public function carsTable(RequestInterface $request)
+    {
+        $cars = $this->carRepository->findAll(['name']);
+
+        return \html('components.cars_table', ['cars' => $cars]);
     }
 }

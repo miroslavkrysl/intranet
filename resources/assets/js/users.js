@@ -50,6 +50,9 @@ $('document').ready(function () {
         app.submitForm(form, function (response) {
             app.setMessages(messageBox, {'success' : [response['message']]});
             $('#users-table').load('/users-table');
+            setTimeout(function() {
+                $('#user-create-modal').modal('hide');
+            }, 1500);
         }, function (response) {
             app.setMessages(messageBox, response.responseJSON.errors, true);
         });

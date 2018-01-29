@@ -179,8 +179,12 @@ class RequestRepository implements RequestRepositoryInterface
      * @param int|null $offset
      * @return array
      */
-    public function findReservedFromBetween(string $from, string $to, array $orderBy = ['reserved_from'], bool $desc = false, int $limit = null, int $offset = null): array
+    public function findReservedFromBetween(string $from, string $to, array $orderBy = null, bool $desc = false, int $limit = null, int $offset = null): array
     {
+        if (\is_null($orderBy)) {
+            $orderBy = ['reserved_from'];
+        }
+
         $query =
             "SELECT * ".
             "FROM $this->table ".
@@ -190,7 +194,6 @@ class RequestRepository implements RequestRepositoryInterface
             ($limit == null ? "" : "LIMIT :limit ").
             ($offset == null ? "" : "OFFSET :offset ").
             ";";
-        \var_dump($query);
 
         $params = [
             'order_by' => \implode(", ", $orderBy),

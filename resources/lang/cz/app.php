@@ -6,6 +6,7 @@ return [
         'home' => 'home',
         'users' => 'uživatelé',
         'settings' => 'nastavení',
+        'cars' => 'Služební auta'
     ],
     'yes' => 'ano',
     'no' => 'ne',
@@ -20,8 +21,15 @@ return [
             'admin_role_denied' => 'Admin nemůže sám sobě změnit roli.'
         ],
         'create' => [
-            'success' => 'Uživatel byl úspěšně vytvořen',
-            'action' => 'Vytvořit nového uživatele'
+            'success' => 'Uživatel byl úspěšně vytvořen, odkaz pro vytvoření hesla byl zaslán na danou adresu',
+            'action' => 'Vytvořit nového uživatele',
+            'mail' => [
+                'message' => 'Na webovém serveru <a href="http://' . config('app.url') . '">Intranetu OŠVS</a> Vám byl vytvořen účet.<br /><br />'.
+                    'Uživatelské jméno: :username <br /><br />'.
+                    'Pro vytvoření hesla klikněte na odkaz níže, budete přesměrováni na formulář, kde lze Vaše heslo vytvořit.<br />'.
+                    '<a href=":url">Vytvoření hesla</a><br /><br />',
+                'subject' => 'Intranet OŠVS - vytvoření účtu'
+            ]
         ],
         'change_password' => [
             'success' => 'Heslo bylo úspěšně změněno',
@@ -52,6 +60,11 @@ return [
         'create' => [
             'success' => 'Auto :name bylo úspěšně přidáno',
             'action' => 'Přidat nové auto'
+        ],
+        'delete' => [
+            'action' => 'Odstranit auto',
+            'confirm' => 'Přejete si opravdu odstranit auto',
+            'success' => 'Auto :name bylo odstraněno'
         ]
     ],
     'auth' => [

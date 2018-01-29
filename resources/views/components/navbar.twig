@@ -11,6 +11,7 @@
         {% if _user.hasPermission(_auth.user().username, 'user_manage') %}
             <a class="nav-item nav-link px-2 px-sm-3" href="/users">{{ _text('app.menu.users')|capitalize }}</a>
         {% endif %}
+        <a class="nav-item nav-link px-2 px-sm-3" href="/cars">{{ _text('app.menu.cars')|capitalize }}</a>
         <a class="nav-item nav-link px-2 px-sm-3" href="/documents">{{ _text('app.menu.documents')|capitalize }}</a>
         <a class="nav-item nav-link px-2 px-sm-3" href="/requests">{{ _text('app.menu.requests')|capitalize }}</a>
     </div>
