@@ -1,19 +1,5 @@
 bindUserCanDriveForms = function () {
-    $('.user-can-drive-delete-form').submit(function (event) {
-        event.preventDefault();
-
-        messageBox = $('#car-settings-message-box');
-        name = $(this).find('input[name="name"]').val();
-
-        app.submitForm($(this), function (response) {
-            app.setMessages(messageBox, {'success' : [response['message']]});
-            $('#users-can-drive-table').load('/users-can-drive-table?' + $.param({'name' : name}), bindUserCanDriveForms);
-        }, function (response) {
-            app.setMessages(messageBox, response.responseJSON.errors, true);
-        })
-    });
-
-    $('.user-can-drive-add-form').submit(function (event) {
+    $('.user-can-drive-delete-form').on('submit', function (event) {
         event.preventDefault();
 
         messageBox = $('#car-settings-message-box');
@@ -125,6 +111,20 @@ $('document').ready(function () {
             }, 1000);
 
             $('#cars-table').load('/cars-table');
+        }, function (response) {
+            app.setMessages(messageBox, response.responseJSON.errors, true);
+        })
+    });
+
+    $('.user-can-drive-add-form').on('submit', function (event) {
+        event.preventDefault();
+
+        messageBox = $('#car-settings-message-box');
+        name = $(this).find('input[name="name"]').val();
+
+        app.submitForm($(this), function (response) {
+            app.setMessages(messageBox, {'success' : [response['message']]});
+            $('#users-can-drive-table').load('/users-can-drive-table?' + $.param({'name' : name}), bindUserCanDriveForms);
         }, function (response) {
             app.setMessages(messageBox, response.responseJSON.errors, true);
         })

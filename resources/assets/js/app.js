@@ -22,8 +22,6 @@ $('document').ready(function () {
                 $(this).remove();
             });
 
-            console.log(messageBox.children());
-
             messages = Object.values(messages);
 
             for (var i = 0; i < messages.length; i++) {
@@ -37,7 +35,6 @@ $('document').ready(function () {
         submitForm : function (form, success, error) {
             form = $(form);
             url = form.attr('action');
-            console.log(url);
             method = form.attr('data-method');
             id = form.attr('id');
 
