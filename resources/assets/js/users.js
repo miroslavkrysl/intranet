@@ -59,7 +59,7 @@ $('document').ready(function () {
     });
 
     $('#user-delete-modal').on('show.bs.modal', function (event) {
-        $(this).find('#user-settings-message-box').text('');
+        $(this).find('#user-delete-message-box').text('');
         username = $(event.relatedTarget).attr('data-username');
         console.log(username);
         $(this).find('#user-delete-modal-username').text(username);

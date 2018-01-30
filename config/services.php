@@ -171,7 +171,9 @@ $container->register('repository.document', DocumentRepository::class)
 
 $container->register('repository.car', CarRepository::class)
     ->addArgument(new SR('database'))
-    ->addArgument(config('database.tables.car'));
+    ->addArgument(config('database.tables.car'))
+    ->addArgument(config('database.tables.user_can_drive'))
+    ->addArgument(config('database.tables.user'));
 
 $container->register('repository.role', RoleRepository::class)
     ->addArgument(new SR('database'))

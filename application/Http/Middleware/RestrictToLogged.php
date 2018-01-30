@@ -35,6 +35,12 @@ class RestrictToLogged
     public function before(RequestInterface $request)
     {
         if (!$this->auth->isLogged()){
+            if ($request->json()) {
+                return \jsonError(401, ['auth' => [\text('app.auth.not_logged')]]);
+            }
+            if ($request->ajax()) {
+                return \html('components.not_logged');
+            }
             return \redirect('/login');
         }
 

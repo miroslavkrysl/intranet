@@ -22,6 +22,11 @@ class Request implements RequestInterface
     private $json;
 
     /**
+     * @var
+     */
+    private $ajax;
+
+    /**
      * @var string
      */
     private $method;
@@ -78,6 +83,7 @@ class Request implements RequestInterface
      * @var RouteInterface
      */
     private $route;
+
     /**
      * Contains validation errors.
      * @var array
@@ -100,6 +106,7 @@ class Request implements RequestInterface
     public function createFromGlobals()
     {
         $this->json = \in_array('application/json', \explode(',', \explode(';', $_SERVER['HTTP_ACCEPT'])[0]));
+        $this->ajax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) and strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
 
         $this->method = \strtolower($_SERVER['REQUEST_METHOD']);
 
@@ -116,12 +123,21 @@ class Request implements RequestInterface
     }
 
     /**
-     * Returns true if the request accept json.
+     * Returns true if the request accepts json.
      * @return bool
      */
     public function json(): bool
     {
         return $this->json;
+    }
+
+    /**
+     * Returns true if the request is via ajax.
+     * @return bool
+     */
+    public function ajax(): bool
+    {
+        return $this->ajax;
     }
 
     /**

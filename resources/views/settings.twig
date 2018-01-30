@@ -1,6 +1,8 @@
 {% extends "layouts/app.twig" %}
 {% import 'macros/form.twig' as form %}
 
+{% set can_manage_users = _user.hasPermission(_auth.user().username, 'user_manage') %}
+
 {% block content %}
 
     <h1>{{ _text('app.menu.settings')|capitalize }}</h1>
@@ -20,7 +22,11 @@
                 <div class="form-group row">
                     <label for="input-email" class="col-sm-5 col-lg-2 col-form-label">{{ _text('fields.email')|capitalize }}</label>
                     <div class="col-sm-7 col-lg-10">
+                        {% if can_manage_users %}
+                        <input type="email" class="form-control" id="input-email" value="{{ _auth.user().email }}" name="email">
+                        {% else %}
                         <input type="email" class="form-control" id="input-email" value="{{ _auth.user().email }}" disabled>
+                        {% endif %}
                     </div>
                 </div>
                 <div class="form-group row">
@@ -35,7 +41,7 @@
 
                 <hr />
 
-                <button type="submit" class="btn btn-primary ml-auto d-block">{{ _text('app.save') }}</button>
+                <button type="submit" class="btn btn-primary ml-auto d-block">{{ _text('app.save')|capitalize }}</button>
             </form>
         </div>
     </div>

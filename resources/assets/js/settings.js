@@ -1,5 +1,16 @@
 $('document').ready(function () {
 
+    $('#settings-form').submit(function (event) {
+        event.preventDefault();
+        messageBox = $('#settings-message-box');
+
+        app.submitForm($(this), function (response) {
+            app.setMessages(messageBox, {'success' : [response['message']]});
+        }, function (response) {
+            app.setMessages(messageBox, response.responseJSON.errors, true);
+        });
+    });
+
     $('#change-password-form').submit(function (event) {
         event.preventDefault();
         messageBox = $('#change-password-message-box');
@@ -14,7 +25,7 @@ $('document').ready(function () {
     $('#change-password-modal').on('show.bs.modal', function (event) {
         form = $(this).find('#change-password-form');
         form.find('#input-password').val('');
-        form.find('#input-password1').val('');
+        form.find('#input-password-again').val('');
         form.find('#input-_password').val('');
     });
 

@@ -1,0 +1,45 @@
+{% import 'macros/form.twig' as form %}
+
+{% set can_manage_cars = _user.hasPermission(_auth.user().username, 'car_manage') %}
+
+{% if not users %}
+    <p>
+        {{ _text('app.user.no_users')|capitalize }}
+    </p>
+{% else %}
+
+<table class="table table-striped table-hover table-bordered mb-1">
+    <thead>
+    <tr>
+        <th scope="col">{{ _text('fields.username')|capitalize }}</th>
+        <th scope="col">{{ _text('fields.name')|capitalize }}</th>
+        {% if can_manage_cars %}
+            <th scope="col"></th>
+        {% endif %}
+    </tr>
+    </thead>
+    <tbody>
+
+    {%  for user in users %}
+
+        <tr data-toggle="modal" data-target="#users-can-drive-modal">
+            <td data-field="username">{{ user.username }}</td>
+            <td data-field="name">{{ user.name }}</td>
+            {% if can_manage_cars %}
+                <td>
+                    <form class="user-can-drive-delete-form" action="/user-can-drive" data-method="delete">
+                        {{ form.csrf() }}
+                        <input type="hidden" name="name" value="{{ car.name }}">
+                        <input type="hidden" name="username" value="{{ user.username }}">
+                        <button type="submit" class="btn btn-link text-danger pt-0 pb-0"><i class="fa fa-close"></i></button>
+                    </form>
+                </td>
+            {% endif %}
+        </tr>
+
+    {% endfor %}
+
+    </tbody>
+</table>
+
+{% endif %}

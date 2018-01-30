@@ -20,16 +20,28 @@ class CarRepository implements CarRepositoryInterface
      * @var string
      */
     private $table;
+    /**
+     * @var string
+     */
+    private $userCanDriveTable;
+    /**
+     * @var string
+     */
+    private $userTable;
 
     /**
      * CarRepository constructor.
      * @param DatabaseInterface $database
      * @param string $table
+     * @param string $userCanDriveTable
+     * @param string $userTable
      */
-    public function __construct(DatabaseInterface $database, string $table)
+    public function __construct(DatabaseInterface $database, string $table, string $userCanDriveTable, string $userTable)
     {
         $this->database = $database;
         $this->table = $table;
+        $this->userCanDriveTable = $userCanDriveTable;
+        $this->userTable = $userTable;
     }
 
     /**
@@ -116,6 +128,88 @@ class CarRepository implements CarRepositoryInterface
             "DELETE FROM $this->table ".
             "WHERE name = :name;";
         $params = ['name' => $name];
+
+        $this->database->execute($query, $params);
+
+        return $this->database->count() > 0;
+    }
+
+    /**
+     * Find all users, that can drive the given car.
+     * @param array|null $orderBy
+     * @param bool $desc
+     * @param int|null $limit
+     * @param int|null $offset
+     * @return array
+     */
+    public function findUsersCanDrive(string $carName, array $orderBy = null, bool $desc = false, int $limit = null, int $offset = null): array
+    {
+        $query =
+            "SELECT u.* ".
+            "FROM $this->table AS `c`".
+            "JOIN $this->userCanDriveTable as `ucd` ".
+                "ON c.name = ucd.car_name ".
+            "JOIN $this->userTable as `u` ".
+                "ON ucd.user_username = u.username " .
+            "WHERE c.name = :name ".
+            ($orderBy == null ? "" : "ORDER BY " . \implode(", ", $orderBy) . " ").
+            ($desc ? "DESC " : "").
+            ($limit == null ? "" : "LIMIT $limit ").
+            ($offset == null ? "" : "OFFSET $offset ").
+            ";";
+
+        $params = [
+            'name' => $carName
+        ];
+
+        $this->database->execute($query, $params);
+        return $this->database->fetchAll() ?? [];
+    }
+
+    /**
+     * Save the user_can_drive relation to the database.
+     * @param string $carName
+     * @param string $username
+     * @return array
+     */
+    public function saveUserCanDrive(string $carName, string $username): array
+    {
+        $query =
+            "INSERT INTO $this->userCanDriveTable ".
+            "(car_name, user_username) ".
+            "VALUES ".
+            "(:car_name, :user_username) ".
+            "ON DUPLICATE KEY UPDATE ".
+            "car_name = :car_name1, ".
+            "user_username = :user_username1;";
+
+        $params = [
+            'car_name' => $carName,
+            'user_username' => $username,
+            'car_name1' => $carName,
+            'user_username1' => $username
+        ];
+
+        $this->database->execute($query, $params);
+
+        return ['car_name' => $carName, 'user_username' => $username];
+    }
+
+    /**
+     * Delete the user_can_drive relation from the database.
+     * @param string $carName
+     * @param string $username
+     * @return bool
+     */
+    public function deleteUserCanDrive(string $carName, string $username): bool
+    {
+        $query =
+            "DELETE FROM $this->userCanDriveTable ".
+            "WHERE car_name = :car_name AND user_username = :username;";
+        $params = [
+            'car_name' => $carName,
+            'username' => $username
+        ];
 
         $this->database->execute($query, $params);
 

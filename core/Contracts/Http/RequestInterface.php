@@ -9,10 +9,16 @@ use Core\Contracts\Routing\RouteInterface;
 interface RequestInterface
 {
     /**
-     * Returns true if the request accept json.
+     * Returns true if the request accepts json.
      * @return bool
      */
     public function json(): bool;
+
+    /**
+     * Returns true if the request is via ajax.
+     * @return bool
+     */
+    public function ajax(): bool;
 
     /**
      * Get the request method.

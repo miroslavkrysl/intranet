@@ -1,4 +1,8 @@
-{% import 'macros/form.twig' as form %}
+{% if not users %}
+    <p>
+        {{ _text('app.user.no_users')|capitalize }}
+    </p>
+{% else %}
 
 <table class="table table-striped table-hover table-bordered">
     <thead>
@@ -24,3 +28,5 @@
 
     </tbody>
 </table>
+
+{% endif %}

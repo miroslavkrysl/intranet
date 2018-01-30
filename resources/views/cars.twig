@@ -21,46 +21,78 @@
         </div>
     </div>
 
-    {% if can_manage_cars %}
-        <div class="modal fade" id="car-settings-modal">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title"></h5>
-                        <button type="button" class="close" data-dismiss="modal">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="car-settings-form" action="/car" data-method="put">
-                            {{ form.csrf() }}
-                            <div class="form-group">
-                                <label for="input-name">{{ _text('fields.name')|capitalize }}</label>
-                                <input type="text" class="form-control" id="input-name" name="name" readonly>
-                            </div>
-                            <div class="form-group">
-                                <label for="input-description">{{ _text('fields.description')|capitalize }}</label>
-                                <textarea class="form-control" id="input-description" name="description"></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label for="input-manufacturer">{{ _text('fields.manufacturer')|capitalize }}</label>
-                                <input type="text" class="form-control" id="input-manufacturer" name="manufacturer">
-                            </div>
-                            <div class="form-group">
-                                <label for="input-model">{{ _text('fields.model')|capitalize }}</label>
-                                <input type="text" class="form-control" id="input-model" name="model">
-                            </div>
-                        </form>
-                        <div id="car-settings-message-box"></div>
-                    </div>
-                    <div class="modal-footer">
-                        <button id="car-settings-delete" class="btn btn-danger mr-auto" data-toggle="modal" data-target="#car-delete-modal">{{ _text('app.delete')|capitalize }}</button>
-                        <button id="car-settings-submit" class="btn btn-primary">{{ _text('app.save')|capitalize }}</button>
-                    </div>
+    <div class="modal fade" id="car-settings-modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"></h5>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
+                <div class="modal-body">
+                    <form id="car-settings-form" action="/car" data-method="put">
+                        {{ form.csrf() }}
+                        <div class="form-group">
+                            <label for="input-name">{{ _text('fields.name')|capitalize }}</label>
+                            <input type="text" class="form-control" id="input-name" name="name" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="input-description">{{ _text('fields.description')|capitalize }}</label>
+                            <textarea class="form-control" id="input-description" name="description" {{ can_manage_cars ? '' : 'readonly' }}></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="input-manufacturer">{{ _text('fields.manufacturer')|capitalize }}</label>
+                            <input type="text" class="form-control" id="input-manufacturer" name="manufacturer" {{ can_manage_cars ? '' : 'readonly' }}>
+                        </div>
+                        <div class="form-group">
+                            <label for="input-model">{{ _text('fields.model')|capitalize }}</label>
+                            <input type="text" class="form-control" id="input-model" name="model" {{ can_manage_cars ? '' : 'readonly' }}>
+                        </div>
+                    </form>
+
+                    <h6 class="mt-4">{{ _text('app.users_can_drive')|capitalize }}</h6>
+                    <div id='users-can-drive-table'>
+                    </div>
+
+                    {% if can_manage_cars %}
+
+                        <form class="form-inline user-can-drive-add-form" action="/user-can-drive" data-method="post">
+                            {{ form.csrf() }}
+                            <input id="user-can-drive-input-name" type="hidden" name="name">
+
+                            <div class="input-group w-100">
+
+                                <select class="form-control col" name="username">
+                                    {% for user in users %}
+                                        <option>{{ user.username }}</option>
+                                    {% endfor %}
+                                </select>
+
+                                <div class="input-group-btn">
+                                    <button type="submit" class="btn btn-info">{{ _text('app.user_can_drive.add.action') }}</button>
+                                </div>
+
+                            </div>
+
+                        </form>
+
+                    {% endif %}
+
+                    <div class="mt-1" id="car-settings-message-box"></div>
+
+                </div>
+                {% if can_manage_cars %}
+                <div class="modal-footer">
+                    <button id="car-settings-delete" class="btn btn-danger mr-auto" data-toggle="modal" data-target="#car-delete-modal">{{ _text('app.delete')|capitalize }}</button>
+                    <button id="car-settings-submit" class="btn btn-primary">{{ _text('app.save')|capitalize }}</button>
+                </div>
+                {% endif %}
             </div>
         </div>
+    </div>
 
+    {% if can_manage_cars %}
         <div class="modal fade" id="car-create-modal">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -129,4 +161,5 @@
     {% endif %}
 
     <script src="/js/cars.js"></script>
+
 {% endblock %}

@@ -16,6 +16,7 @@ return [
     'delete' => 'odstranit',
     'invalid_link' => 'neplatný odkaz',
     'user' => [
+        'no_users' => 'žádní uživatelé',
         'update' => [
             'success' => 'Údaje byly úspěšně aktualizovány',
             'admin_role_denied' => 'Admin nemůže sám sobě změnit roli.'
@@ -67,6 +68,16 @@ return [
             'success' => 'Auto :name bylo odstraněno'
         ]
     ],
+    'user_can_drive' => [
+        'add' => [
+            'action' => 'Přidat uživatele',
+            'success' => 'Uživatel :username smí nyní řídit auto :car_name'
+        ],
+        'delete' => [
+            'success' => 'Uživatel :username nyní již nesmí řídit auto :car_name'
+        ]
+    ],
+    'users_can_drive' => 'uživatelé, kteří smějí řídit toto auto:',
     'auth' => [
         'login' => 'přihlásit se',
         'logout' => 'odhlásit se',
@@ -78,6 +89,7 @@ return [
             'forgotten_spam_text' => 'Z důvodu zamezení spamu lze e-mail odeslat maximálně jednou za 3 hodiny.',
             'wrong' => 'Bylo zadáno špatné heslo',
             'empty' => 'Nebylo zadáno heslo'
-        ]
+        ],
+        'not_logged' => 'Nejste přihlášen, zkuste stránku znovu načíst'
     ]
 ];

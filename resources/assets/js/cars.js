@@ -1,3 +1,33 @@
+bindUserCanDriveForms = function () {
+    $('.user-can-drive-delete-form').submit(function (event) {
+        event.preventDefault();
+
+        messageBox = $('#car-settings-message-box');
+        name = $(this).find('input[name="name"]').val();
+
+        app.submitForm($(this), function (response) {
+            app.setMessages(messageBox, {'success' : [response['message']]});
+            $('#users-can-drive-table').load('/users-can-drive-table?' + $.param({'name' : name}), bindUserCanDriveForms);
+        }, function (response) {
+            app.setMessages(messageBox, response.responseJSON.errors, true);
+        })
+    });
+
+    $('.user-can-drive-add-form').submit(function (event) {
+        event.preventDefault();
+
+        messageBox = $('#car-settings-message-box');
+        name = $(this).find('input[name="name"]').val();
+
+        app.submitForm($(this), function (response) {
+            app.setMessages(messageBox, {'success' : [response['message']]});
+            $('#users-can-drive-table').load('/users-can-drive-table?' + $.param({'name' : name}), bindUserCanDriveForms);
+        }, function (response) {
+            app.setMessages(messageBox, response.responseJSON.errors, true);
+        })
+    });
+};
+
 $('document').ready(function () {
 
     $('#cars-table').load('/cars-table');
@@ -18,12 +48,15 @@ $('document').ready(function () {
         form.find('#input-manufacturer').val(manufacturer);
         form.find('#input-model').val(model);
 
+        $('#user-can-drive-input-name').val(name);
+
         modal.find('#car-settings-delete').attr('data-name', name);
         modal.find('#car-settings-message-box').text('');
+
+        $('#users-can-drive-table').load('/users-can-drive-table?' + $.param({'name' : name}), bindUserCanDriveForms);
     });
 
     $('#car-settings-submit').click(function (event) {
-
         form = $('#car-settings-form');
         messageBox = $('#car-settings-message-box');
         app.submitForm(form, function (response) {
@@ -36,7 +69,7 @@ $('document').ready(function () {
     });
 
     $('#car-create-modal').on('show.bs.modal', function (event) {
-        form = $(this).find('#user-create-form');
+        form = $(this).find('#car-create-form');
         form.find('#input-name').val('');
         form.find('#input-description').val('');
         form.find('#input-manufacturer').val('');
@@ -59,7 +92,7 @@ $('document').ready(function () {
     });
 
     $('#car-delete-modal').on('show.bs.modal', function (event) {
-        $(this).find('#car-settings-message-box').text('');
+        $(this).find('#car-delete-message-box').text('');
         name = $(event.relatedTarget).attr('data-name');
         $(this).find('#car-delete-modal-name').text(name);
         $(this).find('input[name="name"]').val(name);

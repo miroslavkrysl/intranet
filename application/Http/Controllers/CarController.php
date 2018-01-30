@@ -46,7 +46,7 @@ class CarController
     public function create(RequestInterface $request)
     {
         if (!$this->userRepository->hasPermission($this->auth->user()['username'], 'car_manage')) {
-            return \jsonError(403, \text('base.permission_denied'));
+            return \jsonError(403, ['permission' => [\text('base.permission_denied')]]);
         }
 
         $valid = $request->validate([
@@ -104,8 +104,8 @@ class CarController
      */
     public function update(RequestInterface $request)
     {
-        if ($this->userRepository->hasPermission($this->auth->user()['username'], 'car_manage')) {
-            return \jsonError(403, \text('base.permission_denied'));
+        if (!$this->userRepository->hasPermission($this->auth->user()['username'], 'car_manage')) {
+            return \jsonError(403, ['permission' => [\text('base.permission_denied')]]);
         }
 
         $valid = $request->validate([
@@ -145,7 +145,7 @@ class CarController
         $car['manufacturer'] = \is_null($request->manufacturer) ? $car['manufacturer'] : $request->manufacturer;
         $car['model'] = \is_null($request->model) ? $car['model'] : $request->model;
 
-        $car = $this->userRepository->save($car);
+        $car = $this->carRepository->save($car);
 
         return \json(['car' => $car, 'message' => \text('app.car.update.success')]);
     }
@@ -158,7 +158,7 @@ class CarController
     public function delete(RequestInterface $request)
     {
         if (!$this->userRepository->hasPermission($this->auth->user()['username'], 'car_manage')) {
-            return \jsonError(403, \text('base.permission_denied'));
+            return \jsonError(403, ['permission' => [\text('base.permission_denied')]]);
         }
 
         $valid = $request->validate([
@@ -178,7 +178,7 @@ class CarController
 
         $this->carRepository->delete($request->name);
 
-        return \json();
+        return \json(['message' => \text('app.car.delete.success',  ['name' => $request->name])]);
     }
 
     /**
@@ -189,8 +189,9 @@ class CarController
     public function list(RequestInterface $request)
     {
         $cars = $this->carRepository->findAll(['name']);
+        $users = $this->userRepository->findAll(['username']);
 
-        return \html('cars', ['cars' => $cars]);
+        return \html('cars', ['cars' => $cars, 'users' => $users]);
     }
 
     /**
@@ -203,5 +204,109 @@ class CarController
         $cars = $this->carRepository->findAll(['name']);
 
         return \html('components.cars_table', ['cars' => $cars]);
+    }
+
+    /**
+     * Show table with listed users, that can drive the given car.
+     * @param RequestInterface $request
+     * @return ResponseInterface
+     */
+    public function usersCanDriveTable(RequestInterface $request)
+    {
+        $valid = $request->validate([
+            'name' => [
+                'required',
+                'exists' => [
+                    'table' => \config('database.tables.car'),
+                    'column' => 'name'
+                ]
+            ]
+        ]);
+
+        if (!$valid) {
+            $errors = $request->errors();
+            return \jsonError(422, $errors);
+        }
+
+        $car = $this->carRepository->findByName($request->name);
+        $users = $this->carRepository->findUsersCanDrive($request->name, ['u.username']);
+
+        return \html('components.users_can_drive_table', ['users' => $users, 'car' => $car]);
+    }
+
+    /**
+     * Add the user_can_drive relation.
+     * @param RequestInterface $request
+     * @return ResponseInterface
+     */
+    public function userCanDriveAdd(RequestInterface $request)
+    {
+        if (!$this->userRepository->hasPermission($this->auth->user()['username'], 'car_manage')) {
+            return \jsonError(403, ['permission' => [\text('base.permission_denied')]]);
+        }
+
+        $valid = $request->validate([
+            'name' => [
+                'required',
+                'exists' => [
+                    'table' => \config('database.tables.car'),
+                    'column' => 'name'
+                ]
+            ],
+            'username' => [
+                'required',
+                'exists' => [
+                    'table' => \config('database.tables.user'),
+                    'column' => 'username'
+                ]
+            ]
+        ]);
+
+        if (!$valid) {
+            $errors = $request->errors();
+            return \jsonError(422, $errors);
+        }
+
+        $this->carRepository->saveUserCanDrive($request->name, $request->username);
+
+        return \json(['message' => \text('app.user_can_drive.add.success', ['car_name' => $request->name, 'username' => $request->username])]);
+    }
+
+    /**
+     * Delete the user_can_drive relation.
+     * @param RequestInterface $request
+     * @return ResponseInterface
+     */
+    public function userCanDriveDelete(RequestInterface $request)
+    {
+        if (!$this->userRepository->hasPermission($this->auth->user()['username'], 'car_manage')) {
+            return \jsonError(403, ['permission' => [\text('base.permission_denied')]]);
+        }
+
+        $valid = $request->validate([
+            'name' => [
+                'required',
+                'exists' => [
+                    'table' => \config('database.tables.car'),
+                    'column' => 'name'
+                ]
+            ],
+            'username' => [
+                'required',
+                'exists' => [
+                    'table' => \config('database.tables.user'),
+                    'column' => 'username'
+                ]
+            ]
+        ]);
+
+        if (!$valid) {
+            $errors = $request->errors();
+            return \jsonError(422, $errors);
+        }
+
+        $this->carRepository->deleteUserCanDrive($request->name, $request->username);
+
+        return \json(['message' => \text('app.user_can_drive.delete.success', ['car_name' => $request->name, 'username' => $request->username])]);
     }
 }

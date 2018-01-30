@@ -66,4 +66,7 @@ $router->post('/car', 'CarController@create')->jsonOnly()->middleware('RestrictT
 $router->put('/car', 'CarController@update')->jsonOnly()->middleware('RestrictToLogged');
 $router->delete('/car', 'CarController@delete')->jsonOnly()->middleware('RestrictToLogged');
 $router->get('/cars', 'CarController@list')->middleware('RestrictToLogged');
+$router->post('/user-can-drive', 'CarController@userCanDriveAdd')->jsonOnly()->middleware('RestrictToLogged');
+$router->delete('/user-can-drive', 'CarController@userCanDriveDelete')->jsonOnly()->middleware('RestrictToLogged');
 $router->get('/cars-table', 'CarController@carsTable')->jsonOnly()->middleware('RestrictToLogged');
+$router->get('/users-can-drive-table', 'CarController@usersCanDriveTable')->jsonOnly()->middleware('RestrictToLogged');
