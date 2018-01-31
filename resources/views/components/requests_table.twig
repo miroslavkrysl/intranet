@@ -28,9 +28,9 @@
                     <td class="d-none" data-field="passengers">{{ request.passengers }}</td>
                 {% endif %}
                 <td class="d-none" data-field="id">{{ request.id }}</td>
-                <td data-field="car_name">{{ request.car_name }}</td>
-                <td data-field="reserved_from">{{ _date('%e.%m.%Y %H:%M', request.reserved_from) }}</td>
-                <td data-field="reserved_to">{{ _date('%e.%m.%Y %H:%M', request.reserved_to) }}</td>
+                <td nowrap="nowrap" data-field="car_name">{{ request.car_name }}</td>
+                <td nowrap="nowrap" data-field="reserved_from">{{ _date('%e.%m.%Y %H:%M', request.reserved_from) }}</td>
+                <td nowrap="nowrap" data-field="reserved_to">{{ _date('%e.%m.%Y %H:%M', request.reserved_to) }}</td>
                 <td data-field="confirmed" class="{{ request.confirmed_by_username ? 'text-success' : 'text-danger' }}">{{ (request.confirmed_by_username ? _text('app.yes') : _text('app.no')) | upper }}</td>
             </tr>
 

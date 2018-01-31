@@ -22,7 +22,7 @@
                 <td data-field="user_username" class="d-none">{{ document.user_username }}</td>
             {% endif %}
                 <td data-field="id" class="d-none">{{ document.id }}</td>
-                <td data-toggle="modal" data-target="#document-settings-modal" data-field="name">{{ document.name }}</td>
+                <td nowrap="nowrap" data-toggle="modal" data-target="#document-settings-modal" data-field="name">{{ document.name }}</td>
                 <td class=".download-btn text-right">
                     <a href="/upload/{{ document.filename }}" class="btn btn-link text-success pt-0 pb-0"><i class="fa fa-download"></i></a>
                 </td>
