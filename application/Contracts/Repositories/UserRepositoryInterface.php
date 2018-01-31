@@ -83,4 +83,12 @@ interface UserRepositoryInterface
      * @return bool
      */
     public function hasPermission(string $username, string $permission): bool;
+
+    /**
+     * Check whether the user can drive the given car.
+     * @param string $username
+     * @param string $carName
+     * @return bool
+     */
+    public function canDrive(string $username, string $carName): bool;
 }

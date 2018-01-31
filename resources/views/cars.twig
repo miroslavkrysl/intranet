@@ -65,7 +65,7 @@
 
                                 <select class="form-control col" name="username">
                                     {% for user in users %}
-                                        <option>{{ user.username }}</option>
+                                        <option value="{{ user.username }}">{{ user.name }}</option>
                                     {% endfor %}
                                 </select>
 

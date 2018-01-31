@@ -128,9 +128,7 @@ class Validator implements ValidatorInterface
                         $params['message'] ??
                         $this->language->get($this->langPrefixMessages . '.' . $rule, $args, $args['min'] ?? $args['max'] ?? null);
 
-                    if ($rule == 'required') {
-                        break;
-                    }
+                    break;
                 }
             }
         }

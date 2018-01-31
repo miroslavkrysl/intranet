@@ -31,6 +31,10 @@ class UserRepository implements UserRepositoryInterface
      * @var string
      */
     private $permissionTable;
+    /**
+     * @var string
+     */
+    private $userCanDriveTable;
 
     /**
      * UserRepository constructor.
@@ -38,13 +42,19 @@ class UserRepository implements UserRepositoryInterface
      * @param string $table
      * @param string $rolePermissionTable
      * @param string $permissionTable
+     * @param string $userCanDriveTable
      */
-    public function __construct(DatabaseInterface $database, string $table, string $rolePermissionTable, string $permissionTable)
+    public function __construct(DatabaseInterface $database,
+                                string $table,
+                                string $rolePermissionTable,
+                                string $permissionTable,
+                                string $userCanDriveTable)
     {
         $this->database = $database;
         $this->table = $table;
         $this->rolePermissionTable = $rolePermissionTable;
         $this->permissionTable = $permissionTable;
+        $this->userCanDriveTable = $userCanDriveTable;
     }
 
     /**
@@ -227,5 +237,27 @@ class UserRepository implements UserRepositoryInterface
     public function hasPermission(string $username, string $permission): bool
     {
         return \in_array($permission, $this->findPermissionsNames($username));
+    }
+
+    /**
+     * Check whether the user can drive the given car.
+     * @param string $username
+     * @param string $carName
+     * @return bool
+     */
+    public function canDrive(string $username, string $carName): bool
+    {
+        $query =
+            "SELECT * ".
+            "FROM $this->userCanDriveTable AS `ucd`".
+            "WHERE ucd.user_username = :username AND ucd.car_name = :car_name;";
+
+        $params = [
+            'username' => $username,
+            'car_name' => $carName
+        ];
+
+        $this->database->execute($query, $params);
+        return !empty($this->database->fetch());
     }
 }

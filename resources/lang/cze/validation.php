@@ -17,6 +17,7 @@ return [
     'after' => 'Datum :field musí být po datu :after.',
     'email' => ':Field musí být platná emailová adresa.',
     'regex' => ':Field není ve správném tvaru.',
-    'exists' => ':Field :value neexistuje',
-    'unique' => ':Field :value již existuje.'
+    'exists' => ':Field :value neexistuje.',
+    'unique' => ':Field :value již existuje.',
+    'digits' => ':Field musí obsahovat poze číslice.'
 ];

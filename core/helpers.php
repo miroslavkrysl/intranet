@@ -269,3 +269,14 @@ function unique_string()
 {
     return md5(uniqid(rand(), true));
 }
+
+/**
+ * Format the datetime.
+ * @param string $format
+ * @param $datetime
+ * @return string
+ */
+function dateFormat(string $format, $datetime)
+{
+    return strftime($format, strtotime($datetime));
+}

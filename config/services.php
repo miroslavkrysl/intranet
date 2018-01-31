@@ -78,6 +78,7 @@ $container->register('view', TwigViewFactory::class)
     ->addCall('registerFunction', ['_config', [new SR('config'), 'get']])
     ->addCall('registerFunction', ['_token', [new SR('csrf'), 'token']])
     ->addCall('registerFunction', ['_copyright', 'copyright'])
+    ->addCall('registerFunction', ['_date', 'dateFormat'])
     ->addCall('registerGlobal', ['_auth', new SR('auth')])
     ->addCall('registerGlobal', ['_user', new SR('repository.user')]);
 
@@ -155,7 +156,9 @@ $container->register('repository.user', UserRepository::class)
     ->addArgument(new SR('database'))
     ->addArgument(config('database.tables.user'))
     ->addArgument(config('database.tables.role_permission'))
-    ->addArgument(config('database.tables.permission'));
+    ->addArgument(config('database.tables.permission'))
+    ->addArgument(config('database.tables.user_can_drive'));
+
 
 $container->register('repository.login', LoginRepository::class)
     ->addArgument(new SR('database'))
@@ -195,7 +198,11 @@ $container->register('UserController', UserController::class)
     ->addArgument(new SR('auth'))
     ->addArgument(new SR('mail'));
 
-//$container->register('RequestController', RequestController::class);
+$container->register('RequestController', RequestController::class)
+    ->addArgument(new SR('repository.request'))
+    ->addArgument(new SR('repository.user'))
+    ->addArgument(new SR('repository.car'))
+    ->addArgument(new SR('auth'));
 
 //$container->register('DocumentController', DocumentController::class);
 

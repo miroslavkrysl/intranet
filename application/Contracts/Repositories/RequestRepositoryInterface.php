@@ -54,7 +54,18 @@ interface RequestRepositoryInterface
     public function findByDriverUsername(string $username, array $orderBy = null, bool $desc = false, int $limit = null, int $offset = null): array ;
 
     /**
-     * Find requests where reserved from or to is between the given datetime.
+     * Find requests where reserved from is after the given datetime.
+     * @param string $after
+     * @param array|null $orderBy
+     * @param bool $desc
+     * @param int|null $limit
+     * @param int|null $offset
+     * @return array
+     */
+    public function findReservedFromAfter(string $after, array $orderBy = null, bool $desc = false, int $limit = null, int $offset = null): array;
+
+    /**
+     * Find requests where reserved from is between the given datetimes.
      * @param string $from
      * @param string $to
      * @param array|null $orderBy
@@ -70,7 +81,7 @@ interface RequestRepositoryInterface
      * @param array $request
      * @return bool
      */
-    public function save(array $request): bool;
+    public function save(array $request): array;
 
     /**
      * Delete the request from the database.

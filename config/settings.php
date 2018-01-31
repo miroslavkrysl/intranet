@@ -4,8 +4,8 @@ return [
     'app' => [
         'name' => env('app.name'),
         'url' => env('app.url'),
-        'locale' => 'cz',
-        'fallback_locale' => 'cz',
+        'locale' => 'cze',
+        'fallback_locale' => 'cze',
         'webmaster' => 'mirek.krysl@seznam.cz'
     ],
     'database' => [

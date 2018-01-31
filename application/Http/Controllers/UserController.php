@@ -112,7 +112,7 @@ class UserController
 
         $this->userRepository->save($user);
 
-        $url = \sprintf("%s/user/change-password?username=%s&token=%s", \config('app.url'), $user['username'], $token);
+        $url = \sprintf("http://%s/user/change-password?username=%s&token=%s", \config('app.url'), $user['username'], $token);
         $subject = \text('app.user.create.mail.subject');
         $message = \text('app.user.create.mail.message', ['url' => $url, 'username' => $user['username']]);
 

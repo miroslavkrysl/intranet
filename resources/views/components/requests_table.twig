@@ -1,0 +1,42 @@
+{% set can_manage_requests = _user.hasPermission(_auth.user().username, 'req_manage') %}
+
+{% if not requests %}
+    <p>
+        {{ _text('app.request.no_requests')|capitalize }}
+    </p>
+{% else %}
+
+    <table class="table table-striped table-hover table-bordered">
+        <thead>
+        <tr>
+            <th scope="col">{{ _text('fields.car_name')|capitalize }}</th>
+            <th scope="col">{{ _text('fields.reserved_from')|capitalize }}</th>
+            <th scope="col">{{ _text('fields.reserved_to')|capitalize }}</th>
+            <th scope="col">{{ _text('fields.confirmed')|capitalize }}</th>
+        </tr>
+        </thead>
+        <tbody>
+
+        {% for request in requests %}
+
+            <tr data-toggle="modal" data-target="#request-settings-modal">
+                {% if can_manage_requests %}
+                    <td class="d-none" data-field="user_username">{{ request.user_username }}</td>
+                    <td class="d-none" data-field="driver_username">{{ request.driver_username }}</td>
+                    <td class="d-none" data-field="purpose">{{ request.purpose }}</td>
+                    <td class="d-none" data-field="destination">{{ request.destination }}</td>
+                    <td class="d-none" data-field="passengers">{{ request.passengers }}</td>
+                {% endif %}
+                <td class="d-none" data-field="id">{{ request.id }}</td>
+                <td data-field="car_name">{{ request.car_name }}</td>
+                <td data-field="reserved_from">{{ _date('%e.%m.%Y %H:%M', request.reserved_from) }}</td>
+                <td data-field="reserved_to">{{ _date('%e.%m.%Y %H:%M', request.reserved_to) }}</td>
+                <td data-field="confirmed" class="{{ request.confirmed_by_username ? 'text-success' : 'text-danger' }}">{{ (request.confirmed_by_username ? _text('app.yes') : _text('app.no')) | upper }}</td>
+            </tr>
+
+        {% endfor %}
+
+        </tbody>
+    </table>
+
+{% endif %}

@@ -4,7 +4,7 @@ use Core\Application\Application;
 
 
 ini_set('display_errors', true);
-
+setlocale(LC_ALL, 'cs_CZ.utf-8');
 
 // require autoloader
 require('../vendor/autoload.php');

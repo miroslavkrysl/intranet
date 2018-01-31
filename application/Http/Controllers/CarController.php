@@ -309,4 +309,35 @@ class CarController
 
         return \json(['message' => \text('app.user_can_drive.delete.success', ['car_name' => $request->name, 'username' => $request->username])]);
     }
+
+    /**
+     * Return listed users, that can drive the given car.
+     * @param RequestInterface $request
+     * @return ResponseInterface
+     */
+    public function usersCanDriveList(RequestInterface $request)
+    {
+        $valid = $request->validate([
+            'name' => [
+                'required',
+                'exists' => [
+                    'table' => \config('database.tables.car'),
+                    'column' => 'name'
+                ]
+            ]
+        ]);
+
+        if (!$valid) {
+            $errors = $request->errors();
+            return \jsonError(422, $errors);
+        }
+
+        $users = $this->carRepository->findUsersCanDrive($request->name, ['u.username']);
+
+        foreach ($users as $key => $user) {
+            $users[$key] = $this->userRepository->toPublic($user);
+        }
+
+        return \json(['users' => $users]);
+    }
 }

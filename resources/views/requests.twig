@@ -1,0 +1,205 @@
+{% extends "layouts/app.twig" %}
+{% import 'macros/form.twig' as form %}
+
+{% set can_add_requests = _user.hasPermission(_auth.user().username, 'req_own') %}
+{% set can_manage_requests = _user.hasPermission(_auth.user().username, 'req_manage') %}
+{% set can_confirm_requests = _user.hasPermission(_auth.user().username, 'req_confirm') %}
+
+{% block content %}
+    <div class="p-2 row">
+        <div class="col-sm">
+            <h1>{{ _text('app.menu.requests')|capitalize }}</h1>
+        </div>
+        {% if can_add_requests or can_manage_requests %}
+            <div class="col-sm-auto">
+                <button class="btn btn-info m-1" type="button" data-toggle="modal" data-target="#request-create-modal">{{ _text('app.request.create.action') }}</button>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="card">
+        <div id='requests-table' class="card-body">
+        </div>
+    </div>
+
+    {% if can_add_requests or can_manage_requests %}
+        <div class="modal fade" id="request-create-modal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">{{ _text('app.request.create.action') }}</h5>
+                        <button type="button" class="close" data-dismiss="modal">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="request-create-form" action="/request" data-method="post">
+                            {{ form.csrf() }}
+
+                            <input type="hidden" class="form-control" id="input-user_username" name="user_username" value="{{ _auth.user().username }}">
+
+                            <div class="form-group">
+                                <label for="input-car_name">{{ _text('fields.car_name')|capitalize }}</label>
+                                <select class="form-control" id="input-car_name" name="car_name">
+                                    {% for car in cars %}
+                                        <option>{{ car.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="input-reserved_from">{{ _text('fields.reserved_from')|capitalize }}</label>
+                                <input type="text" class="form-control" id="input-reserved_from" name="reserved_from">
+                            </div>
+                            <div class="form-group">
+                                <label for="input-reserved_to">{{ _text('fields.reserved_to')|capitalize }}</label>
+                                <input type="text" class="form-control" id="input-reserved_to" name="reserved_to">
+                            </div>
+                            <div class="form-group">
+                                <label for="input-driver_username">{{ _text('fields.driver_username')|capitalize }}</label>
+                                <select class="form-control" id="input-driver_username" name="driver_username">
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="input-destination">{{ _text('fields.destination')|capitalize }}</label>
+                                <input type="text" class="form-control" id="input-destination" name="destination">
+                            </div>
+                            <div class="form-group">
+                                <label for="input-purpose">{{ _text('fields.purpose')|capitalize }}</label>
+                                <textarea class="form-control" id="input-purpose" name="purpose"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="input-passengers">{{ _text('fields.passengers')|capitalize }}</label>
+                                <textarea class="form-control" id="input-passengers" name="passengers"></textarea>
+                            </div>
+                        </form>
+                        <div id="request-create-message-box"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="request-create-submit" class="btn btn-primary">{{ _text('app.request.create.action')|capitalize }}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    {% if can_manage_requests %}
+
+        <div class="modal fade" id="request-settings-modal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">{{ _text('app.menu.request')|capitalize }}</h5>
+                        <button type="button" class="close" data-dismiss="modal">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="request-settings-form" action="/request" data-method="put">
+                            {{ form.csrf() }}
+                            <input type="hidden" id="input-id" name="id">
+
+                            <div class="form-group">
+                                <label for="input-user_username">{{ _text('fields.user_username')|capitalize }}</label>
+                                <input type="text" class="form-control" id="input-user_username" name="user_username" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="input-car_name">{{ _text('fields.car_name')|capitalize }}</label>
+                                <input type="text" class="form-control" id="input-car_name" name="car_name" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="input-reserved_from">{{ _text('fields.reserved_from')|capitalize }}</label>
+                                <input type="text" class="form-control" id="input-reserved_from" name="reserved_from">
+                            </div>
+                            <div class="form-group">
+                                <label for="input-reserved_to">{{ _text('fields.reserved_to')|capitalize }}</label>
+                                <input type="text" class="form-control" id="input-reserved_to" name="reserved_to">
+                            </div>
+                            <div class="form-group">
+                                <label for="input-driver_username">{{ _text('fields.driver_username')|capitalize }}</label>
+                                <select class="form-control" id="input-driver_username" name="driver_username">
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="input-destination">{{ _text('fields.destination')|capitalize }}</label>
+                                <input type="text" class="form-control" id="input-destination" name="destination">
+                            </div>
+                            <div class="form-group">
+                                <label for="input-purpose">{{ _text('fields.purpose')|capitalize }}</label>
+                                <textarea class="form-control" id="input-purpose" name="purpose"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="input-passengers">{{ _text('fields.passengers')|capitalize }}</label>
+                                <textarea class="form-control" id="input-passengers" name="passengers"></textarea>
+                            </div>
+                        </form>
+                        <div id="request-settings-message-box"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="request-settings-delete" class="btn btn-danger" data-toggle="modal" data-target="#request-delete-modal">{{ _text('app.delete')|capitalize }}</button>
+                        <button id="request-settings-confirm" class="btn btn-success mx-auto" data-toggle="modal" data-target="#request-confirm-modal">{{ _text('app.request.confirm.action')|capitalize }}</button>
+                        <button id="request-settings-submit" class="btn btn-primary">{{ _text('app.save')|capitalize }}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="request-delete-modal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">{{ _text('app.request.delete.action')|capitalize }}</h5>
+                        <button type="button" class="close" data-dismiss="modal">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                            {{ _text('app.request.delete.confirm') }}?
+                        </p>
+                        <div id="request-delete-message-box"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="request-delete-no" type="submit" class="btn btn-primary mr-auto">{{ _text('app.no')|capitalize }}</button>
+
+                        <form id="request-delete-form" action="/request" data-method="delete">
+                            {{ form.csrf() }}
+                            <input name="id" hidden>
+                            <button id="request-delete-yes" class="btn btn-warning">{{ _text('app.yes')|capitalize }}</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="request-confirm-modal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">{{ _text('app.request.confirm.action')|capitalize }}</h5>
+                        <button type="button" class="close" data-dismiss="modal">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                            {{ _text('app.request.confirm.confirm') }}?
+                        </p>
+                        <div id="request-confirm-message-box"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="request-confirm-no" type="submit" class="btn btn-primary mr-auto">{{ _text('app.no')|capitalize }}</button>
+
+                        <form id="request-confirm-form" action="/request/confirm" data-method="put">
+                            {{ form.csrf() }}
+                            <input name="id" hidden>
+                            <button id="request-confirm-yes" class="btn btn-warning">{{ _text('app.yes')|capitalize }}</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    {% endif %}
+
+    <script src="/js/requests.js"></script>
+{% endblock %}

@@ -3,6 +3,7 @@ return [
     'menu' => [
         'documents' => 'dokumenty',
         'requests' => 'žádanky o auta',
+        'request' => 'žádanka',
         'home' => 'home',
         'users' => 'uživatelé',
         'settings' => 'nastavení',
@@ -40,7 +41,7 @@ return [
             'no_auth' => 'Nebylo zadáno heslo, ani autorizační klíč',
             'mail' => [
                 'sent' => 'E-mail s odkazem pro změnu hesla byl zaslán, pokud je adresa platná.',
-                'message' => 'Na webovém serveru <a href="' . config('app.url') . '">Intranetu OŠVS</a> byla podána žádost o změnu hesla.<br /><br />'.
+                'message' => 'Na webovém serveru <a href="http://' . config('app.url') . '">Intranetu OŠVS</a> byla podána žádost o změnu hesla.<br /><br />'.
                     'Klikněte na odkaz níže, budete přesměrováni na formulář, kde lze zadat nové heslo.<br />'.
                     '<a href=":url">Změna hesla</a><br /><br />'.
                     'Platnost odkazu je omezená.',
@@ -55,6 +56,7 @@ return [
         ]
     ],
     'car' => [
+        'no_requests' => 'žádné žádanky',
         'update' => [
             'success' => 'Údaje byly úspěšně aktualizovány'
         ],
@@ -68,7 +70,29 @@ return [
             'success' => 'Auto :name bylo odstraněno'
         ]
     ],
+    'request' => [
+        'reserved_to_before_from' => 'Konec rezervace nemůže být před začátkem rezervace',
+        'reserved_from_before_now' => 'Začátek rezervace nemůže být v minulosti',
+        'update' => [
+            'success' => 'Žádanka byla úspěšně aktualizována'
+        ],
+        'create' => [
+            'success' => 'Žádanka byla úspěšně podána',
+            'action' => 'Podat žádanku'
+        ],
+        'delete' => [
+            'action' => 'Odstranit žádanku',
+            'confirm' => 'Přejete si opravdu odstranit žádanku?',
+            'success' => 'Žádanka byla odstraněna'
+        ],
+        'confirm' => [
+            'action' => 'Potvrdit žádanku',
+            'confirm' => 'Přejete si opravdu potvrdit žádanku?',
+            'success' => 'Žádanka byla potvrzena'
+        ]
+    ],
     'user_can_drive' => [
+        'cant_drive' => "Uživatel :username nemůže řídit auto :car_name",
         'add' => [
             'action' => 'Přidat uživatele',
             'success' => 'Uživatel :username smí nyní řídit auto :car_name'

@@ -48,7 +48,7 @@ class RequestRepository implements RequestRepositoryInterface
             'purpose' => null,
             'destination' => null,
             'passengers' => null,
-            'confirmed' => false,
+            'confirmed_by_username' => null
         );
     }
 
@@ -85,17 +85,13 @@ class RequestRepository implements RequestRepositoryInterface
             "SELECT * ".
             "FROM $this->table ".
             "WHERE user_username = :user_username ".
-            ($orderBy == null ? "" : "ORDER BY :order_by ").
+            ($orderBy == null ? "" : "ORDER BY " . \implode(", ", $orderBy) . " ").
             ($desc ? "DESC " : "").
-            ($limit == null ? "" : "LIMIT :limit ").
-            ($offset == null ? "" : "OFFSET :offset ").
+            ($limit == null ? "" : "LIMIT $limit ").
+            ($offset == null ? "" : "OFFSET $offset ").
             ";";
-        \var_dump($query);
 
         $params = [
-            'order_by' => \implode(", ", $orderBy),
-            'limit' => $limit,
-            'offset' => $offset,
             'user_username' => $username
         ];
 
@@ -113,22 +109,17 @@ class RequestRepository implements RequestRepositoryInterface
      * @return array
      */
     public function findByCarName(int $name, array $orderBy = null, bool $desc = false, int $limit = null, int $offset = null): array
-    {
-        $query =
-            "SELECT * ".
-            "FROM $this->table ".
-            "WHERE car_name = :car_name ".
-            ($orderBy == null ? "" : "ORDER BY :order_by ").
-            ($desc ? "DESC " : "").
-            ($limit == null ? "" : "LIMIT :limit ").
-            ($offset == null ? "" : "OFFSET :offset ").
-            ";";
-        \var_dump($query);
+    {$query =
+        "SELECT * ".
+        "FROM $this->table ".
+        "WHERE car_name = :car_name ".
+        ($orderBy == null ? "" : "ORDER BY " . \implode(", ", $orderBy) . " ").
+        ($desc ? "DESC " : "").
+        ($limit == null ? "" : "LIMIT $limit ").
+        ($offset == null ? "" : "OFFSET $offset ").
+        ";";
 
         $params = [
-            'order_by' => \implode(", ", $orderBy),
-            'limit' => $limit,
-            'offset' => $offset,
             'car_name' => $name
         ];
 
@@ -151,17 +142,13 @@ class RequestRepository implements RequestRepositoryInterface
             "SELECT * ".
             "FROM $this->table ".
             "WHERE driver_username = :driver_username ".
-            ($orderBy == null ? "" : "ORDER BY :order_by ").
+            ($orderBy == null ? "" : "ORDER BY " . \implode(", ", $orderBy) . " ").
             ($desc ? "DESC " : "").
-            ($limit == null ? "" : "LIMIT :limit ").
-            ($offset == null ? "" : "OFFSET :offset ").
+            ($limit == null ? "" : "LIMIT $limit ").
+            ($offset == null ? "" : "OFFSET $offset ").
             ";";
-        \var_dump($query);
 
         $params = [
-            'order_by' => \implode(", ", $orderBy),
-            'limit' => $limit,
-            'offset' => $offset,
             'driver_username' => $username
         ];
 
@@ -170,7 +157,40 @@ class RequestRepository implements RequestRepositoryInterface
     }
 
     /**
-     * Find requests where reserved from or to is between the given datetimes.
+     * Find requests where reserved from is after the given datetime.
+     * @param string $after
+     * @param array|null $orderBy
+     * @param bool $desc
+     * @param int|null $limit
+     * @param int|null $offset
+     * @return array
+     */
+    public function findReservedFromAfter(string $after, array $orderBy = null, bool $desc = false, int $limit = null, int $offset = null): array
+    {
+        if (\is_null($orderBy)) {
+            $orderBy = ['reserved_from'];
+        }
+
+        $query =
+            "SELECT * ".
+            "FROM $this->table ".
+            "WHERE reserved_from > :after ".
+            ($orderBy == null ? "" : "ORDER BY " . \implode(", ", $orderBy) . " ").
+            ($desc ? "DESC " : "").
+            ($limit == null ? "" : "LIMIT $limit ").
+            ($offset == null ? "" : "OFFSET $offset ").
+            ";";
+
+        $params = [
+            'after' => $after
+        ];
+
+        $this->database->execute($query, $params);
+        return $this->database->fetchAll() ?? [];
+    }
+
+    /**
+     * Find requests where reserved from is between the given datetimes.
      * @param string $from
      * @param string $to
      * @param array|null $orderBy
@@ -189,16 +209,13 @@ class RequestRepository implements RequestRepositoryInterface
             "SELECT * ".
             "FROM $this->table ".
             "WHERE reserved_from BETWEEN :from AND :to ".
-            ($orderBy == null ? "" : "ORDER BY :order_by ").
+            ($orderBy == null ? "" : "ORDER BY " . \implode(", ", $orderBy) . " ").
             ($desc ? "DESC " : "").
-            ($limit == null ? "" : "LIMIT :limit ").
-            ($offset == null ? "" : "OFFSET :offset ").
+            ($limit == null ? "" : "LIMIT $limit ").
+            ($offset == null ? "" : "OFFSET $offset ").
             ";";
 
         $params = [
-            'order_by' => \implode(", ", $orderBy),
-            'limit' => $limit,
-            'offset' => $offset,
             'from' => $from,
             'to' => $to
         ];
@@ -210,17 +227,17 @@ class RequestRepository implements RequestRepositoryInterface
     /**
      * Save request to database.
      * @param array $request
-     * @return bool
+     * @return array
      */
-    public function save(array $request): bool
+    public function save(array $request): array
     {
         $query =
             "INSERT INTO $this->table ".
-            "(id, user_username, car_name, reserved_from, reserved_to, driver_username, purpose, destination, passengers, confirmed) ".
+            "(id, user_username, car_name, reserved_from, reserved_to, driver_username, purpose, destination, passengers, confirmed_by_username) ".
             "VALUES ".
-            "(:id, :user_username, :car_name, :reserved_from, :reserved_to, :driver_username, :purpose, :destination, :passengers, :confirmed) ".
+            "(:id, :user_username, :car_name, :reserved_from, :reserved_to, :driver_username, :purpose, :destination, :passengers, :confirmed_by_username) ".
             "ON DUPLICATE KEY UPDATE ".
-            "user_username = :user_username, ".
+            "user_username = :user_username1, ".
             "car_name = :car_name1, ".
             "reserved_from = :reserved_from1, ".
             "reserved_to = :reserved_to1, ".
@@ -228,7 +245,7 @@ class RequestRepository implements RequestRepositoryInterface
             "purpose = :purpose1, ".
             "destination = :destination1, ".
             "passengers = :passengers1, ".
-            "confirmed = :confirmed1;";
+            "confirmed_by_username = :confirmed_by_username1;";
 
         $params = [
             'id' => $request['id'] ?? null,
@@ -240,7 +257,7 @@ class RequestRepository implements RequestRepositoryInterface
             'purpose' => $request['purpose'],
             'destination' => $request['destination'],
             'passengers' => $request['passengers'],
-            'confirmed' => $request['confirmed'],
+            'confirmed_by_username' => $request['confirmed_by_username'],
             'user_username1' => $request['user_username'],
             'car_name1' => $request['car_name'],
             'reserved_from1' => $request['reserved_from'],
@@ -249,12 +266,14 @@ class RequestRepository implements RequestRepositoryInterface
             'purpose1' => $request['purpose'],
             'destination1' => $request['destination'],
             'passengers1' => $request['passengers'],
-            'confirmed1' => $request['confirmed']
+            'confirmed_by_username1' => $request['confirmed_by_username']
         ];
 
         $this->database->execute($query, $params);
 
-        return $this->database->count() > 0;
+        $request['id'] = $this->database->lastInsertId();
+
+        return $request;
     }
 
     /**
