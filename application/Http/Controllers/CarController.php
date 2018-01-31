@@ -98,7 +98,7 @@ class CarController
     }
 
     /**
-     * Update existing user.
+     * Update existing car.
      * @param RequestInterface $request
      * @return ResponseInterface
      */

@@ -204,7 +204,10 @@ $container->register('RequestController', RequestController::class)
     ->addArgument(new SR('repository.car'))
     ->addArgument(new SR('auth'));
 
-//$container->register('DocumentController', DocumentController::class);
+$container->register('DocumentController', DocumentController::class)
+    ->addArgument(new SR('repository.user'))
+    ->addArgument(new SR('repository.document'))
+    ->addArgument(new SR('auth'));
 
 $container->register('CarController', CarController::class)
     ->addArgument(new SR('repository.user'))

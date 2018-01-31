@@ -64,19 +64,15 @@ class DocumentRepository implements DocumentRepositoryInterface
         $query =
             "SELECT * ".
             "FROM $this->table ".
-            "WHERE user_username = :user_username ".
-            ($orderBy == null ? "" : "ORDER BY :order_by ").
+            "WHERE user_username = :username ".
+            ($orderBy == null ? "" : "ORDER BY " . \implode(", ", $orderBy) . " ").
             ($desc ? "DESC " : "").
-            ($limit == null ? "" : "LIMIT :limit ").
-            ($offset == null ? "" : "OFFSET :offset ").
+            ($limit == null ? "" : "LIMIT $limit ").
+            ($offset == null ? "" : "OFFSET $offset ").
             ";";
-        \var_dump($query);
 
         $params = [
-            'order_by' => \implode(", ", $orderBy),
-            'limit' => $limit,
-            'offset' => $offset,
-            'user_username' => $username
+            'username' => $username
         ];
 
         $this->database->execute($query, $params);
@@ -96,20 +92,13 @@ class DocumentRepository implements DocumentRepositoryInterface
         $query =
             "SELECT * ".
             "FROM $this->table ".
-            ($orderBy == null ? "" : "ORDER BY :order_by ").
+            ($orderBy == null ? "" : "ORDER BY " . \implode(", ", $orderBy) . " ").
             ($desc ? "DESC " : "").
-            ($limit == null ? "" : "LIMIT :limit ").
-            ($offset == null ? "" : "OFFSET :offset ").
+            ($limit == null ? "" : "LIMIT $limit ").
+            ($offset == null ? "" : "OFFSET $offset ").
             ";";
-        \var_dump($query);
 
-        $params = [
-            'order_by' => \implode(", ", $orderBy),
-            'limit' => $limit,
-            'offset' => $offset
-        ];
-
-        $this->database->execute($query, $params);
+        $this->database->execute($query);
         return $this->database->fetchAll() ?? [];
     }
 
@@ -128,7 +117,7 @@ class DocumentRepository implements DocumentRepositoryInterface
             "ON DUPLICATE KEY UPDATE ".
             "user_username = :user_username1, ".
             "name = :name1, ".
-            "rsrc = :src1;";
+            "src = :src1;";
 
         $params = [
             'id' => $document['id'] ?? null,

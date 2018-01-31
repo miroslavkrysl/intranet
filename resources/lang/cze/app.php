@@ -15,6 +15,7 @@ return [
     'close' => 'zavřít',
     'send' => 'odeslat',
     'delete' => 'odstranit',
+    'download' => 'stáhnout',
     'invalid_link' => 'neplatný odkaz',
     'user' => [
         'no_users' => 'žádní uživatelé',
@@ -68,6 +69,23 @@ return [
             'action' => 'Odstranit auto',
             'confirm' => 'Přejete si opravdu odstranit auto',
             'success' => 'Auto :name bylo odstraněno'
+        ]
+    ],
+    'document' => [
+        'no_documents' => 'žádné dokumenty',
+        'file_already_exists' => 'Dokument :name již existuje',
+        'file_not_given' => 'Nebyl předán žádný soubor',
+        'update' => [
+            'success' => 'Dokument byl úspěšně aktualizován'
+        ],
+        'create' => [
+            'success' => 'Dokument :name byl úspěšně přidán',
+            'action' => 'Přidat nový dokument'
+        ],
+        'delete' => [
+            'action' => 'Odstranit dokument',
+            'confirm' => 'Přejete si opravdu odstranit dokument',
+            'success' => 'Document :name byl odstraněn'
         ]
     ],
     'request' => [

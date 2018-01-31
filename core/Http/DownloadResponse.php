@@ -28,7 +28,7 @@ class DownloadResponse extends Response
             'Content-disposition', 'attachment; filename="' . $name . '"'
         ];
 
-        parent::__construct(null, $headers);
+        parent::__construct([], $headers);
     }
 
     /**

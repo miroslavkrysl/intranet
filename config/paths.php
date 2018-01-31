@@ -5,5 +5,6 @@ return [
     'env' => '/.env.json',
     'views' => '/resources/views',
     'routes' => '/routes/routes.php',
-    'language' => '/resources/lang'
+    'language' => '/resources/lang',
+    'upload' => '/public/upload'
 ];

@@ -1,0 +1,111 @@
+{% extends "layouts/app.twig" %}
+{% import 'macros/form.twig' as form %}
+
+{% set can_manage_documents = _user.hasPermission(_auth.user().username, 'doc_manage') %}
+
+{% block content %}
+    <div class="p-2 row">
+        <div class="col-sm">
+            <h1>{{ _text('app.menu.documents')|capitalize }}</h1>
+        </div>
+        <div class="col-sm-auto">
+            <button class="btn btn-info m-1" type="button" data-toggle="modal" data-target="#document-create-modal">{{ _text('app.document.create.action') }}</button>
+        </div>
+    </div>
+
+    <div class="card">
+        <div id='documents-table' class="card-body">
+        </div>
+    </div>
+
+    {% if can_manage_documents %}
+        <div class="modal fade" id="document-settings-modal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title"></h5>
+                        <button type="button" class="close" data-dismiss="modal">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="document-settings-form" action="/document" data-method="put">
+                            {{ form.csrf() }}
+                            <input type="hidden" id="input-id" name="id">
+                            <div class="form-group">
+                                <label for="input-name">{{ _text('fields.name')|capitalize }}</label>
+                                <input type="text" class="form-control" id="input-name" name="name">
+                            </div>
+                        </form>
+                        <div id="document-settings-message-box"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="document-settings-delete" class="btn btn-danger mr-auto" data-toggle="modal" data-target="#document-delete-modal">{{ _text('app.delete')|capitalize }}</button>
+                        <button id="document-settings-submit" class="btn btn-primary">{{ _text('app.save')|capitalize }}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="document-create-modal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">{{ _text('app.document.create.action') }}</h5>
+                        <button type="button" class="close" data-dismiss="modal">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="document-create-form" action="/document" data-method="post" enctype="multipart/form-data">
+                            {{ form.csrf() }}
+                            <input type="hidden" id="input-user_username" name="user_username" value="{{ _auth.user().username }}">
+                            <div class="form-group">
+                                <label for="input-name">{{ _text('fields.name')|capitalize }}</label>
+                                <input type="text" class="form-control" id="input-name" name="name">
+                            </div>
+                            <div class="form-group">
+                                <label for="input-file">{{ _text('fields.file')|capitalize }}</label>
+                                <input type="file" class="form-control-file" id="input-file" name="file">
+                            </div>
+                        </form>
+                        <div id="document-create-message-box"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="document-create-submit" class="btn btn-primary">{{ _text('app.save')|capitalize }}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="document-delete-modal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">{{ _text('app.document.delete.action')|capitalize }}</h5>
+                        <button type="button" class="close" data-dismiss="modal">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                            {{ _text('app.document.delete.confirm') }}?
+                        </p>
+                        <div id="document-delete-message-box"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="document-delete-no" type="submit" class="btn btn-primary mr-auto">{{ _text('app.no')|capitalize }}</button>
+
+                        <form id="document-delete-form" action="/document" data-method="delete">
+                            {{ form.csrf() }}
+                            <input name="id" hidden>
+                            <button id="document-delete-yes" class="btn btn-warning">{{ _text('app.yes')|capitalize }}</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <script src="/js/documents.js"></script>
+{% endblock %}

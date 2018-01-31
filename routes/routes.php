@@ -61,6 +61,7 @@ $router->post('/document', 'DocumentController@create')->jsonOnly()->middleware(
 $router->put('/document', 'DocumentController@update')->jsonOnly()->middleware('RestrictToLogged');
 $router->delete('/document', 'DocumentController@delete')->jsonOnly()->middleware('RestrictToLogged');
 $router->get('/documents', 'DocumentController@list')->middleware('RestrictToLogged');
+$router->get('/documents-table', 'DocumentController@documentsTable')->jsonOnly()->middleware('RestrictToLogged');
 
 
 // car handling

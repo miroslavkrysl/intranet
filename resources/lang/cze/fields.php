@@ -21,5 +21,7 @@ return [
     'destination' => 'cíl cesty',
     'purpose' => 'důvod cesty',
     'passengers' => 'pasažéři',
-    'id' => 'id'
+    'id' => 'id',
+    'file' => 'soubor',
+    'filename' => 'jméno souboru'
 ];
