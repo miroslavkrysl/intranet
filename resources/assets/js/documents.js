@@ -36,6 +36,8 @@ $('document').ready(function () {
         form = $(this).find('#document-create-form');
         form.find('#input-name').val('');
         form.find('#input-file').val('');
+
+        $('#document-create-message-box').text('');
     });
 
     running = false;

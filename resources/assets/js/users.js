@@ -41,6 +41,8 @@ $('document').ready(function () {
         form.find('#input-name').val('');
         form.find('#input-email').val('');
         form.find('#input-role_name').val('');
+
+        $('#user-create-message-box').text('');
     });
 
     $('#user-create-submit').click(function (event) {

@@ -60,6 +60,8 @@ $('document').ready(function () {
         form.find('#input-description').val('');
         form.find('#input-manufacturer').val('');
         form.find('#input-model').val('');
+
+        $('#car-create-message-box').text('');
     });
 
     $('#car-create-submit').click(function (event) {

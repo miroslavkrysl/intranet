@@ -28,6 +28,8 @@ $('document').ready(function () {
         form.find('#input-purpose').val('');
         form.find('#input-passengers').val('');
 
+        $('#request-create-message-box').text('');
+
         loadDrivers($('#request-create-form'));
     });
 
